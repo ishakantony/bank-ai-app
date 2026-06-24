@@ -1,5 +1,10 @@
+import { isValidElement } from 'react'
 import ReactMarkdown, { type Components } from 'react-markdown'
 import remarkGfm from 'remark-gfm'
+import { CustomBlock } from './blocks/CustomBlock'
+
+/** Custom blocks are authored as ```bank:<name>``` fenced code. */
+const BANK_FENCE = /language-bank:([\w-]+)/
 
 /**
  * Renders assistant message content as rich markdown (GFM: tables, task lists,
@@ -67,12 +72,26 @@ const components: Components = {
   img: ({ src, alt }) => (
     <img src={typeof src === 'string' ? src : undefined} alt={alt} className="my-2 max-w-full rounded-lg" />
   ),
-  pre: ({ children }) => (
-    <pre className="my-2 overflow-x-auto rounded-xl border border-white/10 bg-black/30 p-3 text-[13px] leading-relaxed text-white/90">
-      {children}
-    </pre>
-  ),
+  pre: ({ children }) => {
+    // A bank: fence renders a custom component (handled in `code`); skip the
+    // styled code-box wrapper so it isn't boxed like a regular code block.
+    if (
+      isValidElement<{ className?: string }>(children) &&
+      BANK_FENCE.test(children.props.className ?? '')
+    ) {
+      return <>{children}</>
+    }
+    return (
+      <pre className="my-2 overflow-x-auto rounded-xl border border-white/10 bg-black/30 p-3 text-[13px] leading-relaxed text-white/90">
+        {children}
+      </pre>
+    )
+  },
   code: ({ className, children }) => {
+    const bank = BANK_FENCE.exec(className ?? '')
+    if (bank) {
+      return <CustomBlock name={bank[1]} raw={String(children)} />
+    }
     const text = String(children)
     const isBlock = /language-(\w+)/.test(className ?? '') || text.includes('\n')
     if (isBlock) {

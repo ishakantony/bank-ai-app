@@ -178,19 +178,35 @@ What would you like to do first?`,
 const insightReplies: Record<string, string> = {
   'Your investment portfolio needs rebalancing': `### Portfolio rebalancing
 
-Your allocation has drifted as markets moved. Here's **target vs. current**:
+Your allocation has drifted as markets moved. Here's where you stand today — equities **68%**, bonds **24%**, cash **8%**:
 
-| Asset class | Target | Current | Drift |
-| --- | ---: | ---: | ---: |
-| Equities | 60% | 68% | 🔺 +8% |
-| Bonds | 30% | 24% | 🔻 −6% |
-| Cash | 10% | 8% | 🔻 −2% |
+\`\`\`bank:allocationDonut
+{ "title": "Current allocation", "slices": [
+  { "label": "Equities", "value": 68 },
+  { "label": "Bonds", "value": 24 },
+  { "label": "Cash", "value": 8 }
+] }
+\`\`\`
 
-To get back on target I'd suggest:
+Against your **target**, equities are over and bonds are under:
 
-1. **Trim equities** by ~£4,200 to lock in recent gains
-2. **Top up bonds** to restore your income buffer
-3. Set a **quarterly auto-rebalance** so this doesn't drift again
+\`\`\`bank:driftBars
+{ "title": "Target vs current", "unit": "%", "items": [
+  { "label": "Equities", "target": 60, "current": 68 },
+  { "label": "Bonds", "target": 30, "current": 24 },
+  { "label": "Cash", "target": 10, "current": 8 }
+] }
+\`\`\`
+
+To get back on target, I'd suggest:
+
+\`\`\`bank:actionCard
+{ "title": "Suggested trades", "actions": [
+  { "label": "Trim equities", "detail": "Sell ~£4,200 to lock in recent gains" },
+  { "label": "Top up bonds", "detail": "Restore your income buffer" },
+  { "label": "Set quarterly auto-rebalance", "detail": "Keeps your mix on target automatically" }
+], "cta": { "label": "Prepare these trades for review" } }
+\`\`\`
 
 > ⚖️ Rebalancing now keeps your risk in line with your plan.
 
