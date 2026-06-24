@@ -19,6 +19,7 @@
     "recharts": "^3.9.0",
     "remark-directive": "^4.0.0",
     "remark-gfm": "^4.0.1",
+    "sonner": "^2.0.7",
     "unist-util-visit": "^5.1.0",
     "zod": "^4.4.3",
     "zustand": "^5.0.14"

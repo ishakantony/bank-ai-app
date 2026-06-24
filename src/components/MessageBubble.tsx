@@ -3,6 +3,7 @@ import { RotateCw } from 'lucide-react'
 import { useChatStore } from '../store/chatStore'
 import { useTypewriter } from '../hooks/useTypewriter'
 import { Markdown } from './Markdown'
+import { MessageActions } from './MessageActions'
 import type { Message, ThreadId } from '../types'
 
 interface MessageBubbleProps {
@@ -56,6 +57,8 @@ export function MessageBubble({ message, threadId, onReveal }: MessageBubbleProp
       <Markdown content={visible} />
       {streaming ? (
         <span className="ml-0.5 inline-block h-4 w-px translate-y-0.5 animate-pulse bg-white/70" />
+      ) : message.content ? (
+        <MessageActions content={message.content} />
       ) : null}
     </div>
   )
