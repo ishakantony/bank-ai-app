@@ -170,7 +170,16 @@ Just tell me what you'd like to do — for example:
 - *"Freeze my travel card"*
 - *"How's my holiday goal doing?"*
 
-What would you like to do first?`,
+What would you like to do first?
+
+\`\`\`bank:suggestions
+{ "items": [
+  { "kind": "prompt", "label": "Send money", "send": "I'd like to send some money" },
+  { "kind": "prompt", "label": "Freeze a card" },
+  { "kind": "prompt", "label": "Check my savings goals" },
+  { "kind": "link", "label": "Open the banking app", "url": "https://example.com/app" }
+] }
+\`\`\``,
 }
 
 // Insight-specific replies, keyed by the insight title the welcome screen sends
@@ -210,7 +219,15 @@ To get back on target, I'd suggest:
 
 > ⚖️ Rebalancing now keeps your risk in line with your plan.
 
-Want me to prepare these trades for your review?`,
+Want me to prepare these trades for your review?
+
+\`\`\`bank:suggestions
+{ "items": [
+  { "kind": "prompt", "label": "Prepare the trades", "send": "Prepare these trades for review" },
+  { "kind": "prompt", "label": "Why did it drift?" },
+  { "kind": "link", "label": "View full portfolio", "url": "https://example.com/portfolio" }
+] }
+\`\`\``,
 
   'Spending this month': `### Spending this month
 

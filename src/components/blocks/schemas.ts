@@ -55,3 +55,31 @@ export const actionCardSchema = z.object({
     .optional(),
 })
 export type ActionCardData = z.infer<typeof actionCardSchema>
+
+/**
+ * Follow-up suggestion pills shown beneath a finished assistant reply. Each item
+ * is a discriminated union on `kind`: a `prompt` sends text back into the thread,
+ * a `link` opens a URL. New affordances (e.g. an in-app `action`) slot in as
+ * another union member without touching the renderer's existing branches.
+ */
+const promptPill = z.object({
+  kind: z.literal('prompt'),
+  /** Pill text. */
+  label: z.string(),
+  /** Text dispatched on click; defaults to `label` when omitted. */
+  send: z.string().optional(),
+})
+const linkPill = z.object({
+  kind: z.literal('link'),
+  label: z.string(),
+  /** Opened in a new tab. */
+  url: z.url(),
+})
+export const suggestionsSchema = z.object({
+  items: z
+    .array(z.discriminatedUnion('kind', [promptPill, linkPill]))
+    .min(1)
+    .max(4),
+})
+export type SuggestionsData = z.infer<typeof suggestionsSchema>
+export type SuggestionItem = SuggestionsData['items'][number]

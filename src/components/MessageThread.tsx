@@ -3,6 +3,7 @@ import { useChatStore } from '../store/chatStore'
 import type { ThreadId } from '../types'
 import { MessageBubble } from './MessageBubble'
 import { TypingIndicator } from './TypingIndicator'
+import { ChatThreadProvider } from './blocks/ChatThreadContext'
 
 interface MessageThreadProps {
   threadId: ThreadId
@@ -25,17 +26,20 @@ export function MessageThread({ threadId }: MessageThreadProps) {
   }, [messages.length, showIndicator, scrollToBottom])
 
   return (
-    <div className="flex flex-col gap-4 py-6">
-      {messages.map((message) => (
-        <MessageBubble
-          key={message.id}
-          message={message}
-          threadId={threadId}
-          onReveal={scrollToBottom}
-        />
-      ))}
-      {showIndicator ? <TypingIndicator /> : null}
-      <div ref={bottomRef} />
-    </div>
+    <ChatThreadProvider value={threadId}>
+      <div className="flex flex-col gap-4 py-6">
+        {messages.map((message, i) => (
+          <MessageBubble
+            key={message.id}
+            message={message}
+            threadId={threadId}
+            isLast={i === messages.length - 1}
+            onReveal={scrollToBottom}
+          />
+        ))}
+        {showIndicator ? <TypingIndicator /> : null}
+        <div ref={bottomRef} />
+      </div>
+    </ChatThreadProvider>
   )
 }

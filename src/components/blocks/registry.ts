@@ -4,6 +4,7 @@ import {
   actionCardSchema,
   allocationDonutSchema,
   driftBarsSchema,
+  suggestionsSchema,
 } from './schemas'
 
 /**
@@ -46,4 +47,5 @@ export const blockRegistry: Record<string, BlockDefinition> = {
   ),
   driftBars: defineBlock(driftBarsSchema, () => import('./DriftBars')),
   actionCard: defineBlock(actionCardSchema, () => import('./ActionCard')),
+  suggestions: defineBlock(suggestionsSchema, () => import('./Suggestions')),
 }

@@ -1,24 +1,36 @@
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { RotateCw } from 'lucide-react'
 import { useChatStore } from '../store/chatStore'
 import { useTypewriter } from '../hooks/useTypewriter'
 import { Markdown } from './Markdown'
 import { MessageActions } from './MessageActions'
+import { CustomBlock } from './blocks/CustomBlock'
+import { splitSuggestions } from './blocks/splitSuggestions'
 import type { Message, ThreadId } from '../types'
 
 interface MessageBubbleProps {
   message: Message
   threadId: ThreadId
+  /** Whether this is the last message in the thread (gates the suggestion pills). */
+  isLast?: boolean
   /** Called as the bubble's content reveals, so the thread can keep scrolled. */
   onReveal?: () => void
 }
 
-export function MessageBubble({ message, threadId, onReveal }: MessageBubbleProps) {
+export function MessageBubble({ message, threadId, isLast, onReveal }: MessageBubbleProps) {
   const retryLast = useChatStore((s) => s.retryLast)
   const finishStreaming = useChatStore((s) => s.finishStreaming)
 
+  // Hoist the suggestions block out of the prose: it renders below the actions,
+  // never inline. Stripping it before the typewriter also keeps its raw JSON
+  // from ever flashing on screen.
+  const { prose, raw: suggestions } = useMemo(
+    () => splitSuggestions(message.content),
+    [message.content],
+  )
+
   const streaming = message.role === 'assistant' && message.status === 'streaming'
-  const visible = useTypewriter(message.content, streaming, () =>
+  const visible = useTypewriter(prose, streaming, () =>
     finishStreaming(threadId, message.id),
   )
 
@@ -58,7 +70,12 @@ export function MessageBubble({ message, threadId, onReveal }: MessageBubbleProp
       {streaming ? (
         <span className="ml-0.5 inline-block h-4 w-px translate-y-0.5 animate-pulse bg-white/70" />
       ) : message.content ? (
-        <MessageActions content={message.content} />
+        <>
+          <MessageActions content={message.content} />
+          {isLast && suggestions ? (
+            <CustomBlock name="suggestions" raw={suggestions} />
+          ) : null}
+        </>
       ) : null}
     </div>
   )
