@@ -8,6 +8,7 @@ const EMPTY_THREADS: Record<ThreadId, Message[]> = {
   cards: [],
   savings: [],
   security: [],
+  insights: [],
   general: [],
 }
 

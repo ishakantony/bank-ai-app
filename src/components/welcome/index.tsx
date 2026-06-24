@@ -6,6 +6,7 @@ import { TransferWelcome } from './TransferWelcome'
 import { CardServicesWelcome } from './CardServicesWelcome'
 import { SavingsWelcome } from './SavingsWelcome'
 import { SecurityWelcome } from './SecurityWelcome'
+import { InsightsWelcome } from './InsightsWelcome'
 import { GenericWelcome } from './GenericWelcome'
 
 // Bespoke layout per topic; anything missing falls back to GenericWelcome.
@@ -14,6 +15,7 @@ const WELCOME: Partial<Record<TopicId, FC<WelcomeProps>>> = {
   cards: CardServicesWelcome,
   savings: SavingsWelcome,
   security: SecurityWelcome,
+  insights: InsightsWelcome,
 }
 
 interface WelcomeScreenProps {

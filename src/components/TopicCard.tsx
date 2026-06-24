@@ -3,6 +3,7 @@ import {
   CreditCard,
   PiggyBank,
   ShieldCheck,
+  Sparkles,
   type LucideIcon,
 } from 'lucide-react'
 import type { Topic } from '../types'
@@ -12,6 +13,7 @@ const ICONS: Record<Topic['icon'], LucideIcon> = {
   card: CreditCard,
   savings: PiggyBank,
   security: ShieldCheck,
+  insights: Sparkles,
 }
 
 interface TopicCardProps {

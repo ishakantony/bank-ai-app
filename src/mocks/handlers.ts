@@ -1,5 +1,5 @@
 import { http, HttpResponse, delay } from 'msw'
-import type { ThreadId, Topic } from '../types'
+import type { Insight, ThreadId, Topic } from '../types'
 
 const topics: Topic[] = [
   {
@@ -25,6 +25,36 @@ const topics: Topic[] = [
     name: 'Fraud & Security',
     description: 'Report suspicious activity and stay protected.',
     icon: 'security',
+  },
+  {
+    id: 'insights',
+    name: 'Insights',
+    description: 'Personalized tips to make the most of your money.',
+    icon: 'insights',
+  },
+]
+
+const insights: Insight[] = [
+  {
+    id: 'portfolio',
+    title: 'Your investment portfolio needs rebalancing',
+    description: 'Your allocation has drifted from your target. Tap to review.',
+    icon: 'portfolio',
+    tone: 'amber',
+  },
+  {
+    id: 'spending',
+    title: 'Spending this month',
+    description: "You've spent £2,140 — 18% more than last month.",
+    icon: 'spending',
+    tone: 'blue',
+  },
+  {
+    id: 'idleCash',
+    title: 'Idle cash',
+    description: '£8,500 sitting in checking could be earning more.',
+    icon: 'idleCash',
+    tone: 'green',
   },
 ]
 
@@ -111,6 +141,18 @@ If you don't recognise the **£89.99** charge, here's what we'll do:
 
 Want me to start a dispute? You can also [report fraud here](https://example.com/report-fraud).`,
 
+  insights: `### Your financial insights
+
+I keep an eye on your money and surface what matters. Right now I'm tracking:
+
+| Insight | What's up |
+| --- | --- |
+| **Portfolio drift** | Your allocation has moved away from target |
+| **Monthly spending** | You're trending 18% above last month |
+| **Idle cash** | £8,500 could be working harder |
+
+Tap any insight above, or ask me something like *"why is my spending up?"*`,
+
   general: `## Hi, I'm Bank AI 👋
 
 I can help you take care of your money. Here's what I'm good at:
@@ -131,6 +173,67 @@ Just tell me what you'd like to do — for example:
 What would you like to do first?`,
 }
 
+// Insight-specific replies, keyed by the insight title the welcome screen sends
+// as the user message. Looked up only on the `insights` thread.
+const insightReplies: Record<string, string> = {
+  'Your investment portfolio needs rebalancing': `### Portfolio rebalancing
+
+Your allocation has drifted as markets moved. Here's **target vs. current**:
+
+| Asset class | Target | Current | Drift |
+| --- | ---: | ---: | ---: |
+| Equities | 60% | 68% | 🔺 +8% |
+| Bonds | 30% | 24% | 🔻 −6% |
+| Cash | 10% | 8% | 🔻 −2% |
+
+To get back on target I'd suggest:
+
+1. **Trim equities** by ~£4,200 to lock in recent gains
+2. **Top up bonds** to restore your income buffer
+3. Set a **quarterly auto-rebalance** so this doesn't drift again
+
+> ⚖️ Rebalancing now keeps your risk in line with your plan.
+
+Want me to prepare these trades for your review?`,
+
+  'Spending this month': `### Spending this month
+
+You've spent **£2,140** so far — **18% more** than the same point last month. Here's where it went:
+
+| Category | This month | vs. last |
+| --- | ---: | ---: |
+| Dining & takeaway | £540 | 🔺 +32% |
+| Groceries | £410 | +4% |
+| Transport | £320 | 🔺 +21% |
+| Subscriptions | £180 | +0% |
+| Shopping | £690 | 🔺 +27% |
+
+A few things stand out:
+
+- **Dining** is your fastest-growing category
+- You have **£180/mo** in subscriptions — I can flag any unused ones
+
+> 💡 Setting a £600 dining budget would put you back on last month's pace.
+
+Want me to set up category budgets or review your subscriptions?`,
+
+  'Idle cash': `### Idle cash
+
+You're holding **£8,500** in checking earning **0.1%**. Put to work, it could earn more:
+
+| Option | Rate | Est. annual interest | Access |
+| --- | ---: | ---: | --- |
+| Checking (now) | 0.10% | £9 | Instant |
+| Easy-access savings | 3.75% | £319 | Instant |
+| 90-day notice | 4.40% | £374 | 90 days |
+
+Keeping ~£2,000 as a buffer and moving the rest to **easy-access savings** would earn roughly **£280 more a year** with no lock-in.
+
+> 💰 Same money, same access — just a better rate.
+
+Shall I open an easy-access savings account and move £6,500?`,
+}
+
 export const handlers = [
   http.get('/api/topics', async () => {
     // Artificial latency so the loading skeletons are visible.
@@ -138,10 +241,22 @@ export const handlers = [
     return HttpResponse.json(topics)
   }),
 
+  http.get('/api/insights', async () => {
+    await delay(600)
+    return HttpResponse.json(insights)
+  }),
+
   http.post('/api/chat', async ({ request }) => {
-    const { threadId } = (await request.json()) as { threadId: ThreadId }
+    const { threadId, message } = (await request.json()) as {
+      threadId: ThreadId
+      message: string
+    }
     // Backend returns the full reply; streaming is faked client-side.
     await delay(700)
+    // On the insights thread, match the message text to an insight reply.
+    if (threadId === 'insights' && insightReplies[message]) {
+      return HttpResponse.json({ reply: insightReplies[message] })
+    }
     return HttpResponse.json({ reply: replies[threadId] ?? replies.general })
   }),
 ]

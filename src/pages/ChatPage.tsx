@@ -7,7 +7,13 @@ import { WelcomeScreen } from '../components/welcome'
 import { useChatStore } from '../store/chatStore'
 import type { ThreadId, TopicId } from '../types'
 
-const TOPIC_IDS: TopicId[] = ['transfer', 'cards', 'savings', 'security']
+const TOPIC_IDS: TopicId[] = [
+  'transfer',
+  'cards',
+  'savings',
+  'security',
+  'insights',
+]
 
 function isTopicId(value: string | null): value is TopicId {
   return value !== null && (TOPIC_IDS as string[]).includes(value)
