@@ -58,9 +58,10 @@ export function ChatPage() {
       onChange={setDraft}
       onSubmit={handleSubmit}
       inputDisabled={pending === threadId}
+      overlay
     >
       {showWelcome ? (
-        <div className="flex flex-1 flex-col justify-center">
+        <div className="flex min-h-full flex-col justify-center">
           <WelcomeScreen
             topicId={threadId as TopicId}
             onSend={(text) => sendMessage(threadId, text)}

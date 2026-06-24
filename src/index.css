@@ -100,6 +100,15 @@
   animation: float-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
+/* Hide the native scrollbar while keeping the element scrollable (used by the
+   chat input's auto-growing textarea once it hits its max-height). */
+@utility no-scrollbar {
+  scrollbar-width: none; /* Firefox */
+  &::-webkit-scrollbar {
+    display: none; /* WebKit */
+  }
+}
+
 /* Slow, organic drift paths for the ambient background orbs. Each moves in a
    different direction and amount so the cluster never feels synchronized. */
 @keyframes drift-1 {

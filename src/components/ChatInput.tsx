@@ -68,7 +68,7 @@ export function ChatInput({
           disabled={disabled}
           rows={1}
           placeholder={disabled ? 'Bank AI is replying…' : 'Ask Bank AI anything…'}
-          className="max-h-40 flex-1 resize-none bg-transparent py-1.5 text-[15px] leading-relaxed text-white placeholder:text-white/40 focus:outline-none disabled:cursor-not-allowed disabled:opacity-60"
+          className="no-scrollbar max-h-40 flex-1 resize-none bg-transparent py-1.5 text-[15px] leading-relaxed text-white placeholder:text-white/40 focus:outline-none disabled:cursor-not-allowed disabled:opacity-60"
         />
 
         <button
