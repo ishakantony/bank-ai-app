@@ -3,22 +3,25 @@ import { useEffect, useRef, useState } from 'react'
 const STEP = 2 // characters revealed per tick
 const INTERVAL = 16 // ms between ticks (~60fps)
 
-// Custom-component fences (```bank:<name>``` … ```) are revealed atomically: we
-// never type their raw JSON out character by character. Instead, once the
-// cursor enters a fence we jump straight to its end so the component appears in
-// one frame (then fades in via the float-in animation).
-const FENCE = /```bank:[\w-]+\n[\s\S]*?\n```/g
+// Markup that must reveal atomically rather than typing out character by
+// character: custom-component fences (```bank:<name>``` … ```) — whose raw JSON
+// we never want to see — and inline `:hl[text]{tone=...}` highlights, whose
+// directive syntax would otherwise leak mid-word. Once the cursor enters one of
+// these we jump straight to its end so it appears (and fades in) in one frame.
+const ATOMIC = [/```bank:[\w-]+\n[\s\S]*?\n```/g, /:hl\[[^\]]*\]\{[^}]*\}/g]
 
-/** Byte ranges [start, end) of every bank: fence in the text. */
+/** Byte ranges [start, end) of every atomic span in the text. */
 function fenceRanges(text: string): Array<[number, number]> {
   const ranges: Array<[number, number]> = []
-  for (const match of text.matchAll(FENCE)) {
-    ranges.push([match.index, match.index + match[0].length])
+  for (const pattern of ATOMIC) {
+    for (const match of text.matchAll(pattern)) {
+      ranges.push([match.index, match.index + match[0].length])
+    }
   }
   return ranges
 }
 
-/** If `i` lands inside a fence, snap it to that fence's end. */
+/** If `i` lands inside an atomic span, snap it to that span's end. */
 function snapPastFence(i: number, ranges: Array<[number, number]>): number {
   for (const [start, end] of ranges) {
     if (i > start && i < end) return end

@@ -1,10 +1,45 @@
-import { isValidElement } from 'react'
+import { isValidElement, type ReactNode } from 'react'
 import ReactMarkdown, { type Components } from 'react-markdown'
 import remarkGfm from 'remark-gfm'
+import remarkDirective from 'remark-directive'
+import { visit } from 'unist-util-visit'
+import type { Node } from 'unist'
 import { CustomBlock } from './blocks/CustomBlock'
+import { Highlight } from './Highlight'
 
 /** Custom blocks are authored as ```bank:<name>``` fenced code. */
 const BANK_FENCE = /language-bank:([\w-]+)/
+
+/**
+ * Authoring contract for inline highlights (consumed by hand-written mock
+ * replies today, and by a future model/system prompt):
+ *
+ *   Your allocation has :hl[drifted]{tone=negative}.
+ *
+ * Syntax is a remark text directive — `:hl[<text>]{tone=<tone>}` — where
+ * <tone> is one of: positive | negative | warning | info (see Highlight.tsx).
+ * An unknown tone degrades to plain text; a missing tone falls back to `info`.
+ * This rides on remark-directive rather than raw `<mark>` HTML so the no-raw,
+ * no-rehype-raw safety guarantee below still holds.
+ */
+interface DirectiveNode extends Node {
+  name?: string
+  attributes?: Record<string, string | null | undefined>
+  data?: { hName?: string; hProperties?: Record<string, unknown> }
+}
+
+/** Map `:hl[...]{tone=...}` text directives onto a `<hl tone>` hast element. */
+function remarkHighlight() {
+  return (tree: Node) => {
+    visit(tree, (node: Node) => {
+      const n = node as DirectiveNode
+      if (n.type !== 'textDirective' || n.name !== 'hl') return
+      const data = n.data ?? (n.data = {})
+      data.hName = 'hl'
+      data.hProperties = { tone: n.attributes?.tone ?? '' }
+    })
+  }
+}
 
 /**
  * Renders assistant message content as rich markdown (GFM: tables, task lists,
@@ -105,9 +140,21 @@ const components: Components = {
   },
 }
 
+// `hl` is a custom element name (not a real HTML tag), so it lives outside the
+// typed `components` map and the merge is cast through `unknown`.
+const allComponents = {
+  ...components,
+  hl: ({ tone, children }: { tone?: string; children?: ReactNode }) => (
+    <Highlight tone={tone}>{children}</Highlight>
+  ),
+} as unknown as Components
+
 export function Markdown({ content }: { content: string }) {
   return (
-    <ReactMarkdown remarkPlugins={[remarkGfm]} components={components}>
+    <ReactMarkdown
+      remarkPlugins={[remarkGfm, remarkDirective, remarkHighlight]}
+      components={allComponents}
+    >
       {content}
     </ReactMarkdown>
   )

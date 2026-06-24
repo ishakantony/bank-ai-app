@@ -178,7 +178,7 @@ What would you like to do first?`,
 const insightReplies: Record<string, string> = {
   'Your investment portfolio needs rebalancing': `### Portfolio rebalancing
 
-Your allocation has drifted as markets moved. Here's where you stand today — equities **68%**, bonds **24%**, cash **8%**:
+Your allocation has :hl[drifted]{tone=negative} as markets moved. Here's where you stand today — equities **68%**, bonds **24%**, cash **8%**:
 
 \`\`\`bank:allocationDonut
 { "title": "Current allocation", "slices": [
@@ -214,7 +214,7 @@ Want me to prepare these trades for your review?`,
 
   'Spending this month': `### Spending this month
 
-You've spent **£2,140** so far — **18% more** than the same point last month. Here's where it went:
+You've spent **£2,140** so far — :hl[18% more]{tone=warning} than the same point last month. Here's where it went:
 
 | Category | This month | vs. last |
 | --- | ---: | ---: |
@@ -243,7 +243,7 @@ You're holding **£8,500** in checking earning **0.1%**. Put to work, it could e
 | Easy-access savings | 3.75% | £319 | Instant |
 | 90-day notice | 4.40% | £374 | 90 days |
 
-Keeping ~£2,000 as a buffer and moving the rest to **easy-access savings** would earn roughly **£280 more a year** with no lock-in.
+Keeping ~£2,000 as a buffer and moving the rest to **easy-access savings** would earn roughly :hl[£280 more a year]{tone=positive} with no lock-in.
 
 > 💰 Same money, same access — just a better rate.
 

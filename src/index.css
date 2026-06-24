@@ -13,6 +13,12 @@
   --color-glow-warm: oklch(0.72 0.17 55); /* orange */
   --color-glow-green: oklch(0.7 0.16 155); /* emerald */
 
+  /* Highlight tones (inline :hl[...]{tone=...} directives) */
+  --color-tone-positive: oklch(0.78 0.15 155); /* green  — gains, on-track */
+  --color-tone-negative: oklch(0.7 0.19 25); /* red    — losses, drift, risk */
+  --color-tone-warning: oklch(0.82 0.15 80); /* amber  — attention, deadlines */
+  --color-tone-info: oklch(0.78 0.16 200); /* cyan   — neutral emphasis */
+
   /* Surfaces */
   --color-ink: oklch(0.16 0.02 280);
   --color-ink-deep: oklch(0.11 0.02 280);
