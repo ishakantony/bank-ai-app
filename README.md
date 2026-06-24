@@ -1,32 +1,60 @@
-# React + TypeScript + Vite
+# Bank AI
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+A polished, phone-width AI chat app for a fictional bank — a spinning brand orb, topic cards, per-topic welcome screens, and an assistant whose replies render rich markdown, charts, and interactive follow-up pills. Everything runs off a mock API (MSW); there is **no real backend or LLM**. Assistant replies are canned markdown strings, revealed with a fake typewriter "stream".
 
-Currently, two official plugins are available:
+## Tech stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Vite 8** + **React 19** + **TypeScript**
+- **Tailwind CSS v4** (CSS-first — no `tailwind.config.js`; theme lives in `src/index.css`)
+- **React Router 7** — two routes, `/` and `/chat`
+- **TanStack Query 5** — server data (topics, insights)
+- **Zustand 5** — chat state, persisted to `sessionStorage`
+- **MSW 2** — mock API at the Service Worker layer
+- **Zod 4** — validates the JSON for custom reply "blocks"
+- **Recharts 3** — charts in assistant replies (code-split)
+- **react-markdown** + remark-gfm + remark-directive — rich reply rendering
+- **sonner** (toasts), **lucide-react** (icons)
 
-## React Compiler
+## Getting started
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```bash
+npm install
+npm run dev      # http://localhost:9999
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+The dev server starts the MSW mock worker automatically (DEV only). Production builds never load it.
+
+## Scripts
+
+```bash
+npm run dev      # Vite dev server on http://localhost:9999
+npm run build    # tsc -b (typecheck) then vite build → dist/
+npm run lint     # oxlint
+npm run preview  # serve the production build
+```
+
+There is no test runner; `npm run build` is the typecheck gate.
+
+## How it works
+
+- **Routes** — `/` (`WelcomePage`) shows the orb, brand mark, and topic grid; submitting the input starts a fresh "general" conversation and goes to `/chat`. `/chat` (`ChatPage`) picks its thread from the URL (`?topic=<id>`, else `general`) and shows a bespoke welcome screen when a topic thread is empty.
+- **Mock API** — `src/mocks/handlers.ts` serves `GET /api/topics`, `GET /api/insights`, and `POST /api/chat`. The chat endpoint returns a full canned markdown reply keyed by thread.
+- **Chat state** — `src/store/chatStore.ts` (Zustand) holds one message list per thread and a single `pending` lock, persisted to `sessionStorage`.
+- **Fake streaming** — `useTypewriter` reveals the reply progressively, snapping past custom-block fences and highlight directives so raw syntax never flashes.
+- **Rich replies** — replies use GFM markdown plus two custom affordances: inline highlights `:hl[text]{tone=…}` and code-split "blocks" authored as `` ```bank:<name>``` `` JSON fences (charts, action cards, suggestion pills). Blocks are validated with Zod and live in `src/components/blocks/`. Raw HTML in replies is intentionally not rendered.
+
+## Project layout
+
+```
+src/
+  api/          fetch wrappers (topics, insights, chat)
+  components/   UI; blocks/ = custom reply blocks, welcome/ = per-topic screens
+  hooks/        useTopics, useInsights, useTypewriter
+  mocks/        MSW worker + handlers (all seed + reply data)
+  pages/        WelcomePage, ChatPage
+  store/        chatStore (Zustand)
+  index.css     Tailwind v4 theme tokens, keyframes, utilities
+  types.ts      shared domain types
+```
+
+See [`CLAUDE.md`](./CLAUDE.md) for a deeper architecture tour.
