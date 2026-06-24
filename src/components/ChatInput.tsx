@@ -6,12 +6,19 @@ interface ChatInputProps {
   value: string
   onChange: (value: string) => void
   onSubmit: (value: string) => void
+  /** When true, the textarea and send button are locked (e.g. while streaming). */
+  disabled?: boolean
 }
 
-export function ChatInput({ value, onChange, onSubmit }: ChatInputProps) {
+export function ChatInput({
+  value,
+  onChange,
+  onSubmit,
+  disabled = false,
+}: ChatInputProps) {
   const [focused, setFocused] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
-  const canSend = value.trim().length > 0
+  const canSend = !disabled && value.trim().length > 0
 
   // Auto-grow the textarea to fit its content (capped via max-height).
   useEffect(() => {
@@ -58,9 +65,10 @@ export function ChatInput({ value, onChange, onSubmit }: ChatInputProps) {
               submit()
             }
           }}
+          disabled={disabled}
           rows={1}
-          placeholder="Ask Bank AI anything…"
-          className="max-h-40 flex-1 resize-none bg-transparent py-1.5 text-[15px] leading-relaxed text-white placeholder:text-white/40 focus:outline-none"
+          placeholder={disabled ? 'Bank AI is replying…' : 'Ask Bank AI anything…'}
+          className="max-h-40 flex-1 resize-none bg-transparent py-1.5 text-[15px] leading-relaxed text-white placeholder:text-white/40 focus:outline-none disabled:cursor-not-allowed disabled:opacity-60"
         />
 
         <button
