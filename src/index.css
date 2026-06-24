@@ -1,0 +1,83 @@
+@import 'tailwindcss';
+
+@theme {
+  --font-sans:
+    'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  /* Brand accent gradient stops */
+  --color-accent-1: oklch(0.62 0.21 280); /* indigo / violet */
+  --color-accent-2: oklch(0.66 0.2 320); /* magenta */
+  --color-accent-3: oklch(0.78 0.16 200); /* cyan */
+
+  /* Surfaces */
+  --color-ink: oklch(0.16 0.02 280);
+  --color-ink-deep: oklch(0.11 0.02 280);
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100dvh;
+    font-family: var(--font-sans);
+    color: oklch(0.97 0.01 280);
+    background:
+      radial-gradient(
+        60rem 60rem at 50% -10%,
+        oklch(0.3 0.12 290 / 0.45),
+        transparent 60%
+      ),
+      radial-gradient(
+        50rem 50rem at 85% 20%,
+        oklch(0.4 0.12 200 / 0.18),
+        transparent 55%
+      ),
+      var(--color-ink-deep);
+    background-attachment: fixed;
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+/* The angle custom property drives the clockwise rotating border + orb spin.
+   Registering it lets the browser interpolate the angle so it animates. */
+@property --angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@keyframes spin-angle {
+  to {
+    --angle: 360deg;
+  }
+}
+
+@keyframes orb-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  50% {
+    transform: scale(1.05);
+    filter: brightness(1.15);
+  }
+}
+
+@keyframes float-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@utility animate-float-in {
+  animation: float-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
