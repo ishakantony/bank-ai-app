@@ -1,19 +1,41 @@
+import { useEffect, useRef, useState } from 'react'
 import { Orb } from './Orb'
+import { useTypewriter } from '../hooks/useTypewriter'
 
-/** Shown as an assistant bubble while waiting for the reply to arrive. */
+/** Cycled while we wait on the backend so the user knows we're still working. */
+const PHRASES = [
+  'Connecting securely…',
+  'Looking into that for you…',
+  'Checking your accounts…',
+  'Almost there…',
+]
+
+/** How long a phrase stays fully typed before the next one starts. */
+const HOLD_MS = 2200
+
+/** Shown while waiting for the assistant's reply: the orb plus a cycling,
+ *  self-typing status line. Each phrase types out, holds, then the next
+ *  phrase replaces it, looping until the reply arrives. */
 export function TypingIndicator() {
+  const [index, setIndex] = useState(0)
+  const timer = useRef<number | undefined>(undefined)
+
+  const text = useTypewriter(PHRASES[index], true, () => {
+    timer.current = window.setTimeout(
+      () => setIndex((i) => (i + 1) % PHRASES.length),
+      HOLD_MS,
+    )
+  })
+
+  useEffect(() => () => window.clearTimeout(timer.current), [])
+
   return (
-    <div className="flex items-end gap-2">
-      <Orb size={26} active className="shrink-0" />
-      <div className="flex items-center gap-1 rounded-2xl rounded-bl-md bg-white/5 px-3.5 py-3 ring-1 ring-white/10">
-        {[0, 1, 2].map((i) => (
-          <span
-            key={i}
-            className="size-1.5 animate-bounce rounded-full bg-white/50"
-            style={{ animationDelay: `${i * 0.15}s` }}
-          />
-        ))}
-      </div>
+    <div className="flex items-center gap-2.5">
+      <Orb size={26} active loading className="shrink-0" />
+      <span className="text-sm text-white/50">
+        {text}
+        <span className="ml-0.5 inline-block h-4 w-px translate-y-0.5 animate-pulse bg-white/70" />
+      </span>
     </div>
   )
 }

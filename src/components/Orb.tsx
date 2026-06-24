@@ -3,6 +3,8 @@ interface OrbProps {
   size?: number
   /** When false the orb spins slowly and dims its glow (idle state). */
   active?: boolean
+  /** When true the core morphs circle ↔ rounded-square while it rotates. */
+  loading?: boolean
   className?: string
 }
 
@@ -10,8 +12,16 @@ interface OrbProps {
  * A spinning gradient orb with a blurred glow halo.
  * Reused large on the welcome screen and compact inside the chat input.
  */
-export function Orb({ size = 140, active = true, className = '' }: OrbProps) {
+export function Orb({
+  size = 140,
+  active = true,
+  loading = false,
+  className = '',
+}: OrbProps) {
   const spin = active ? '6s' : '14s'
+  const coreShape = loading
+    ? 'orb-morph 2.4s ease-in-out infinite'
+    : 'orb-pulse 4s ease-in-out infinite'
 
   return (
     <div
@@ -37,7 +47,7 @@ export function Orb({ size = 140, active = true, className = '' }: OrbProps) {
           height: '82%',
           background:
             'conic-gradient(from var(--angle), var(--color-accent-1), var(--color-accent-2), var(--color-accent-3), var(--color-accent-1))',
-          animation: `spin-angle ${spin} linear infinite, orb-pulse 4s ease-in-out infinite`,
+          animation: `spin-angle ${spin} linear infinite, ${coreShape}`,
           boxShadow: 'inset 0 0 24px rgba(255,255,255,0.35)',
         }}
       >
