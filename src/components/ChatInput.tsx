@@ -50,6 +50,7 @@ export function ChatInput({
         <Orb
           size={32}
           active={focused}
+          loading={focused}
           className="mb-0.5 shrink-0 transition-opacity duration-300"
         />
 
