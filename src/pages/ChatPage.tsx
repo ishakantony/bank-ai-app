@@ -4,6 +4,7 @@ import { AppShell } from '../components/AppShell'
 import { ChatHeader } from '../components/ChatHeader'
 import { MessageThread } from '../components/MessageThread'
 import { WelcomeScreen } from '../components/welcome'
+import { BlockOverlayHost } from '../components/blocks/BlockOverlayHost'
 import { useChatStore } from '../store/chatStore'
 import type { ThreadId, TopicId } from '../types'
 
@@ -52,24 +53,30 @@ export function ChatPage() {
   const showWelcome = threadId !== 'general' && messages.length === 0
 
   return (
-    <AppShell
-      header={<ChatHeader threadId={threadId} />}
-      value={draft}
-      onChange={setDraft}
-      onSubmit={handleSubmit}
-      inputDisabled={pending === threadId}
-      overlay
-    >
-      {showWelcome ? (
-        <div className="flex min-h-full flex-col justify-center">
-          <WelcomeScreen
-            topicId={threadId as TopicId}
-            onSend={(text) => sendMessage(threadId, text)}
-          />
-        </div>
-      ) : (
-        <MessageThread threadId={threadId} />
-      )}
-    </AppShell>
+    <>
+      <AppShell
+        header={<ChatHeader threadId={threadId} />}
+        value={draft}
+        onChange={setDraft}
+        onSubmit={handleSubmit}
+        inputDisabled={pending === threadId}
+        overlay
+      >
+        {showWelcome ? (
+          <div className="flex min-h-full flex-col justify-center">
+            <WelcomeScreen
+              topicId={threadId as TopicId}
+              onSend={(text) => sendMessage(threadId, text)}
+            />
+          </div>
+        ) : (
+          <MessageThread threadId={threadId} />
+        )}
+      </AppShell>
+
+      {/* Renders block overlays (e.g. the wizard drawer) opened via bus signals
+          — outside the message DOM so they escape the scroll/chrome context. */}
+      <BlockOverlayHost />
+    </>
   )
 }

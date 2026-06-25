@@ -57,10 +57,42 @@ export const actionCardSchema = z.object({
 export type ActionCardData = z.infer<typeof actionCardSchema>
 
 /**
+ * A branching questionnaire rendered as a `bank:wizard` block. The card teases
+ * the first question; the drawer (opened via the block bus) walks the user
+ * through it. Branching lives on each option's `next` — an option with no
+ * `next` ends the flow. `id` is the bus key both the card and any `signal`
+ * suggestion pill (e.g. "Reassess my needs") address.
+ */
+const wizardQuestionSchema = z.object({
+  title: z.string(),
+  options: z
+    .array(
+      z.object({
+        value: z.string(),
+        label: z.string(),
+        /** Next question id; omit to make this option terminal. */
+        next: z.string().optional(),
+      }),
+    )
+    .min(1),
+})
+export const wizardSchema = z.object({
+  /** Bus id — the coordination key, addressable across messages. */
+  id: z.string(),
+  title: z.string().optional(),
+  subtitle: z.string().optional(),
+  /** Id of the first question; must exist in `questions`. */
+  start: z.string(),
+  questions: z.record(z.string(), wizardQuestionSchema),
+})
+export type WizardData = z.infer<typeof wizardSchema>
+
+/**
  * Follow-up suggestion pills shown beneath a finished assistant reply. Each item
  * is a discriminated union on `kind`: a `prompt` sends text back into the thread,
- * a `link` opens a URL. New affordances (e.g. an in-app `action`) slot in as
- * another union member without touching the renderer's existing branches.
+ * a `link` opens a URL, a `signal` fires a block-bus intent at a target block
+ * (e.g. re-opening a wizard). New affordances slot in as another union member
+ * without touching the renderer's existing branches.
  */
 const promptPill = z.object({
   kind: z.literal('prompt'),
@@ -75,9 +107,19 @@ const linkPill = z.object({
   /** Opened in a new tab. */
   url: z.url(),
 })
+const signalPill = z.object({
+  kind: z.literal('signal'),
+  label: z.string(),
+  /** Bus id of the block to signal. */
+  target: z.string(),
+  /** Intent name, e.g. "open". */
+  name: z.string(),
+  /** Optional intent payload, e.g. `{ "fresh": true }`. */
+  payload: z.unknown().optional(),
+})
 export const suggestionsSchema = z.object({
   items: z
-    .array(z.discriminatedUnion('kind', [promptPill, linkPill]))
+    .array(z.discriminatedUnion('kind', [promptPill, linkPill, signalPill]))
     .min(1)
     .max(4),
 })

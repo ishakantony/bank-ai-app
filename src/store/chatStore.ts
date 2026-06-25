@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 import { sendChat } from '../api/chat'
+import { useBlockBus } from './blockBus'
 import type { Message, ThreadId } from '../types'
 
 const EMPTY_THREADS: Record<ThreadId, Message[]> = {
@@ -104,11 +105,15 @@ export const useChatStore = create<ChatState>()(
           void requestReply('general')
         },
 
-        clearThread: (threadId) =>
+        clearThread: (threadId) => {
+          // Block sessions (e.g. a wizard's answers) belong to the conversation,
+          // so reset them too — otherwise a new chat reuses the old block state.
+          useBlockBus.getState().resetThread(threadId)
           set((state) => ({
             pending: state.pending === threadId ? null : state.pending,
             threads: { ...state.threads, [threadId]: [] },
-          })),
+          }))
+        },
 
         retryLast: (threadId) => {
           set((state) => {

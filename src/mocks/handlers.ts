@@ -252,19 +252,118 @@ Want me to set up category budgets or review your subscriptions?`,
 
   'Idle cash': `### Idle cash
 
-You're holding **£8,500** in checking earning **0.1%**. Put to work, it could earn more:
+You're holding :hl[£8,500]{tone=positive} in checking earning just **0.1%**. Before I suggest where it should go, let's tailor it to what you actually want this money to do.
 
-| Option | Rate | Est. annual interest | Access |
-| --- | ---: | ---: | --- |
-| Checking (now) | 0.10% | £9 | Instant |
-| Easy-access savings | 3.75% | £319 | Instant |
-| 90-day notice | 4.40% | £374 | 90 days |
+\`\`\`bank:wizard
+{
+  "id": "idleCash",
+  "title": "Make your idle cash work",
+  "subtitle": "A few quick questions to tailor your options",
+  "start": "aim",
+  "questions": {
+    "aim": {
+      "title": "What's your aim for this money?",
+      "options": [
+        { "value": "wealth", "label": "Grow my wealth", "next": "horizon" },
+        { "value": "retire", "label": "Save for retirement", "next": "retireWhen" },
+        { "value": "home", "label": "Buy a home", "next": "homeWhen" },
+        { "value": "buffer", "label": "Keep a rainy-day buffer" }
+      ]
+    },
+    "horizon": {
+      "title": "Over what time frame?",
+      "options": [
+        { "value": "short", "label": "Under 3 years" },
+        { "value": "mid", "label": "3 to 5 years", "next": "risk" },
+        { "value": "long", "label": "5 years or more", "next": "risk" }
+      ]
+    },
+    "risk": {
+      "title": "How do you feel about ups and downs?",
+      "options": [
+        { "value": "cautious", "label": "Keep it steady" },
+        { "value": "balanced", "label": "A balanced mix" },
+        { "value": "adventurous", "label": "Chase higher returns" }
+      ]
+    },
+    "retireWhen": {
+      "title": "How far off is retirement?",
+      "options": [
+        { "value": "soon", "label": "Less than 5 years" },
+        { "value": "midway", "label": "5 to 15 years" },
+        { "value": "far", "label": "More than 15 years" }
+      ]
+    },
+    "homeWhen": {
+      "title": "When do you hope to buy?",
+      "options": [
+        { "value": "soon", "label": "Within 2 years" },
+        { "value": "later", "label": "2 to 5 years away" }
+      ]
+    }
+  }
+}
+\`\`\`
 
-Keeping ~£2,000 as a buffer and moving the rest to **easy-access savings** would earn roughly :hl[£280 more a year]{tone=positive} with no lock-in.
+Tap **Get started** and I'll line up the right options for you.`,
+}
 
-> 💰 Same money, same access — just a better rate.
+// Shown beneath every post-questionnaire reply. The `signal` pill re-opens the
+// idle-cash wizard fresh — the cross-message trigger — alongside normal pills.
+const wizardSuggestions = `\`\`\`bank:suggestions
+{ "items": [
+  { "kind": "signal", "label": "Reassess my needs", "target": "idleCash", "name": "open", "payload": { "fresh": true } },
+  { "kind": "prompt", "label": "Open easy-access savings", "send": "Open an easy-access savings account and move £6,500" },
+  { "kind": "link", "label": "Compare rates", "url": "https://example.com/savings" }
+] }
+\`\`\``
 
-Shall I open an easy-access savings account and move £6,500?`,
+// Post-submission replies, keyed by the first answer (the "aim" option label).
+const wizardReplies: Record<string, string> = {
+  'Grow my wealth': `### A plan for growth
+
+Thanks — that helps. With growth as your aim, a **stocks & shares ISA** fits well: historically it's outpaced cash over longer horizons, though values can fall as well as rise.
+
+- Keep ~£2,000 in easy-access as a buffer
+- Invest the rest in a diversified, low-cost fund
+- Automate a monthly top-up to smooth out the ups and downs
+
+> 📈 Time *in* the market tends to matter more than timing it.`,
+
+  'Save for retirement': `### Building your retirement pot
+
+A retirement aim usually means a longer runway, so tax-efficient wrappers do the heavy lifting. Topping up a **pension** (with tax relief) or a **stocks & shares ISA** could turn this idle cash into meaningful future income.
+
+- Check whether you've used this year's pension allowance
+- Consider a low-cost global fund for the long term
+- Revisit the mix as retirement gets closer`,
+
+  'Buy a home': `### Saving toward your home
+
+For a deposit, certainty matters more than chasing returns. A **Lifetime ISA** (25% government bonus, up to £1,000/yr) or a top **fixed-rate saver** keeps the money safe while it grows.
+
+- Lock away what you won't need before completion
+- Keep the rest instant-access for flexibility`,
+
+  'Keep a rainy-day buffer': `### A stronger safety net
+
+Smart instinct — a rainy-day buffer should stay **instant-access**. But it shouldn't sit at 0.1%: moving it to **easy-access savings** earns roughly :hl[£280 more a year]{tone=positive} with no lock-in.
+
+> 💰 Same money, same access — just a better rate.`,
+
+  default: `### Here's what I'd suggest
+
+Based on your answers, the simplest win is moving most of this idle cash into **easy-access savings** — roughly :hl[£280 more a year]{tone=positive}, with instant access kept for emergencies.`,
+}
+
+/** Detects a questionnaire submission (the `Q: …` / `A: …` message shape). */
+function isWizardSubmission(message: string): boolean {
+  return /^Q:\s.+\nA:\s/m.test(message)
+}
+
+/** The first answer in a submission — used to tailor the reply by aim. */
+function firstAnswer(message: string): string {
+  return message.match(/A:\s*(.+)/)?.[1]?.trim() ?? ''
 }
 
 export const handlers = [
@@ -286,9 +385,17 @@ export const handlers = [
     }
     // Backend returns the full reply; streaming is faked client-side.
     await delay(700)
-    // On the insights thread, match the message text to an insight reply.
-    if (threadId === 'insights' && insightReplies[message]) {
-      return HttpResponse.json({ reply: insightReplies[message] })
+    if (threadId === 'insights') {
+      // A questionnaire submission: tailor the reply by the first answer and
+      // append the follow-up pills (incl. "Reassess my needs").
+      if (isWizardSubmission(message)) {
+        const body = wizardReplies[firstAnswer(message)] ?? wizardReplies.default
+        return HttpResponse.json({ reply: `${body}\n\n${wizardSuggestions}` })
+      }
+      // Otherwise match the message text to an insight reply.
+      if (insightReplies[message]) {
+        return HttpResponse.json({ reply: insightReplies[message] })
+      }
     }
     return HttpResponse.json({ reply: replies[threadId] ?? replies.general })
   }),
