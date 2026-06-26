@@ -48,11 +48,20 @@ export function AppShell({
 
   return (
     <div className="mx-auto flex h-dvh w-full flex-col px-4">
-      {header ? <div className="shrink-0">{header}</div> : null}
+      {header ? (
+        <div className="shrink-0 pt-[env(safe-area-inset-top)]">{header}</div>
+      ) : null}
 
-      <main className="flex flex-1 flex-col overflow-y-auto">{children}</main>
+      {/* When there's no header, the scroll area runs full-bleed to the top
+          edge so content can scroll up behind the notch; the inset is applied
+          as scrollable padding so the resting position still clears it. */}
+      <main
+        className={`flex flex-1 flex-col overflow-y-auto${header ? '' : ' pt-[env(safe-area-inset-top)]'}`}
+      >
+        {children}
+      </main>
 
-      <div className="shrink-0 pt-2">
+      <div className="shrink-0 pt-2 pb-[env(safe-area-inset-bottom)]">
         <ChatInput
           value={value}
           onChange={onChange}
@@ -112,7 +121,7 @@ function OverlayShell({
       {header ? (
         <div
           ref={topRef}
-          className="pointer-events-none absolute inset-x-0 top-0 bg-gradient-to-b from-ink-deep/70 via-ink-deep/40 to-transparent px-4 pb-6 backdrop-blur-md [mask-image:linear-gradient(to_bottom,black_60%,transparent)]"
+          className="pointer-events-none absolute inset-x-0 top-0 bg-gradient-to-b from-ink-deep/70 via-ink-deep/40 to-transparent px-4 pb-6 pt-[env(safe-area-inset-top)] backdrop-blur-md [mask-image:linear-gradient(to_bottom,black_60%,transparent)]"
         >
           <div className="pointer-events-auto">{header}</div>
         </div>
@@ -120,7 +129,7 @@ function OverlayShell({
 
       <div
         ref={bottomRef}
-        className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink-deep/80 via-ink-deep/50 to-transparent px-4 pt-8 backdrop-blur-md [mask-image:linear-gradient(to_top,black_70%,transparent)]"
+        className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink-deep/80 via-ink-deep/50 to-transparent px-4 pb-[env(safe-area-inset-bottom)] pt-8 backdrop-blur-md [mask-image:linear-gradient(to_top,black_70%,transparent)]"
       >
         <div className="pointer-events-auto">
           <ChatInput
