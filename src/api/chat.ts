@@ -1,8 +1,15 @@
-import type { ThreadId } from '../types'
+import type { Role, ThreadId } from '../types'
+
+/** A single conversation turn sent to the backend (client-only fields stripped). */
+export interface ChatTurn {
+  role: Role
+  content: string
+}
 
 export interface SendChatRequest {
   threadId: ThreadId
-  message: string
+  /** Full thread history so the LLM has multi-turn context. */
+  messages: ChatTurn[]
 }
 
 export interface SendChatResponse {

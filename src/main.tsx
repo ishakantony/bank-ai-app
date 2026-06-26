@@ -9,6 +9,10 @@ const queryClient = new QueryClient()
 
 async function enableMocking() {
   if (!import.meta.env.DEV) return
+  // Two interchangeable backends: the MSW mock (default) and the real Hono
+  // server. `VITE_API_MODE=real` skips the worker so /api calls fall through
+  // the Vite proxy to Hono. Same /api/* paths in both modes.
+  if (import.meta.env.VITE_API_MODE === 'real') return
   const { worker } = await import('./mocks/browser')
   await worker.start({ onUnhandledRequest: 'bypass' })
 }

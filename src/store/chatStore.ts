@@ -38,13 +38,17 @@ export const useChatStore = create<ChatState>()(
       async function requestReply(threadId: ThreadId) {
         set({ pending: threadId })
         const thread = get().threads[threadId]
-        const lastUser = [...thread].reverse().find((m) => m.role === 'user')
-        if (!lastUser) {
+        if (!thread.some((m) => m.role === 'user')) {
           set({ pending: null })
           return
         }
+        // Send the full thread as context, stripping client-only fields
+        // (id/status) and any prior error placeholders.
+        const messages = thread
+          .filter((m) => m.status !== 'error')
+          .map((m) => ({ role: m.role, content: m.content }))
         try {
-          const { reply } = await sendChat({ threadId, message: lastUser.content })
+          const { reply } = await sendChat({ threadId, messages })
           set((state) => ({
             threads: {
               ...state.threads,

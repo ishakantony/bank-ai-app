@@ -12,6 +12,9 @@ dist
 dist-ssr
 *.local
 
+# Local secrets (OpenRouter key). .env.example and .env.real are committed.
+.env
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
