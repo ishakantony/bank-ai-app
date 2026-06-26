@@ -20,6 +20,15 @@ export function ChatInput({
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const canSend = !disabled && value.trim().length > 0
 
+  // Touch devices (Android/iOS WebView) follow the mobile convention: Enter
+  // inserts a newline and the dedicated Send button submits. Only physical
+  // keyboards get Enter-to-submit.
+  const [isTouch] = useState(
+    () =>
+      typeof window !== 'undefined' &&
+      window.matchMedia?.('(pointer: coarse)').matches === true,
+  )
+
   // Auto-grow the textarea to fit its content (capped via max-height).
   useEffect(() => {
     const el = textareaRef.current
@@ -61,7 +70,11 @@ export function ChatInput({
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
           onKeyDown={(e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
+            // Soft keyboards (esp. Android) fire unreliable key events while an
+            // IME composition is in flight (key 'Unidentified' / keyCode 229);
+            // never treat those as a submit.
+            if (e.nativeEvent.isComposing || e.keyCode === 229) return
+            if (e.key === 'Enter' && !e.shiftKey && !isTouch) {
               e.preventDefault()
               submit()
             }
@@ -74,6 +87,11 @@ export function ChatInput({
 
         <button
           type="button"
+          // Keep the textarea focused so the soft keyboard stays open. Without
+          // this the tap blurs the textarea, the keyboard dismisses, the
+          // `h-dvh` bottom bar reflows downward, and the button slides out from
+          // under the finger before `click` fires — so submit never runs.
+          onPointerDown={(e) => e.preventDefault()}
           onClick={submit}
           disabled={!canSend}
           aria-label="Send message"

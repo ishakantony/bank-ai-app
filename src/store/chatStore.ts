@@ -28,7 +28,13 @@ interface ChatState {
 }
 
 function newId() {
-  return crypto.randomUUID()
+  // crypto.randomUUID is only exposed in secure contexts (HTTPS / localhost).
+  // Android WebView often loads over http:// or a custom scheme, where it's
+  // undefined — fall back to a random id there.
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID()
+  }
+  return `id-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`
 }
 
 export const useChatStore = create<ChatState>()(
