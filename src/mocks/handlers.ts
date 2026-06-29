@@ -1,4 +1,5 @@
 import { http, HttpResponse, delay } from 'msw'
+import type { ChatTurn } from '../api/chat'
 import type { Insight, ThreadId, Topic } from '../types'
 
 const topics: Topic[] = [
@@ -379,10 +380,13 @@ export const handlers = [
   }),
 
   http.post('/api/chat', async ({ request }) => {
-    const { threadId, message } = (await request.json()) as {
+    const { threadId, messages } = (await request.json()) as {
       threadId: ThreadId
-      message: string
+      messages: ChatTurn[]
     }
+    // The client sends the full thread for context; the canned replies only
+    // care about the latest user turn.
+    const message = messages.filter((m) => m.role === 'user').at(-1)?.content ?? ''
     // Backend returns the full reply; streaming is faked client-side.
     await delay(700)
     if (threadId === 'insights') {
