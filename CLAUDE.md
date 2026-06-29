@@ -55,6 +55,16 @@ No test runner is configured. `npm run build` is the typecheck gate — run it t
 
 - **`Message.icon`-style string-keyed maps**: several types carry a string `icon`/`tone` key resolved to a component/class at render time — `Topic['icon']` → `ICONS` in `TopicCard.tsx`, `Insight['icon']`/`tone` → `InsightCard.tsx`. Adding an option means extending both the union in `src/types.ts` and the corresponding map.
 
+## Locale & currency
+
+Bank AI is a **Malaysian** bank — design everything from a Malaysia / MYR perspective unless a scenario is explicitly international.
+
+- **Currency**: all monetary amounts are in Ringgit Malaysia, formatted as `RMx,xxx` (the `RM` prefix immediately followed by the number, no space) — e.g. `RM2,140`, `RM89.99`, `RM15`. Never use `£` or `$`.
+- **Products & terminology**: prefer Malaysian equivalents — EPF (incl. voluntary i-Saraan), PRS (Private Retirement Scheme, tax relief), ASB / ASNB funds, unit trusts, fixed deposits, easy-access savings. Avoid UK/US-specific products (ISA, Lifetime ISA, 401k, etc.).
+- **Transfers**: DuitNow (instant) and IBG / Interbank GIRO for local rails; SWIFT only for international transfers.
+- **Conventions**: `DD/MM` dates, one-time passcodes referred to as TAC, and Malaysian names/merchants in mock data.
+- **International scenarios**: only depart from MYR/Malaysia when the case is genuinely cross-border (e.g. an outbound SWIFT transfer), and make that explicit.
+
 ## Conventions
 
 - Components are named exports in `src/components/` (blocks under `components/blocks/`, welcome screens under `components/welcome/`); pages in `src/pages/`. Block components are **default** exports (required by the lazy-import loader). Path-less relative imports throughout (no path aliases configured).

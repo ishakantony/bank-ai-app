@@ -51,14 +51,14 @@ export const insights: Insight[] = [
   {
     id: 'spending',
     title: 'Spending this month',
-    description: "You've spent £2,140 — 18% more than last month.",
+    description: "You've spent RM2,140 — 18% more than last month.",
     icon: 'spending',
     tone: 'blue',
   },
   {
     id: 'idleCash',
     title: 'Idle cash',
-    description: '£8,500 sitting in checking could be earning more.',
+    description: 'RM8,500 sitting in checking could be earning more.',
     icon: 'idleCash',
     tone: 'green',
   },

@@ -53,7 +53,7 @@ export const blockCatalog = {
     useWhen: 'Propose a short list of suggested actions with an optional CTA.',
     example: `\`\`\`bank:actionCard
 { "title": "Suggested trades", "actions": [
-  { "label": "Trim equities", "detail": "Sell ~£4,200 to lock in gains" },
+  { "label": "Trim equities", "detail": "Sell ~RM4,200 to lock in gains" },
   { "label": "Top up bonds", "detail": "Restore your income buffer" }
 ], "cta": { "label": "Prepare these trades for review" } }
 \`\`\``,

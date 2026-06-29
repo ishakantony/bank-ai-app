@@ -46,14 +46,14 @@ const insights: Insight[] = [
   {
     id: 'spending',
     title: 'Spending this month',
-    description: "You've spent £2,140 — 18% more than last month.",
+    description: "You've spent RM2,140 — 18% more than last month.",
     icon: 'spending',
     tone: 'blue',
   },
   {
     id: 'idleCash',
     title: 'Idle cash',
-    description: '£8,500 sitting in checking could be earning more.',
+    description: 'RM8,500 sitting in checking could be earning more.',
     icon: 'idleCash',
     tone: 'green',
   },
@@ -68,9 +68,9 @@ Happy to help you move funds. Here are your current **transfer limits and arriva
 
 | Method | Daily limit | Arrives | Fee |
 | --- | --- | ---: | --- |
-| Instant payment | £25,000 | Seconds | Free |
-| Standard transfer | £50,000 | 1–2 business days | Free |
-| International (SWIFT) | £20,000 | 2–4 business days | £15 |
+| DuitNow (instant) | RM25,000 | Seconds | Free |
+| IBG (Interbank GIRO) | RM50,000 | Same/next business day | Free |
+| International (SWIFT) | RM20,000 | 2–4 business days | RM15 |
 
 To get started I'll need:
 
@@ -88,9 +88,9 @@ Here's a snapshot of the cards on your account:
 
 | Card | Last 4 | Status | Monthly spend |
 | --- | --- | --- | ---: |
-| Everyday Debit | \`4471\` | 🟢 Active | £1,240 |
-| Travel Credit | \`8820\` | 🟢 Active | £312 |
-| Old Debit | \`1093\` | 🔴 Frozen | £0 |
+| Everyday Debit | \`4471\` | 🟢 Active | RM1,240 |
+| Travel Credit | \`8820\` | 🟢 Active | RM312 |
+| Old Debit | \`1093\` | 🔴 Frozen | RM0 |
 
 I can help you:
 
@@ -108,9 +108,9 @@ Great — let's grow those savings. Here's how your goals are tracking:
 
 | Goal | Target | Saved | Progress |
 | --- | ---: | ---: | --- |
-| Emergency fund | £6,000 | £4,500 | 75% |
-| Holiday 2026 | £2,000 | £600 | 30% |
-| New laptop | £1,500 | £1,500 | ✅ Done |
+| Emergency fund | RM6,000 | RM4,500 | 75% |
+| Holiday 2026 | RM2,000 | RM600 | 30% |
+| New laptop | RM1,500 | RM1,500 | ✅ Done |
 
 A few things I can set up for you:
 
@@ -118,7 +118,7 @@ A few things I can set up for you:
 2. Project **how long** it'll take to hit a target at your current rate
 3. Round up everyday spending into savings
 
-> At £250/month, your *Holiday 2026* goal is on track to complete by **November 2026**.
+> At RM250/month, your *Holiday 2026* goal is on track to complete by **November 2026**.
 
 What are you saving for? You can also [view all goals](https://example.com/goals).`,
 
@@ -128,17 +128,17 @@ Your security is the priority. Here's the **recent activity** I flagged for revi
 
 | Date | Merchant | Amount | Flag |
 | --- | --- | ---: | --- |
-| 24 Jun | Unknown – Online | £89.99 | 🔺 High risk |
-| 23 Jun | Coffee House | £4.20 | OK |
-| 22 Jun | Streaming Co. | £12.99 | OK |
+| 24/06 | Unknown – Online | RM89.99 | 🔺 High risk |
+| 23/06 | Kopitiam | RM4.20 | OK |
+| 22/06 | Streaming Co. | RM12.99 | OK |
 
-If you don't recognise the **£89.99** charge, here's what we'll do:
+If you don't recognise the **RM89.99** charge, here's what we'll do:
 
 - [x] Freeze the affected card
 - [ ] Dispute the transaction
 - [ ] Issue a replacement card
 
-> ⚠️ **Never** share your one-time passcode — Bank AI will never ask for it.
+> ⚠️ **Never** share your one-time passcode (TAC) — Bank AI will never ask for it.
 
 Want me to start a dispute? You can also [report fraud here](https://example.com/report-fraud).`,
 
@@ -150,7 +150,7 @@ I keep an eye on your money and surface what matters. Right now I'm tracking:
 | --- | --- |
 | **Portfolio drift** | Your allocation has moved away from target |
 | **Monthly spending** | You're trending 18% above last month |
-| **Idle cash** | £8,500 could be working harder |
+| **Idle cash** | RM8,500 could be working harder |
 
 Tap any insight above, or ask me something like *"why is my spending up?"*`,
 
@@ -167,7 +167,7 @@ I can help you take care of your money. Here's what I'm good at:
 
 Just tell me what you'd like to do — for example:
 
-- *"Send £200 to Sam"*
+- *"Send RM200 to Sam"*
 - *"Freeze my travel card"*
 - *"How's my holiday goal doing?"*
 
@@ -212,7 +212,7 @@ To get back on target, I'd suggest:
 
 \`\`\`bank:actionCard
 { "title": "Suggested trades", "actions": [
-  { "label": "Trim equities", "detail": "Sell ~£4,200 to lock in recent gains" },
+  { "label": "Trim equities", "detail": "Sell ~RM4,200 to lock in recent gains" },
   { "label": "Top up bonds", "detail": "Restore your income buffer" },
   { "label": "Set quarterly auto-rebalance", "detail": "Keeps your mix on target automatically" }
 ], "cta": { "label": "Prepare these trades for review" } }
@@ -232,28 +232,28 @@ Want me to prepare these trades for your review?
 
   'Spending this month': `### Spending this month
 
-You've spent **£2,140** so far — :hl[18% more]{tone=warning} than the same point last month. Here's where it went:
+You've spent **RM2,140** so far — :hl[18% more]{tone=warning} than the same point last month. Here's where it went:
 
 | Category | This month | vs. last |
 | --- | ---: | ---: |
-| Dining & takeaway | £540 | 🔺 +32% |
-| Groceries | £410 | +4% |
-| Transport | £320 | 🔺 +21% |
-| Subscriptions | £180 | +0% |
-| Shopping | £690 | 🔺 +27% |
+| Dining & takeaway | RM540 | 🔺 +32% |
+| Groceries | RM410 | +4% |
+| Transport | RM320 | 🔺 +21% |
+| Subscriptions | RM180 | +0% |
+| Shopping | RM690 | 🔺 +27% |
 
 A few things stand out:
 
 - **Dining** is your fastest-growing category
-- You have **£180/mo** in subscriptions — I can flag any unused ones
+- You have **RM180/mo** in subscriptions — I can flag any unused ones
 
-> 💡 Setting a £600 dining budget would put you back on last month's pace.
+> 💡 Setting a RM600 dining budget would put you back on last month's pace.
 
 Want me to set up category budgets or review your subscriptions?`,
 
   'Idle cash': `### Idle cash
 
-You're holding :hl[£8,500]{tone=positive} in checking earning just **0.1%**. Before I suggest where it should go, let's tailor it to what you actually want this money to do.
+You're holding :hl[RM8,500]{tone=positive} in checking earning just **0.1%**. Before I suggest where it should go, let's tailor it to what you actually want this money to do.
 
 \`\`\`bank:wizard
 {
@@ -314,7 +314,7 @@ Tap **Get started** and I'll line up the right options for you.`,
 const wizardSuggestions = `\`\`\`bank:suggestions
 { "items": [
   { "kind": "signal", "label": "Reassess my needs", "target": "idleCash", "name": "open", "payload": { "fresh": true } },
-  { "kind": "prompt", "label": "Open easy-access savings", "send": "Open an easy-access savings account and move £6,500" },
+  { "kind": "prompt", "label": "Open easy-access savings", "send": "Open an easy-access savings account and move RM6,500" },
   { "kind": "link", "label": "Compare rates", "url": "https://example.com/savings" }
 ] }
 \`\`\``
@@ -323,9 +323,9 @@ const wizardSuggestions = `\`\`\`bank:suggestions
 const wizardReplies: Record<string, string> = {
   'Grow my wealth': `### A plan for growth
 
-Thanks — that helps. With growth as your aim, a **stocks & shares ISA** fits well: historically it's outpaced cash over longer horizons, though values can fall as well as rise.
+Thanks — that helps. With growth as your aim, a **unit trust or ASNB fund (e.g. ASB)** fits well: historically these have outpaced cash over longer horizons, though values can fall as well as rise.
 
-- Keep ~£2,000 in easy-access as a buffer
+- Keep ~RM2,000 in easy-access as a buffer
 - Invest the rest in a diversified, low-cost fund
 - Automate a monthly top-up to smooth out the ups and downs
 
@@ -333,28 +333,28 @@ Thanks — that helps. With growth as your aim, a **stocks & shares ISA** fits w
 
   'Save for retirement': `### Building your retirement pot
 
-A retirement aim usually means a longer runway, so tax-efficient wrappers do the heavy lifting. Topping up a **pension** (with tax relief) or a **stocks & shares ISA** could turn this idle cash into meaningful future income.
+A retirement aim usually means a longer runway, so tax-efficient options do the heavy lifting. Topping up your **EPF (voluntary, via i-Saraan)** or a **PRS (Private Retirement Scheme, tax relief up to RM3,000/yr)** could turn this idle cash into meaningful future income.
 
-- Check whether you've used this year's pension allowance
+- Check how much of this year's PRS tax relief you've used
 - Consider a low-cost global fund for the long term
 - Revisit the mix as retirement gets closer`,
 
   'Buy a home': `### Saving toward your home
 
-For a deposit, certainty matters more than chasing returns. A **Lifetime ISA** (25% government bonus, up to £1,000/yr) or a top **fixed-rate saver** keeps the money safe while it grows.
+For a deposit, certainty matters more than chasing returns. A top **fixed deposit** or an **ASB** account keeps the money safe while it grows steadily.
 
 - Lock away what you won't need before completion
 - Keep the rest instant-access for flexibility`,
 
   'Keep a rainy-day buffer': `### A stronger safety net
 
-Smart instinct — a rainy-day buffer should stay **instant-access**. But it shouldn't sit at 0.1%: moving it to **easy-access savings** earns roughly :hl[£280 more a year]{tone=positive} with no lock-in.
+Smart instinct — a rainy-day buffer should stay **instant-access**. But it shouldn't sit at 0.1%: moving it to **easy-access savings** earns roughly :hl[RM280 more a year]{tone=positive} with no lock-in.
 
 > 💰 Same money, same access — just a better rate.`,
 
   default: `### Here's what I'd suggest
 
-Based on your answers, the simplest win is moving most of this idle cash into **easy-access savings** — roughly :hl[£280 more a year]{tone=positive}, with instant access kept for emergencies.`,
+Based on your answers, the simplest win is moving most of this idle cash into **easy-access savings** — roughly :hl[RM280 more a year]{tone=positive}, with instant access kept for emergencies.`,
 }
 
 /** Detects a questionnaire submission (the `Q: …` / `A: …` message shape). */

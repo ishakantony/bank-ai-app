@@ -21,7 +21,7 @@ export function TransferWelcome({ onSend }: WelcomeProps) {
         <span className="text-xs uppercase tracking-wider text-white/40">
           Available balance
         </span>
-        <p className="mt-1 text-3xl font-semibold text-white">$4,820.65</p>
+        <p className="mt-1 text-3xl font-semibold text-white">RM4,820.65</p>
         <p className="mt-0.5 text-xs text-white/45">Everyday Checking ··· 4471</p>
       </div>
 

@@ -22,7 +22,7 @@ export function SavingsWelcome({ onSend }: WelcomeProps) {
       <div className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-md">
         <div className="flex items-baseline justify-between">
           <span className="text-sm font-medium text-white">Holiday fund</span>
-          <span className="text-sm text-white/60">$1,920 / $3,000</span>
+          <span className="text-sm text-white/60">RM1,920 / RM3,000</span>
         </div>
         <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-white/10">
           <div

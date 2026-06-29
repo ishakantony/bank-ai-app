@@ -17,7 +17,7 @@ export function CardServicesWelcome({ onSend }: WelcomeProps) {
           <div>
             <p className="font-mono text-lg tracking-[0.2em]">···· ···· ···· 4471</p>
             <p className="mt-1 text-xs uppercase tracking-wider text-white/75">
-              Alex Morgan · 09/28
+              Nurul Aisyah · 09/28
             </p>
           </div>
         </div>
