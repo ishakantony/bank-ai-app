@@ -1,8 +1,15 @@
+import { lazy, Suspense } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import { Toaster } from 'sonner'
 import { WelcomePage } from './pages/WelcomePage'
 import { ChatPage } from './pages/ChatPage'
 import { AnimatedBackground } from './components/AnimatedBackground'
+
+// The docs gallery/playground are a URL-only side route; lazy-load so their
+// sample/doc content stays out of the main app bundle.
+const DocsPage = lazy(() =>
+  import('./pages/DocsPage').then((m) => ({ default: m.DocsPage })),
+)
 
 export default function App() {
   return (
@@ -11,6 +18,14 @@ export default function App() {
       <Routes>
         <Route path="/" element={<WelcomePage />} />
         <Route path="/chat" element={<ChatPage />} />
+        <Route
+          path="/docs"
+          element={
+            <Suspense fallback={null}>
+              <DocsPage />
+            </Suspense>
+          }
+        />
       </Routes>
       {/* Offset clears the bottom-pinned chat input + footer. Unstyled so the
           glassmorphism classes fully replace sonner's default solid card. */}
