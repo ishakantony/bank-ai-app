@@ -47,9 +47,14 @@ export function AppShell({
   }
 
   return (
-    <div className="mx-auto flex h-dvh w-full flex-col px-4">
+    // The outer column is full-width so the scroll area's scrollbar lands at
+    // the browser's far-right edge; the chrome inside is centered to a
+    // phone-width column.
+    <div className="flex h-dvh w-full flex-col">
       {header ? (
-        <div className="shrink-0 pt-[env(safe-area-inset-top)]">{header}</div>
+        <div className={`shrink-0 pt-[env(safe-area-inset-top)] ${PHONE_COL}`}>
+          {header}
+        </div>
       ) : null}
 
       {/* When there's no header, the scroll area runs full-bleed to the top
@@ -58,10 +63,12 @@ export function AppShell({
       <main
         className={`flex flex-1 flex-col overflow-y-auto${header ? '' : ' pt-[env(safe-area-inset-top)]'}`}
       >
-        {children}
+        <div className={`flex flex-1 flex-col ${PHONE_COL}`}>{children}</div>
       </main>
 
-      <div className="shrink-0 pt-2 pb-[env(safe-area-inset-bottom)]">
+      <div
+        className={`shrink-0 pt-2 pb-[env(safe-area-inset-bottom)] ${PHONE_COL}`}
+      >
         <ChatInput
           value={value}
           onChange={onChange}
@@ -73,6 +80,13 @@ export function AppShell({
     </div>
   )
 }
+
+/**
+ * The centered phone-width column the app chrome lives in. The scroll
+ * containers stay full-width (so their scrollbar sits at the browser edge);
+ * everything visible is constrained to this width and centered.
+ */
+const PHONE_COL = 'mx-auto w-full max-w-md px-4'
 
 /**
  * Full-height scroll area with the header and chat input + footer floating on
@@ -108,12 +122,18 @@ function OverlayShell({
   }, [])
 
   return (
-    <div className="relative mx-auto h-dvh w-full">
+    // Full-width so the scroll area's scrollbar reaches the browser's far-right
+    // edge; the scroll content and the floating bars are each centered to the
+    // phone-width column.
+    <div className="relative h-dvh w-full">
       <main
-        className="h-full overflow-y-auto px-4"
+        className="h-full overflow-y-auto"
         style={{ scrollPaddingTop: pad.top, scrollPaddingBottom: pad.bottom }}
       >
-        <div style={{ paddingTop: pad.top, paddingBottom: pad.bottom }}>
+        <div
+          className={PHONE_COL}
+          style={{ paddingTop: pad.top, paddingBottom: pad.bottom }}
+        >
           {children}
         </div>
       </main>
@@ -121,24 +141,32 @@ function OverlayShell({
       {header ? (
         <div
           ref={topRef}
-          className="pointer-events-none absolute inset-x-0 top-0 bg-gradient-to-b from-ink-deep/70 via-ink-deep/40 to-transparent px-4 pb-6 pt-[env(safe-area-inset-top)] backdrop-blur-md [mask-image:linear-gradient(to_bottom,black_60%,transparent)]"
+          className="pointer-events-none absolute inset-x-0 top-0"
         >
-          <div className="pointer-events-auto">{header}</div>
+          <div
+            className={`${PHONE_COL} bg-gradient-to-b from-ink-deep/70 via-ink-deep/40 to-transparent pb-6 pt-[env(safe-area-inset-top)] backdrop-blur-md [mask-image:linear-gradient(to_bottom,black_60%,transparent)]`}
+          >
+            <div className="pointer-events-auto">{header}</div>
+          </div>
         </div>
       ) : null}
 
       <div
         ref={bottomRef}
-        className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink-deep/80 via-ink-deep/50 to-transparent px-4 pb-[env(safe-area-inset-bottom)] pt-8 backdrop-blur-md [mask-image:linear-gradient(to_top,black_70%,transparent)]"
+        className="pointer-events-none absolute inset-x-0 bottom-0"
       >
-        <div className="pointer-events-auto">
-          <ChatInput
-            value={value}
-            onChange={onChange}
-            onSubmit={onSubmit}
-            disabled={inputDisabled}
-          />
-          <Footer />
+        <div
+          className={`${PHONE_COL} bg-gradient-to-t from-ink-deep/80 via-ink-deep/50 to-transparent pb-[env(safe-area-inset-bottom)] pt-8 backdrop-blur-md [mask-image:linear-gradient(to_top,black_70%,transparent)]`}
+        >
+          <div className="pointer-events-auto">
+            <ChatInput
+              value={value}
+              onChange={onChange}
+              onSubmit={onSubmit}
+              disabled={inputDisabled}
+            />
+            <Footer />
+          </div>
         </div>
       </div>
     </div>

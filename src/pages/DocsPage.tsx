@@ -15,7 +15,7 @@ const TABS: { id: Tab; label: string }[] = [
  * `/docs` — living documentation for the reply-authoring system. Two tabs
  * (tracked in `?tab=`): a Gallery of every custom block + markdown affordances,
  * and a Playground for composing reply markdown with a live preview. Reachable
- * by URL only; uses a wider column than the phone-width app shell.
+ * by URL only; spans the full browser width, unlike the phone-width app shell.
  *
  * Block content is wrapped in `ChatThreadProvider` with no thread so the page
  * is side-effect free: charts/cards render fully, while prompt/signal pills and
@@ -37,7 +37,7 @@ export function DocsPage() {
   }
 
   return (
-    <div className="relative mx-auto min-h-dvh w-full max-w-5xl px-4 py-8">
+    <div className="relative min-h-dvh w-full px-4 py-8 sm:px-6 lg:px-8">
       <header className="mb-6 space-y-4">
         <Link
           to="/"
