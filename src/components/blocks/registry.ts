@@ -4,6 +4,7 @@ import {
   actionCardSchema,
   allocationDonutSchema,
   driftBarsSchema,
+  spendTrendSchema,
   suggestionsSchema,
   wizardSchema,
 } from './schemas'
@@ -47,6 +48,7 @@ export const blockRegistry: Record<string, BlockDefinition> = {
     () => import('./AllocationDonut'),
   ),
   driftBars: defineBlock(driftBarsSchema, () => import('./DriftBars')),
+  spendTrend: defineBlock(spendTrendSchema, () => import('./SpendTrend')),
   actionCard: defineBlock(actionCardSchema, () => import('./ActionCard')),
   suggestions: defineBlock(suggestionsSchema, () => import('./Suggestions')),
   wizard: defineBlock(wizardSchema, () => import('./WizardCard')),

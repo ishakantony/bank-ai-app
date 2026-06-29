@@ -103,6 +103,47 @@ Here are a few ways to do even better:
 `,
   },
   {
+    label: 'Spending this month',
+    content: `## Spending this month
+
+You've spent :hl[RM2,140]{tone=warning} so far — about **18% more** than the same
+point in May. Most of the lift is **dining & travel**.
+
+\`\`\`bank:spendTrend
+{
+  "spend": 2140,
+  "transactions": 27,
+  "currency": "RM",
+  "currentLabel": "June",
+  "previousLabel": "May",
+  "markerDay": 15,
+  "current": [
+    { "day": 1, "amount": 120 },
+    { "day": 5, "amount": 540 },
+    { "day": 10, "amount": 1280 },
+    { "day": 15, "amount": 2140 }
+  ],
+  "previous": [
+    { "day": 1, "amount": 100 },
+    { "day": 5, "amount": 460 },
+    { "day": 10, "amount": 1020 },
+    { "day": 15, "amount": 1660 },
+    { "day": 30, "amount": 2980 }
+  ]
+}
+\`\`\`
+
+\`\`\`bank:suggestions
+{
+  "items": [
+    { "kind": "prompt", "label": "Show me spending in May" },
+    { "kind": "prompt", "label": "How much did I spend this year" }
+  ]
+}
+\`\`\`
+`,
+  },
+  {
     label: 'Portfolio breakdown',
     content: `## Where your money sits
 

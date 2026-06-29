@@ -183,6 +183,112 @@ What would you like to do first?
 \`\`\``,
 }
 
+// The spends journey. `spendThisMonth` is keyed under both the insight title and
+// the "Show me spending in June" follow-up so navigation never dead-ends; the
+// `spendTrend` block carries cumulative daily totals (this month vs last).
+const spendThisMonth = `### Spending this month
+
+You've spent :hl[RM2,140]{tone=warning} so far this month — about **18% more** than the same point in May. Most of the lift is **dining & travel**: a long weekend in Penang and a few more meals out than usual.
+
+\`\`\`bank:spendTrend
+{
+  "spend": 2140,
+  "transactions": 27,
+  "currency": "RM",
+  "currentLabel": "June",
+  "previousLabel": "May",
+  "markerDay": 29,
+  "current": [
+    { "day": 1, "amount": 90 }, { "day": 3, "amount": 240 }, { "day": 5, "amount": 400 },
+    { "day": 7, "amount": 560 }, { "day": 9, "amount": 730 }, { "day": 11, "amount": 910 },
+    { "day": 13, "amount": 1080 }, { "day": 15, "amount": 1280 }, { "day": 17, "amount": 1450 },
+    { "day": 19, "amount": 1610 }, { "day": 21, "amount": 1790 }, { "day": 23, "amount": 1910 },
+    { "day": 25, "amount": 2010 }, { "day": 27, "amount": 2090 }, { "day": 29, "amount": 2140 }
+  ],
+  "previous": [
+    { "day": 1, "amount": 75 }, { "day": 3, "amount": 200 }, { "day": 5, "amount": 330 },
+    { "day": 7, "amount": 470 }, { "day": 9, "amount": 610 }, { "day": 11, "amount": 760 },
+    { "day": 13, "amount": 900 }, { "day": 15, "amount": 1050 }, { "day": 17, "amount": 1190 },
+    { "day": 19, "amount": 1330 }, { "day": 21, "amount": 1480 }, { "day": 23, "amount": 1620 },
+    { "day": 25, "amount": 1720 }, { "day": 27, "amount": 1790 }, { "day": 29, "amount": 1814 },
+    { "day": 31, "amount": 2010 }
+  ]
+}
+\`\`\`
+
+Dining is your fastest-growing category. Want me to dig into a specific month, or look at the whole year?
+
+\`\`\`bank:suggestions
+{ "items": [
+  { "kind": "prompt", "label": "Show me spending in May" },
+  { "kind": "prompt", "label": "How much did I spend this year" }
+] }
+\`\`\``
+
+const spendInMay = `### Spending in May
+
+In May you spent :hl[RM2,010]{tone=positive} across 24 transactions — about **8% less** than April. Groceries and transport stayed flat; the drop came from fewer shopping trips.
+
+\`\`\`bank:spendTrend
+{
+  "spend": 2010,
+  "transactions": 24,
+  "currency": "RM",
+  "currentLabel": "May",
+  "previousLabel": "April",
+  "markerDay": 30,
+  "current": [
+    { "day": 1, "amount": 75 }, { "day": 3, "amount": 200 }, { "day": 5, "amount": 330 },
+    { "day": 7, "amount": 470 }, { "day": 9, "amount": 610 }, { "day": 11, "amount": 760 },
+    { "day": 13, "amount": 900 }, { "day": 15, "amount": 1050 }, { "day": 17, "amount": 1190 },
+    { "day": 19, "amount": 1330 }, { "day": 21, "amount": 1480 }, { "day": 23, "amount": 1620 },
+    { "day": 25, "amount": 1720 }, { "day": 27, "amount": 1810 }, { "day": 30, "amount": 1910 },
+    { "day": 31, "amount": 2010 }
+  ],
+  "previous": [
+    { "day": 1, "amount": 95 }, { "day": 3, "amount": 250 }, { "day": 5, "amount": 410 },
+    { "day": 7, "amount": 580 }, { "day": 9, "amount": 760 }, { "day": 11, "amount": 940 },
+    { "day": 13, "amount": 1110 }, { "day": 15, "amount": 1300 }, { "day": 17, "amount": 1470 },
+    { "day": 19, "amount": 1640 }, { "day": 21, "amount": 1820 }, { "day": 23, "amount": 1960 },
+    { "day": 25, "amount": 2070 }, { "day": 27, "amount": 2140 }, { "day": 30, "amount": 2180 }
+  ]
+}
+\`\`\`
+
+\`\`\`bank:suggestions
+{ "items": [
+  { "kind": "prompt", "label": "Show me spending in June", "send": "Show me spending in June" },
+  { "kind": "prompt", "label": "How much did I spend this year" }
+] }
+\`\`\``
+
+const spendThisYear = `### Spending so far this year
+
+You've spent :hl[RM12,480]{tone=info} over the first six months — an average of **RM2,080 a month**. June is your biggest month so far at RM2,140; February was the leanest at RM1,760.
+
+\`\`\`bank:allocationDonut
+{
+  "title": "Spending by category (year to date)",
+  "slices": [
+    { "label": "Dining & takeaway", "value": 28 },
+    { "label": "Groceries", "value": 22 },
+    { "label": "Shopping", "value": 18 },
+    { "label": "Transport", "value": 16 },
+    { "label": "Travel", "value": 10 },
+    { "label": "Subscriptions", "value": 6 }
+  ]
+}
+\`\`\`
+
+Dining and groceries together make up half your spend. A RM2,000 monthly budget would keep you on last year's pace.
+
+\`\`\`bank:suggestions
+{ "items": [
+  { "kind": "prompt", "label": "Show me spending in May" },
+  { "kind": "prompt", "label": "Show me spending in June", "send": "Show me spending in June" }
+] }
+\`\`\``
+
 // Insight-specific replies, keyed by the insight title the welcome screen sends
 // as the user message. Looked up only on the `insights` thread.
 const insightReplies: Record<string, string> = {
@@ -230,26 +336,10 @@ Want me to prepare these trades for your review?
 ] }
 \`\`\``,
 
-  'Spending this month': `### Spending this month
-
-You've spent **RM2,140** so far — :hl[18% more]{tone=warning} than the same point last month. Here's where it went:
-
-| Category | This month | vs. last |
-| --- | ---: | ---: |
-| Dining & takeaway | RM540 | 🔺 +32% |
-| Groceries | RM410 | +4% |
-| Transport | RM320 | 🔺 +21% |
-| Subscriptions | RM180 | +0% |
-| Shopping | RM690 | 🔺 +27% |
-
-A few things stand out:
-
-- **Dining** is your fastest-growing category
-- You have **RM180/mo** in subscriptions — I can flag any unused ones
-
-> 💡 Setting a RM600 dining budget would put you back on last month's pace.
-
-Want me to set up category budgets or review your subscriptions?`,
+  'Spending this month': spendThisMonth,
+  'Show me spending in June': spendThisMonth,
+  'Show me spending in May': spendInMay,
+  'How much did I spend this year': spendThisYear,
 
   'Idle cash': `### Idle cash
 
