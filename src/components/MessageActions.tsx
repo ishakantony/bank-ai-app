@@ -1,6 +1,8 @@
-import { useEffect, useRef, useState } from 'react'
-import { Check, Copy, ThumbsDown, ThumbsUp } from 'lucide-react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { Check, Copy, Square, ThumbsDown, ThumbsUp, Volume2 } from 'lucide-react'
 import { toast } from 'sonner'
+import { useSpeech } from '../hooks/useSpeech'
+import { speechText } from '../hooks/speechText'
 
 type Feedback = 'up' | 'down' | null
 
@@ -18,6 +20,8 @@ export function MessageActions({ content }: MessageActionsProps) {
   const [feedback, setFeedback] = useState<Feedback>(null)
   const [copied, setCopied] = useState(false)
   const copiedTimer = useRef<ReturnType<typeof setTimeout>>(undefined)
+  const { speaking, toggle: toggleSpeech, supported: canSpeak } = useSpeech()
+  const spoken = useMemo(() => speechText(content), [content])
 
   useEffect(() => () => clearTimeout(copiedTimer.current), [])
 
@@ -52,6 +56,23 @@ export function MessageActions({ content }: MessageActionsProps) {
           <Copy className="size-4" />
         )}
       </button>
+      {canSpeak && spoken ? (
+        <button
+          type="button"
+          onClick={() => toggleSpeech(spoken)}
+          aria-label={speaking ? 'Stop reading' : 'Read aloud'}
+          aria-pressed={speaking}
+          className={`rounded-lg p-1.5 transition hover:bg-white/10 hover:text-white/80 ${
+            speaking ? 'text-accent-3' : ''
+          }`}
+        >
+          {speaking ? (
+            <Square className="size-4" fill="currentColor" />
+          ) : (
+            <Volume2 className="size-4" />
+          )}
+        </button>
+      ) : null}
       <button
         type="button"
         onClick={() => rate('up')}
