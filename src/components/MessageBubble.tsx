@@ -71,7 +71,12 @@ export function MessageBubble({ message, threadId, isLast, onReveal }: MessageBu
         <span className="ml-0.5 inline-block h-4 w-px translate-y-0.5 animate-pulse bg-white/70" />
       ) : message.content ? (
         <>
-          <MessageActions content={message.content} />
+          <MessageActions
+            content={message.content}
+            threadId={threadId}
+            messageId={message.id}
+            canRegenerate={!!isLast}
+          />
           {isLast && suggestions ? (
             <CustomBlock name="suggestions" raw={suggestions} />
           ) : null}

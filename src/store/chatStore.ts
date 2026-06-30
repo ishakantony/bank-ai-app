@@ -23,6 +23,8 @@ interface ChatState {
   startGeneralFresh: (text: string) => void
   clearThread: (threadId: ThreadId) => void
   retryLast: (threadId: ThreadId) => void
+  /** Drop an assistant reply and re-request a fresh one from the same context. */
+  regenerate: (threadId: ThreadId, messageId: string) => void
   /** Called by the typewriter when a streaming reply finishes revealing. */
   finishStreaming: (threadId: ThreadId, messageId: string) => void
 }
@@ -133,6 +135,18 @@ export const useChatStore = create<ChatState>()(
             return {
               threads: { ...state.threads, [threadId]: thread.slice(0, -1) },
             }
+          })
+          void requestReply(threadId)
+        },
+
+        regenerate: (threadId, messageId) => {
+          if (get().pending) return // don't regenerate while a reply is in flight
+          set((state) => {
+            const thread = state.threads[threadId]
+            const idx = thread.findIndex((m) => m.id === messageId)
+            if (idx === -1) return state
+            // Drop this assistant reply (and anything after it) and re-request.
+            return { threads: { ...state.threads, [threadId]: thread.slice(0, idx) } }
           })
           void requestReply(threadId)
         },

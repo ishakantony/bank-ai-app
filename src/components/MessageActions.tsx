@@ -1,14 +1,22 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Check, Copy, Square, ThumbsDown, ThumbsUp, Volume2 } from 'lucide-react'
+import { Check, Copy, RefreshCw, Square, ThumbsDown, ThumbsUp, Volume2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { useSpeech } from '../hooks/useSpeech'
 import { speechText } from '../hooks/speechText'
+import { useChatStore } from '../store/chatStore'
+import type { ThreadId } from '../types'
 
 type Feedback = 'up' | 'down' | null
 
 interface MessageActionsProps {
   /** Raw markdown source of the assistant reply, used for copy. */
   content: string
+  /** Thread this reply belongs to, for regenerating. */
+  threadId: ThreadId
+  /** Id of this assistant message, for regenerating. */
+  messageId: string
+  /** Only the last reply can be regenerated (it truncates the thread). */
+  canRegenerate: boolean
 }
 
 /**
@@ -16,10 +24,17 @@ interface MessageActionsProps {
  * reply, and rate it up/down. Feedback is local UI state (mutually exclusive,
  * click-again to clear) and surfaces a toast on selection.
  */
-export function MessageActions({ content }: MessageActionsProps) {
+export function MessageActions({
+  content,
+  threadId,
+  messageId,
+  canRegenerate,
+}: MessageActionsProps) {
   const [feedback, setFeedback] = useState<Feedback>(null)
   const [copied, setCopied] = useState(false)
   const copiedTimer = useRef<ReturnType<typeof setTimeout>>(undefined)
+  const regenerate = useChatStore((s) => s.regenerate)
+  const pending = useChatStore((s) => s.pending)
   const { speaking, toggle: toggleSpeech, supported: canSpeak } = useSpeech()
   const spoken = useMemo(() => speechText(content), [content])
 
@@ -44,6 +59,17 @@ export function MessageActions({ content }: MessageActionsProps) {
 
   return (
     <div className="mt-1.5 flex items-center gap-1 text-white/50">
+      {canRegenerate ? (
+        <button
+          type="button"
+          onClick={() => regenerate(threadId, messageId)}
+          disabled={pending != null}
+          aria-label="Regenerate response"
+          className="rounded-lg p-1.5 transition hover:bg-white/10 hover:text-white/80 disabled:opacity-40"
+        >
+          <RefreshCw className="size-4" />
+        </button>
+      ) : null}
       <button
         type="button"
         onClick={copy}
@@ -56,23 +82,6 @@ export function MessageActions({ content }: MessageActionsProps) {
           <Copy className="size-4" />
         )}
       </button>
-      {canSpeak && spoken ? (
-        <button
-          type="button"
-          onClick={() => toggleSpeech(spoken)}
-          aria-label={speaking ? 'Stop reading' : 'Read aloud'}
-          aria-pressed={speaking}
-          className={`rounded-lg p-1.5 transition hover:bg-white/10 hover:text-white/80 ${
-            speaking ? 'text-accent-3' : ''
-          }`}
-        >
-          {speaking ? (
-            <Square className="size-4" fill="currentColor" />
-          ) : (
-            <Volume2 className="size-4" />
-          )}
-        </button>
-      ) : null}
       <button
         type="button"
         onClick={() => rate('up')}
@@ -95,6 +104,23 @@ export function MessageActions({ content }: MessageActionsProps) {
       >
         <ThumbsDown className="size-4" fill={feedback === 'down' ? 'currentColor' : 'none'} />
       </button>
+      {canSpeak && spoken ? (
+        <button
+          type="button"
+          onClick={() => toggleSpeech(spoken)}
+          aria-label={speaking ? 'Stop reading' : 'Read aloud'}
+          aria-pressed={speaking}
+          className={`rounded-lg p-1.5 transition hover:bg-white/10 hover:text-white/80 ${
+            speaking ? 'text-accent-3' : ''
+          }`}
+        >
+          {speaking ? (
+            <Square className="size-4" fill="currentColor" />
+          ) : (
+            <Volume2 className="size-4" />
+          )}
+        </button>
+      ) : null}
     </div>
   )
 }
