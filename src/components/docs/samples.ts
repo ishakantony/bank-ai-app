@@ -106,29 +106,23 @@ Here are a few ways to do even better:
     label: 'Spending this month',
     content: `## Spending this month
 
-You've spent :hl[RM2,140]{tone=warning} so far — about **18% more** than the same
-point in May. Most of the lift is **dining & travel**.
+You've spent :hl[RM6,800]{tone=warning} in June — about **45% more** than your
+usual 6-month average. **Dining & shopping** drove most of the lift.
 
-\`\`\`bank:spendTrend
+\`\`\`bank:spendDonut
 {
-  "spend": 2140,
-  "transactions": 27,
+  "month": "June",
   "currency": "RM",
-  "currentLabel": "June",
-  "previousLabel": "May",
-  "markerDay": 15,
-  "current": [
-    { "day": 1, "amount": 120 },
-    { "day": 5, "amount": 540 },
-    { "day": 10, "amount": 1280 },
-    { "day": 15, "amount": 2140 }
-  ],
-  "previous": [
-    { "day": 1, "amount": 100 },
-    { "day": 5, "amount": 460 },
-    { "day": 10, "amount": 1020 },
-    { "day": 15, "amount": 1660 },
-    { "day": 30, "amount": 2980 }
+  "spend": 6800,
+  "transactions": 96,
+  "spendVsAvg": "+45% vs AVG",
+  "txnVsAvg": "+25 vs AVG",
+  "categories": [
+    { "label": "Dining", "amount": 2448 },
+    { "label": "Shopping", "amount": 1632 },
+    { "label": "Transport", "amount": 1156 },
+    { "label": "Transfer", "amount": 544 },
+    { "label": "Others", "amount": 1020 }
   ]
 }
 \`\`\`
@@ -136,8 +130,32 @@ point in May. Most of the lift is **dining & travel**.
 \`\`\`bank:suggestions
 {
   "items": [
-    { "kind": "prompt", "label": "Show me spending in May" },
+    { "kind": "prompt", "label": "View detailed breakdown" },
     { "kind": "prompt", "label": "How much did I spend this year" }
+  ]
+}
+\`\`\`
+`,
+  },
+  {
+    label: 'Spending breakdown',
+    content: `## Your June breakdown
+
+\`\`\`bank:spendBreakdown
+{
+  "title": "June Spend",
+  "currency": "RM",
+  "total": 6800,
+  "vsAvg": "+RM2,110",
+  "vsAvgLabel": "vs. 6-Month Avg",
+  "categories": [
+    { "label": "Dining", "icon": "dining", "percent": 36, "amount": 2448, "delta": "+RM530" },
+    { "label": "Shopping", "icon": "shopping", "percent": 24, "amount": 1632, "delta": "+RM867" },
+    { "label": "Transport", "icon": "transport", "percent": 17, "amount": 1156, "delta": "+RM548" },
+    { "label": "Transfer", "icon": "transfer", "percent": 8, "amount": 544, "delta": "+RM100" },
+    { "label": "Bills & Utility", "icon": "bills", "percent": 6, "amount": 408, "delta": "Flat" },
+    { "label": "Entertainment", "icon": "entertainment", "percent": 5, "amount": 340, "delta": "-RM22" },
+    { "label": "Others", "icon": "others", "percent": 4, "amount": 272, "delta": "+RM87" }
   ]
 }
 \`\`\`

@@ -7,7 +7,6 @@ import {
   YAxis,
 } from 'recharts'
 import type { SpendTrendData } from './schemas'
-import { BlockCard } from './BlockCard'
 
 /** Brand green used for the current (solid) line and the hero spend figure. */
 const CURRENT = 'var(--color-glow-green)'
@@ -70,7 +69,7 @@ export default function SpendTrend({ data }: { data: SpendTrendData }) {
   }
 
   return (
-    <BlockCard>
+    <>
       <div className="mb-4 flex gap-10">
         <div>
           <p className="text-[11px] font-medium uppercase tracking-wide text-white/50">
@@ -152,6 +151,6 @@ export default function SpendTrend({ data }: { data: SpendTrendData }) {
           {data.previousLabel}
         </span>
       </div>
-    </BlockCard>
+    </>
   )
 }
