@@ -1,6 +1,6 @@
-import { useMemo, useRef, useState } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { Search, Share2 } from 'lucide-react'
+import { Columns2, Search, Share2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { Markdown } from '../Markdown'
 import { blockDocs, exampleFence } from './blockDocs'
@@ -58,15 +58,41 @@ export function Playground() {
   const [viewportId, setViewportId] = useState<string | null>(null)
   const [customW, setCustomW] = useState(390)
   const [customH, setCustomH] = useState(844)
+  // Compare mode: turn the viewport pills into a multi-select and render every
+  // selected device side-by-side. `compareIds` is a subset of preset ids plus
+  // 'custom', in selection order.
+  const [compare, setCompare] = useState(false)
+  const [compareIds, setCompareIds] = useState<string[]>([])
 
-  // Resolve the active device dimensions; null means no frame (Fit mode).
-  const device = useMemo(() => {
-    if (viewportId === null) return null
-    if (viewportId === 'custom') {
-      return { label: 'Custom', w: customW, h: customH }
+  // Resolve a viewport id to concrete dimensions; null if it has no frame.
+  const resolveDevice = useCallback(
+    (id: string): Viewport | null => {
+      if (id === 'custom') return { id: 'custom', label: 'Custom', w: customW, h: customH }
+      return VIEWPORTS.find((v) => v.id === id) ?? null
+    },
+    [customW, customH],
+  )
+
+  // The device frames to render. Empty = Fit mode (responsive, no frame).
+  const frames = useMemo<Viewport[]>(() => {
+    const ids = compare ? compareIds : viewportId === null ? [] : [viewportId]
+    return ids.map(resolveDevice).filter((d): d is Viewport => d !== null)
+  }, [compare, compareIds, viewportId, resolveDevice])
+
+  // Enable compare; seed the set from the current device so the preview isn't blank.
+  function enableCompare() {
+    setCompare(true)
+    if (compareIds.length === 0) {
+      setCompareIds([viewportId ?? 'se'])
     }
-    return VIEWPORTS.find((v) => v.id === viewportId) ?? null
-  }, [viewportId, customW, customH])
+  }
+
+  // Toggle a viewport id in/out of the compare set.
+  function toggleCompareId(id: string) {
+    setCompareIds((ids) =>
+      ids.includes(id) ? ids.filter((x) => x !== id) : [...ids, id],
+    )
+  }
 
   // Filter the block palette so it stays usable as the block count grows.
   const blockEntries = useMemo(() => Object.entries(blockDocs), [])
@@ -197,38 +223,53 @@ export function Playground() {
         </span>
         <button
           type="button"
-          className={viewportId === null ? PILL_ACTIVE : PILL}
-          onClick={() => setViewportId(null)}
+          className={compare ? PILL_ACTIVE : PILL}
+          aria-pressed={compare}
+          onClick={() => (compare ? setCompare(false) : enableCompare())}
         >
-          Fit
+          <Columns2 className="size-3.5" />
+          Compare
         </button>
-        {VIEWPORTS.map((v) => (
+        {!compare && (
           <button
-            key={v.id}
             type="button"
-            className={viewportId === v.id ? PILL_ACTIVE : PILL}
-            onClick={() => setViewportId(v.id)}
+            className={viewportId === null ? PILL_ACTIVE : PILL}
+            onClick={() => setViewportId(null)}
           >
-            {v.label}
+            Fit
           </button>
-        ))}
+        )}
+        {VIEWPORTS.map((v) => {
+          const active = compare ? compareIds.includes(v.id) : viewportId === v.id
+          return (
+            <button
+              key={v.id}
+              type="button"
+              className={active ? PILL_ACTIVE : PILL}
+              onClick={() => (compare ? toggleCompareId(v.id) : setViewportId(v.id))}
+            >
+              {v.label}
+            </button>
+          )
+        })}
         <button
           type="button"
-          className={viewportId === 'custom' ? PILL_ACTIVE : PILL}
-          onClick={() => setViewportId('custom')}
+          className={
+            (compare ? compareIds.includes('custom') : viewportId === 'custom')
+              ? PILL_ACTIVE
+              : PILL
+          }
+          onClick={() => (compare ? toggleCompareId('custom') : setViewportId('custom'))}
         >
           Custom
         </button>
-        {viewportId === 'custom' && (
+        {(compare ? compareIds.includes('custom') : viewportId === 'custom') && (
           <div className="flex items-center gap-1.5 text-[13px] text-white/55">
             <input
               type="number"
               min={120}
               value={customW}
-              onChange={(e) => {
-                setCustomW(Number(e.target.value) || 0)
-                setViewportId('custom')
-              }}
+              onChange={(e) => setCustomW(Number(e.target.value) || 0)}
               className="w-20 rounded-full border border-white/10 bg-black/30 px-3 py-1.5 text-white/85 outline-none transition focus:border-white/25 focus-visible:ring-2 focus-visible:ring-accent-1/40"
             />
             <span aria-hidden>×</span>
@@ -236,10 +277,7 @@ export function Playground() {
               type="number"
               min={120}
               value={customH}
-              onChange={(e) => {
-                setCustomH(Number(e.target.value) || 0)
-                setViewportId('custom')
-              }}
+              onChange={(e) => setCustomH(Number(e.target.value) || 0)}
               className="w-20 rounded-full border border-white/10 bg-black/30 px-3 py-1.5 text-white/85 outline-none transition focus:border-white/25 focus-visible:ring-2 focus-visible:ring-accent-1/40"
             />
           </div>
@@ -247,7 +285,7 @@ export function Playground() {
       </div>
 
       {/* Editor + live preview */}
-      {device === null ? (
+      {!compare && viewportId === null ? (
         <div className="grid gap-4 md:grid-cols-2">
           <div className="flex flex-col">
             <div className="mb-2 text-xs font-medium uppercase tracking-wide text-white/40">
@@ -285,22 +323,37 @@ export function Playground() {
             />
           </div>
           <div className="flex flex-col">
-            <div className="mb-2 flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-white/40">
-              <span>Preview · {device.label}</span>
-              <span className="font-mono normal-case text-white/35">
-                {device.w} × {device.h}
-              </span>
+            <div className="mb-2 text-xs font-medium uppercase tracking-wide text-white/40">
+              Preview{compare ? ` · comparing ${frames.length}` : ''}
             </div>
-            <div className="flex justify-center overflow-x-auto py-2">
-              <div
-                style={{ width: device.w, height: device.h }}
-                className="shrink-0 overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.04] shadow-2xl backdrop-blur-md"
-              >
-                <div className="no-scrollbar h-full overflow-y-auto p-4">
-                  <Markdown content={value} />
+            {frames.length === 0 ? (
+              <div className="rounded-2xl border border-dashed border-white/10 bg-white/[0.02] p-8 text-center text-sm text-white/45">
+                Select one or more devices to compare.
+              </div>
+            ) : (
+              <div className="overflow-x-auto py-2">
+                <div className="mx-auto flex min-w-max gap-4 px-1">
+                  {frames.map((d) => (
+                    <div key={d.id} className="flex shrink-0 flex-col gap-2">
+                      <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-white/40">
+                        <span>{d.label}</span>
+                        <span className="font-mono normal-case text-white/35">
+                          {d.w} × {d.h}
+                        </span>
+                      </div>
+                      <div
+                        style={{ width: d.w, height: d.h }}
+                        className="shrink-0 overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.04] shadow-2xl backdrop-blur-md"
+                      >
+                        <div className="no-scrollbar h-full overflow-y-auto p-4">
+                          <Markdown content={value} />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       )}
