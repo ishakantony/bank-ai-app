@@ -1,12 +1,10 @@
 import { z } from 'zod'
 import type { ThreadId } from '../src/types.ts'
-import {
-  actionCardSchema,
-  allocationDonutSchema,
-  driftBarsSchema,
-  suggestionsSchema,
-  wizardSchema,
-} from '../src/components/blocks/schemas.ts'
+import { actionCardSchema } from '../src/components/blocks/actionCard/schema.ts'
+import { allocationDonutSchema } from '../src/components/blocks/allocationDonut/schema.ts'
+import { driftBarsSchema } from '../src/components/blocks/driftBars/schema.ts'
+import { suggestionsSchema } from '../src/components/blocks/suggestions/schema.ts'
+import { wizardSchema } from '../src/components/blocks/wizard/schema.ts'
 
 /**
  * Server-side catalog of the custom blocks the assistant may emit. The Zod

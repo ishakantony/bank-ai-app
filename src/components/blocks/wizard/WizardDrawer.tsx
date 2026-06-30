@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
 import { Check, ChevronLeft, ChevronRight, X } from 'lucide-react'
-import { useBlockBus, type WizardEntry, type WizardFlow } from '../../store/blockBus'
-import { useChatStore } from '../../store/chatStore'
+import { useBlockBus, type WizardEntry, type WizardFlow } from '../../../store/blockBus'
+import { useChatStore } from '../../../store/chatStore'
 
 interface WizardDrawerProps {
   /** Bus id of the wizard being answered. */

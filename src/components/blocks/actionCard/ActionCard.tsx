@@ -1,6 +1,6 @@
 import { ChevronRight } from 'lucide-react'
-import type { ActionCardData } from './schemas'
-import { BlockCard } from './BlockCard'
+import type { ActionCardData } from './schema'
+import { BlockCard } from '../BlockCard'
 
 /**
  * A reusable suggested-actions card: a list of tappable rows plus an optional

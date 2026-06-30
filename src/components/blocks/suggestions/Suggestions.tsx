@@ -1,8 +1,8 @@
 import { ArrowUpRight, Sparkles } from 'lucide-react'
-import { useChatStore } from '../../store/chatStore'
-import { useBlockBus } from '../../store/blockBus'
-import { useChatThread } from './ChatThreadContext'
-import type { SuggestionItem, SuggestionsData } from './schemas'
+import { useChatStore } from '../../../store/chatStore'
+import { useBlockBus } from '../../../store/blockBus'
+import { useChatThread } from '../ChatThreadContext'
+import type { SuggestionItem, SuggestionsData } from './schema'
 
 /** Shared glassmorphism pill look — identical for prompts, links and signals. */
 const PILL =

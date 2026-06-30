@@ -6,7 +6,7 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
-import type { SpendTrendData } from './schemas'
+import type { SpendTrendData } from './schema'
 
 /** Brand green used for the current (solid) line and the hero spend figure. */
 const CURRENT = 'var(--color-glow-green)'

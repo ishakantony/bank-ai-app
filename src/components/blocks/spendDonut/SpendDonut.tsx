@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import { Cell, Pie, PieChart, ResponsiveContainer } from 'recharts'
-import type { SpendDonutData } from './schemas'
-import { ACCENTS } from './colors'
+import type { SpendDonutData } from './schema'
+import { ACCENTS } from '../colors'
 
 /** Tailwind text colour per badge tone; defaults to warning (amber). */
 const TONE_TEXT: Record<NonNullable<SpendDonutData['vsAvgTone']>, string> = {

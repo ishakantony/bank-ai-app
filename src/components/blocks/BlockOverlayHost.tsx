@@ -7,7 +7,7 @@ import { useBlockBus, type BlockEntry } from '../../store/blockBus'
  * only when an overlay first opens. Adding an overlay-bearing block = one line.
  */
 const OVERLAYS = {
-  wizard: lazy(() => import('./WizardDrawer')),
+  wizard: lazy(() => import('./wizard/WizardDrawer')),
 } satisfies Record<BlockEntry['type'], unknown>
 
 interface OpenOverlay {

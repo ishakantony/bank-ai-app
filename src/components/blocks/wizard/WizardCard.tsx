@@ -1,8 +1,8 @@
 import { useEffect } from 'react'
 import { ArrowRight, Check } from 'lucide-react'
-import { useBlockBus } from '../../store/blockBus'
-import { useChatThread } from './ChatThreadContext'
-import type { WizardData } from './schemas'
+import { useBlockBus } from '../../../store/blockBus'
+import { useChatThread } from '../ChatThreadContext'
+import type { WizardData } from './schema'
 
 /**
  * The in-message face of a questionnaire wizard. It publishes its flow to the

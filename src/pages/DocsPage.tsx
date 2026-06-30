@@ -1,21 +1,24 @@
 import { Link, useSearchParams } from 'react-router-dom'
 import { ArrowLeft } from 'lucide-react'
+import { MarkdownBasics } from '../components/docs/MarkdownBasics'
 import { BlockGallery } from '../components/docs/BlockGallery'
 import { Playground } from '../components/docs/Playground'
 import { ChatThreadProvider } from '../components/blocks/ChatThreadContext'
 
-type Tab = 'gallery' | 'playground'
+type Tab = 'basics' | 'gallery' | 'playground'
 
 const TABS: { id: Tab; label: string }[] = [
-  { id: 'gallery', label: 'Gallery' },
+  { id: 'basics', label: 'Markdown Basics' },
+  { id: 'gallery', label: 'Custom Blocks' },
   { id: 'playground', label: 'Playground' },
 ]
 
 /**
- * `/docs` — living documentation for the reply-authoring system. Two tabs
- * (tracked in `?tab=`): a Gallery of every custom block + markdown affordances,
- * and a Playground for composing reply markdown with a live preview. Reachable
- * by URL only; spans the full browser width, unlike the phone-width app shell.
+ * `/docs` — living documentation for the reply-authoring system. Three tabs
+ * (tracked in `?tab=`): Markdown Basics (the plain prose affordances), Custom
+ * Blocks (the searchable block gallery), and a Playground for composing reply
+ * markdown with a live preview. Reachable by URL only; spans the full browser
+ * width, unlike the phone-width app shell.
  *
  * Block content is wrapped in `ChatThreadProvider` with no thread so the page
  * is side-effect free: charts/cards render fully, while prompt/signal pills and
@@ -24,7 +27,9 @@ const TABS: { id: Tab; label: string }[] = [
  */
 export function DocsPage() {
   const [params, setParams] = useSearchParams()
-  const tab: Tab = params.get('tab') === 'playground' ? 'playground' : 'gallery'
+  const raw = params.get('tab')
+  const tab: Tab =
+    raw === 'basics' || raw === 'playground' ? raw : 'gallery'
 
   function selectTab(next: Tab) {
     setParams(
@@ -74,7 +79,13 @@ export function DocsPage() {
       </header>
 
       <ChatThreadProvider value={null}>
-        {tab === 'gallery' ? <BlockGallery /> : <Playground />}
+        {tab === 'basics' ? (
+          <MarkdownBasics />
+        ) : tab === 'playground' ? (
+          <Playground />
+        ) : (
+          <BlockGallery />
+        )}
       </ChatThreadProvider>
     </div>
   )

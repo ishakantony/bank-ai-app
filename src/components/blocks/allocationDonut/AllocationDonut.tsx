@@ -1,7 +1,7 @@
 import { Cell, Pie, PieChart, ResponsiveContainer } from 'recharts'
-import type { AllocationDonutData } from './schemas'
-import { BlockCard } from './BlockCard'
-import { ACCENTS } from './colors'
+import type { AllocationDonutData } from './schema'
+import { BlockCard } from '../BlockCard'
+import { ACCENTS } from '../colors'
 
 /**
  * Donut/ring chart of a current allocation. Segment sizes are taken straight

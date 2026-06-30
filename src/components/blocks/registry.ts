@@ -1,62 +1,27 @@
-import { lazy, type ComponentType, type LazyExoticComponent } from 'react'
-import { z } from 'zod'
-import {
-  actionCardSchema,
-  allocationDonutSchema,
-  driftBarsSchema,
-  spendBreakdownSchema,
-  spendDonutSchema,
-  spendTrendSchema,
-  suggestionsSchema,
-  wizardSchema,
-} from './schemas'
+import type { BlockDefinition } from './defineBlock'
+
+export type { BlockDefinition }
 
 /**
- * A registered custom block: a Zod schema describing its accepted data and a
- * lazily-imported component that renders validated data. Types are erased to
- * `unknown` here so the registry can hold many heterogeneous blocks in one map;
- * `defineBlock` re-establishes the schema↔component type link at registration.
+ * The block registry, auto-discovered from the per-block folders. Each
+ * `blocks/<name>/index.ts` default-exports a `BlockDefinition` (its schema +
+ * lazy component) via `defineBlock`; this glob wires them up keyed by folder
+ * name — the same name used in a ```bank:<name>``` fence.
+ *
+ * Adding a block is therefore *zero edits here*: drop in a new folder and it
+ * registers itself. The eager glob pulls in every block's (small) schema and
+ * builds its `lazy()` wrapper, but does **not** execute the component loaders —
+ * so component code (and Recharts) stays code-split out of the initial bundle.
+ *
+ * `index.ts` deliberately never imports its sibling `docs.ts` / `guide.md`, so
+ * documentation prose stays out of this (chat) import graph entirely.
  */
-export interface BlockDefinition {
-  schema: z.ZodType<unknown>
-  Component: LazyExoticComponent<ComponentType<{ data: unknown }>>
-}
+const mods = import.meta.glob<{ default: BlockDefinition }>('./*/index.ts', {
+  eager: true,
+})
 
-/**
- * Register a block, tying the component's `data` prop to the schema's inferred
- * output so a mismatch is a compile error. The component is code-split via the
- * dynamic-import loader, keeping it (and Recharts) out of the initial bundle.
- */
-function defineBlock<S extends z.ZodTypeAny>(
-  schema: S,
-  loader: () => Promise<{ default: ComponentType<{ data: z.infer<S> }> }>,
-): BlockDefinition {
-  return {
-    schema: schema as unknown as z.ZodType<unknown>,
-    Component: lazy(loader) as LazyExoticComponent<
-      ComponentType<{ data: unknown }>
-    >,
-  }
-}
-
-/**
- * The block registry. Adding a component is a single declarative line here —
- * this scales to many blocks without growing the initial bundle, since each
- * entry is loaded on demand the first time a response uses it.
- */
-export const blockRegistry: Record<string, BlockDefinition> = {
-  allocationDonut: defineBlock(
-    allocationDonutSchema,
-    () => import('./AllocationDonut'),
-  ),
-  driftBars: defineBlock(driftBarsSchema, () => import('./DriftBars')),
-  spendTrend: defineBlock(spendTrendSchema, () => import('./SpendTrend')),
-  spendDonut: defineBlock(spendDonutSchema, () => import('./SpendDonut')),
-  spendBreakdown: defineBlock(
-    spendBreakdownSchema,
-    () => import('./SpendBreakdown'),
-  ),
-  actionCard: defineBlock(actionCardSchema, () => import('./ActionCard')),
-  suggestions: defineBlock(suggestionsSchema, () => import('./Suggestions')),
-  wizard: defineBlock(wizardSchema, () => import('./WizardCard')),
-}
+export const blockRegistry: Record<string, BlockDefinition> = Object.fromEntries(
+  Object.entries(mods)
+    .map(([path, mod]) => [path.split('/')[1], mod.default] as const)
+    .sort(([a], [b]) => a.localeCompare(b)),
+)

@@ -8,8 +8,8 @@ import {
   ArrowLeftRight,
   type LucideIcon,
 } from 'lucide-react'
-import type { SpendBreakdownData } from './schemas'
-import { ACCENTS } from './colors'
+import type { SpendBreakdownData } from './schema'
+import { ACCENTS } from '../colors'
 
 /**
  * Category icons, keyed by the `icon` string in the block data. Extend this map

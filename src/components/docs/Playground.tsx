@@ -1,9 +1,9 @@
-import { useRef, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { Share2 } from 'lucide-react'
+import { Search, Share2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { Markdown } from '../Markdown'
-import { blockDocs, blockFence } from './blockDocs'
+import { blockDocs, exampleFence } from './blockDocs'
 import { CopyButton } from './CopyButton'
 import { MARKDOWN_SNIPPETS, STARTERS } from './samples'
 
@@ -37,6 +37,20 @@ export function Playground() {
   const [value, setValue] = useState(
     () => decodeMd(params.get('md')) ?? STARTERS[0].content,
   )
+  const [blockQuery, setBlockQuery] = useState('')
+
+  // Filter the block palette so it stays usable as the block count grows.
+  const blockEntries = useMemo(() => Object.entries(blockDocs), [])
+  const filteredBlocks = useMemo(() => {
+    const q = blockQuery.toLowerCase().trim()
+    if (!q) return blockEntries
+    return blockEntries.filter(([name, doc]) => {
+      const hay = [name, doc.title, doc.summary, doc.category, ...(doc.keywords ?? [])]
+        .join(' ')
+        .toLowerCase()
+      return q.split(/\s+/).every((t) => hay.includes(t))
+    })
+  }, [blockEntries, blockQuery])
 
   /** Splice `snippet` in at the cursor (or replace the selection). */
   function insert(snippet: string) {
@@ -96,30 +110,55 @@ export function Playground() {
       </div>
 
       {/* Insert palette */}
-      <div className="flex flex-wrap items-center gap-2">
-        <span className="text-xs font-medium uppercase tracking-wide text-white/40">
-          Insert
-        </span>
-        {Object.entries(blockDocs).map(([name, doc]) => (
-          <button
-            key={name}
-            type="button"
-            className={PILL}
-            onClick={() => insert(`\n${blockFence(name, doc.example)}\n`)}
-          >
-            {doc.title}
-          </button>
-        ))}
-        {MARKDOWN_SNIPPETS.map((s) => (
-          <button
-            key={s.label}
-            type="button"
-            className={PILL}
-            onClick={() => insert(s.snippet)}
-          >
-            {s.label}
-          </button>
-        ))}
+      <div className="space-y-2.5">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-xs font-medium uppercase tracking-wide text-white/40">
+            Insert block
+          </span>
+          <div className="relative">
+            <Search className="pointer-events-none absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-white/35" />
+            <input
+              type="search"
+              value={blockQuery}
+              onChange={(e) => setBlockQuery(e.target.value)}
+              placeholder="Filter blocks…"
+              className="w-44 rounded-full border border-white/10 bg-black/30 py-1.5 pl-8 pr-3 text-[13px] text-white/85 outline-none transition placeholder:text-white/35 focus:border-white/25 focus-visible:ring-2 focus-visible:ring-accent-1/40"
+            />
+          </div>
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          {filteredBlocks.length === 0 ? (
+            <span className="text-xs text-white/40">No blocks match.</span>
+          ) : (
+            filteredBlocks.map(([name, doc]) => (
+              <button
+                key={name}
+                type="button"
+                className={PILL}
+                onClick={() =>
+                  insert(`\n${exampleFence(name, doc.examples[0].data)}\n`)
+                }
+              >
+                {doc.title}
+              </button>
+            ))
+          )}
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-xs font-medium uppercase tracking-wide text-white/40">
+            Markdown
+          </span>
+          {MARKDOWN_SNIPPETS.map((s) => (
+            <button
+              key={s.label}
+              type="button"
+              className={PILL}
+              onClick={() => insert(s.snippet)}
+            >
+              {s.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Editor + live preview */}

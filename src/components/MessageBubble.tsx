@@ -5,7 +5,7 @@ import { useTypewriter } from '../hooks/useTypewriter'
 import { Markdown } from './Markdown'
 import { MessageActions } from './MessageActions'
 import { CustomBlock } from './blocks/CustomBlock'
-import { splitSuggestions } from './blocks/splitSuggestions'
+import { splitSuggestions } from './blocks/suggestions/splitSuggestions'
 import type { Message, ThreadId } from '../types'
 
 interface MessageBubbleProps {
