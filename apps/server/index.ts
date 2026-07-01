@@ -1,13 +1,28 @@
 import { serve } from '@hono/node-server'
 import { Hono } from 'hono'
-import type { ThreadId } from '@bank-ai/shared'
+import type { BlockRemoteManifest, ThreadId } from '@bank-ai/shared'
 import { insights, topics } from './data.ts'
 import { generateReply, type ChatTurn } from './openrouter.ts'
 
 const app = new Hono()
 
+// Which block remotes exist and where to load them from. The URL is
+// env-configurable (default: the local dev remote) so the same server can point
+// the host at a CDN in other environments without a host rebuild.
+const blockRemotes: BlockRemoteManifest = {
+  remotes: [
+    {
+      name: 'blocksSpend',
+      entry:
+        process.env.BLOCKS_SPEND_ENTRY ?? 'http://localhost:9998/remoteEntry.js',
+      blocks: ['spendTrend', 'spendDonut', 'spendBreakdown'],
+    },
+  ],
+}
+
 app.get('/api/topics', (c) => c.json(topics))
 app.get('/api/insights', (c) => c.json(insights))
+app.get('/api/block-remotes', (c) => c.json(blockRemotes))
 
 app.post('/api/chat', async (c) => {
   const body = await c.req.json<{ threadId?: ThreadId; messages?: ChatTurn[] }>()

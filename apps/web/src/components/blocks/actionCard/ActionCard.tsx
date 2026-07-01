@@ -1,6 +1,6 @@
 import { ChevronRight } from 'lucide-react'
 import type { ActionCardData } from '@bank-ai/shared'
-import { BlockCard } from '../BlockCard'
+import { BlockCard } from '@bank-ai/blocks-kit'
 
 /**
  * A reusable suggested-actions card: a list of tappable rows plus an optional

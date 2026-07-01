@@ -4,6 +4,8 @@ import { BrowserRouter } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import './index.css'
 import App from './App.tsx'
+import { fetchBlockRemotes } from './api/blockRemotes'
+import { registerRemoteBlocks } from './components/blocks/registry'
 
 const queryClient = new QueryClient()
 
@@ -33,14 +35,32 @@ async function enableMocking() {
   await worker.start({ onUnhandledRequest: 'bypass' })
 }
 
-Promise.all([enableEruda(), enableMocking()]).then(() => {
-  createRoot(document.getElementById('root')!).render(
-    <StrictMode>
-      <QueryClientProvider client={queryClient}>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
-      </QueryClientProvider>
-    </StrictMode>,
-  )
-})
+// Discover federated block remotes from the backend and register them before
+// the first render, so a ```bank:<name>``` fence resolves whether the block is
+// compiled in or hosted by a remote. Runs after mocking is ready (so MSW can
+// intercept the request in mock mode) and never blocks boot on failure — a
+// missing manifest just leaves remote blocks unregistered (they degrade to the
+// inline fallback).
+async function registerBlocks() {
+  try {
+    registerRemoteBlocks(await fetchBlockRemotes())
+  } catch (err) {
+    if (import.meta.env.DEV) {
+      console.warn('[blocks] failed to register remotes', err)
+    }
+  }
+}
+
+Promise.all([enableEruda(), enableMocking()])
+  .then(registerBlocks)
+  .then(() => {
+    createRoot(document.getElementById('root')!).render(
+      <StrictMode>
+        <QueryClientProvider client={queryClient}>
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
+        </QueryClientProvider>
+      </StrictMode>,
+    )
+  })

@@ -1,0 +1,15 @@
+{
+  "name": "@bank-ai/blocks-kit",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "lucide-react": "^1.21.0"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0"
+  }
+}

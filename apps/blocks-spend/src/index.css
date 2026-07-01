@@ -1,0 +1,29 @@
+/*
+ * Self-contained styles for the spend blocks. This stylesheet is bundled into
+ * the federated chunk and injected into the host document when a block loads,
+ * so the remote can use any Tailwind utility without the host having "seen" it.
+ *
+ * Preflight (Tailwind's base reset) is deliberately NOT imported — the host
+ * already ships it, and re-applying a global reset from an injected remote
+ * stylesheet would clobber the host's layout. We pull in only the theme tokens
+ * and the generated utilities.
+ */
+@import 'tailwindcss/theme' layer(theme);
+@import 'tailwindcss/utilities' layer(utilities);
+
+@theme {
+  /* Brand accent gradient stops (cycled by the donut/breakdown via ACCENTS) */
+  --color-accent-1: oklch(0.62 0.21 280);
+  --color-accent-2: oklch(0.66 0.2 320);
+  --color-accent-3: oklch(0.78 0.16 200);
+
+  /* Ambient glow stops reused as chart colours */
+  --color-glow-warm: oklch(0.72 0.17 55);
+  --color-glow-green: oklch(0.7 0.16 155);
+
+  /* Highlight tones used by the "vs AVG" / delta badges */
+  --color-tone-positive: oklch(0.78 0.15 155);
+  --color-tone-negative: oklch(0.7 0.19 25);
+  --color-tone-warning: oklch(0.82 0.15 80);
+  --color-tone-info: oklch(0.78 0.16 200);
+}

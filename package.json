@@ -10,8 +10,10 @@
   ],
   "scripts": {
     "dev": "npm run dev -w @bank-ai/web",
-    "dev:real": "concurrently -k -n server,web -c green,cyan \"npm run server -w @bank-ai/server\" \"npm run dev -w @bank-ai/web -- --mode real\"",
+    "dev:mfe": "concurrently -k -n remote,web -c magenta,cyan \"npm run remote\" \"npm run dev -w @bank-ai/web\"",
+    "dev:real": "concurrently -k -n server,remote,web -c green,magenta,cyan \"npm run server -w @bank-ai/server\" \"npm run remote\" \"npm run dev -w @bank-ai/web -- --mode real\"",
     "server": "npm run server -w @bank-ai/server",
+    "remote": "npm run dev -w @bank-ai/blocks-spend",
     "build": "tsc -b && npm run build -w @bank-ai/web",
     "lint": "oxlint",
     "preview": "npm run preview -w @bank-ai/web"

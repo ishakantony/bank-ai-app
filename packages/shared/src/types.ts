@@ -28,6 +28,24 @@ export type ThreadId = TopicId | 'general'
 
 export type Role = 'user' | 'assistant'
 
+/**
+ * One federated block remote: its Module Federation name, the runtime
+ * `remoteEntry.js` URL to load it from, and the block names it exposes (each
+ * name matches a ```bank:<name>``` fence). Served by the backend so remote
+ * locations are dynamic — a team can redeploy or add blocks without a host
+ * release.
+ */
+export interface BlockRemote {
+  name: string
+  entry: string
+  blocks: string[]
+}
+
+/** The manifest of block remotes the host fetches at boot to register them. */
+export interface BlockRemoteManifest {
+  remotes: BlockRemote[]
+}
+
 /** A single chat message. `status` only applies to assistant messages. */
 export interface Message {
   id: string

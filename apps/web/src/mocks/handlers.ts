@@ -1,6 +1,23 @@
 import { http, HttpResponse, delay } from 'msw'
 import type { ChatTurn } from '../api/chat'
-import type { Insight, ThreadId, Topic } from '@bank-ai/shared'
+import type {
+  BlockRemoteManifest,
+  Insight,
+  ThreadId,
+  Topic,
+} from '@bank-ai/shared'
+
+// Mirrors the Hono server's manifest so mock mode drives runtime block loading
+// too. Both point the host at the local spend remote (:9998).
+const blockRemotes: BlockRemoteManifest = {
+  remotes: [
+    {
+      name: 'blocksSpend',
+      entry: 'http://localhost:9998/remoteEntry.js',
+      blocks: ['spendTrend', 'spendDonut', 'spendBreakdown'],
+    },
+  ],
+}
 
 const topics: Topic[] = [
   {
@@ -498,6 +515,11 @@ export const handlers = [
   http.get('/api/insights', async () => {
     await delay(600)
     return HttpResponse.json(insights)
+  }),
+
+  http.get('/api/block-remotes', async () => {
+    await delay(150)
+    return HttpResponse.json(blockRemotes)
   }),
 
   http.post('/api/chat', async ({ request }) => {

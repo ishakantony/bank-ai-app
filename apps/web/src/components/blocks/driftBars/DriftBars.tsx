@@ -1,7 +1,6 @@
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from 'recharts'
 import type { DriftBarsData } from '@bank-ai/shared'
-import { BlockCard } from '../BlockCard'
-import { ACCENTS } from '../colors'
+import { BlockCard, ACCENTS } from '@bank-ai/blocks-kit'
 
 /**
  * Grouped horizontal bars comparing a target vs current value per item, with a

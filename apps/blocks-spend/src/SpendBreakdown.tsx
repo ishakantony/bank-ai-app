@@ -9,7 +9,7 @@ import {
   type LucideIcon,
 } from 'lucide-react'
 import type { SpendBreakdownData } from '@bank-ai/shared'
-import { ACCENTS } from '../colors'
+import { ACCENTS } from '@bank-ai/blocks-kit'
 
 /**
  * Category icons, keyed by the `icon` string in the block data. Extend this map

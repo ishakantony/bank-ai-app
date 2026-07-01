@@ -3,7 +3,8 @@ import { useSearchParams } from 'react-router-dom'
 import { Columns2, Search, Share2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { Markdown } from '../Markdown'
-import { blockDocs, exampleFence } from './blockDocs'
+import { exampleFence } from './blockDocs'
+import { useBlockDocs } from './useBlockDocs'
 import { CopyButton } from './CopyButton'
 import { MARKDOWN_SNIPPETS, STARTERS } from './samples'
 
@@ -95,7 +96,8 @@ export function Playground() {
   }
 
   // Filter the block palette so it stays usable as the block count grows.
-  const blockEntries = useMemo(() => Object.entries(blockDocs), [])
+  const blockDocs = useBlockDocs()
+  const blockEntries = useMemo(() => Object.entries(blockDocs), [blockDocs])
   const filteredBlocks = useMemo(() => {
     const q = blockQuery.toLowerCase().trim()
     if (!q) return blockEntries

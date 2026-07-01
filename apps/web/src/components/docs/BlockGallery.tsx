@@ -2,7 +2,8 @@ import { useMemo, useState } from 'react'
 import { ChevronRight, Search, TriangleAlert } from 'lucide-react'
 import { Markdown } from '../Markdown'
 import { blockRegistry } from '../blocks/registry'
-import { blockDocs, blockGuides, exampleFence, type BlockDoc } from './blockDocs'
+import { blockGuides, exampleFence, type BlockDoc } from './blockDocs'
+import { useBlockDocs } from './useBlockDocs'
 import { CopyButton } from './CopyButton'
 
 interface Entry {
@@ -128,9 +129,10 @@ export function BlockGallery() {
   const [query, setQuery] = useState('')
   const [category, setCategory] = useState<string | null>(null)
 
+  const docs = useBlockDocs()
   const entries = useMemo<Entry[]>(
-    () => Object.keys(blockRegistry).map((name) => ({ name, doc: blockDocs[name] })),
-    [],
+    () => Object.keys(blockRegistry).map((name) => ({ name, doc: docs[name] })),
+    [docs],
   )
   const categories = useMemo(
     () =>

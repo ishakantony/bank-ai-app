@@ -16,19 +16,12 @@
  *
  * Examples use Malaysian / MYR scenarios (RM, EPF/PRS/ASB, DuitNow) per the
  * project locale rules.
+ *
+ * `BlockDoc` lives in `@bank-ai/blocks-kit` (re-exported here for existing
+ * importers) so block remotes can ship docs of the same shape.
  */
-export interface BlockDoc {
-  /** Human title shown above the examples. */
-  title: string
-  /** Short line shown on cards and matched by search. */
-  summary: string
-  /** Facet for grouping/filtering, e.g. "charts" | "spending" | "cards" | "interactive". */
-  category: string
-  /** Extra search tokens beyond the title/summary. */
-  keywords?: string[]
-  /** One or more named examples; `data` is the raw block JSON (an object). */
-  examples: { label: string; caption?: string; data: unknown }[]
-}
+export type { BlockDoc } from '@bank-ai/blocks-kit'
+import type { BlockDoc } from '@bank-ai/blocks-kit'
 
 /** Folder-name → metadata, auto-discovered from `blocks/<name>/docs.ts`. */
 const docMods = import.meta.glob<{ default: BlockDoc }>('../blocks/*/docs.ts', {

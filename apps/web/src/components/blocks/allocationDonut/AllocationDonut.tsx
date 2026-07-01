@@ -1,7 +1,6 @@
 import { Cell, Pie, PieChart, ResponsiveContainer } from 'recharts'
 import type { AllocationDonutData } from '@bank-ai/shared'
-import { BlockCard } from '../BlockCard'
-import { ACCENTS } from '../colors'
+import { BlockCard, ACCENTS } from '@bank-ai/blocks-kit'
 
 /**
  * Donut/ring chart of a current allocation. Segment sizes are taken straight
