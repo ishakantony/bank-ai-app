@@ -1,0 +1,19 @@
+{
+  "name": "@bank-ai/server",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "server": "node --env-file-if-exists=.env --watch index.ts"
+  },
+  "dependencies": {
+    "@bank-ai/shared": "*",
+    "@hono/node-server": "^2.0.6",
+    "hono": "^4.12.27",
+    "openai": "^6.45.0",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "^26.0.0"
+  }
+}

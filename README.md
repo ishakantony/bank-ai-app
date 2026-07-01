@@ -26,11 +26,15 @@ The dev server starts the MSW mock worker automatically (DEV only). Production b
 
 ## Scripts
 
+Run from the repo root; workspace scripts are delegated to the right package.
+
 ```bash
-npm run dev      # Vite dev server on http://localhost:9999
-npm run build    # tsc -b (typecheck) then vite build → dist/
-npm run lint     # oxlint
-npm run preview  # serve the production build
+npm run dev       # Vite dev server (mock API) on http://localhost:9999
+npm run dev:real  # Hono server (:8787) + Vite (:9999, MSW off) together
+npm run server    # just the Hono backend
+npm run build     # tsc -b (typecheck all packages) then vite build → dist/
+npm run lint      # oxlint (whole repo)
+npm run preview   # serve the production build
 ```
 
 There is no test runner; `npm run build` is the typecheck gate.
@@ -45,16 +49,23 @@ There is no test runner; `npm run build` is the typecheck gate.
 
 ## Project layout
 
+An **npm-workspaces monorepo** (`apps/*` + `packages/*`):
+
 ```
-src/
-  api/          fetch wrappers (topics, insights, chat)
-  components/   UI; blocks/ = custom reply blocks, welcome/ = per-topic screens
-  hooks/        useTopics, useInsights, useTypewriter
-  mocks/        MSW worker + handlers (all seed + reply data)
-  pages/        WelcomePage, ChatPage
-  store/        chatStore (Zustand)
-  index.css     Tailwind v4 theme tokens, keyframes, utilities
-  types.ts      shared domain types
+apps/
+  web/          the React + Vite frontend (@bank-ai/web)
+    src/
+      api/          fetch wrappers (topics, insights, chat)
+      components/   UI; blocks/ = custom reply blocks, welcome/ = per-topic screens
+      hooks/        useTopics, useInsights, useTypewriter
+      mocks/        MSW worker + handlers (all seed + reply data)
+      pages/        WelcomePage, ChatPage, DocsPage
+      store/        chatStore (Zustand)
+      index.css     Tailwind v4 theme tokens, keyframes, utilities
+  server/       the Hono backend (@bank-ai/server) — real LLM mode
+packages/
+  shared/       @bank-ai/shared — domain types + block Zod schemas
+                (the contract shared by web and server; raw TS, no build)
 ```
 
 See [`CLAUDE.md`](./CLAUDE.md) for a deeper architecture tour.

@@ -3,50 +3,22 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "packageManager": "npm@11.11.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
-    "dev": "vite --host",
-    "dev:real": "concurrently -k -n server,web -c green,cyan \"npm run server\" \"vite --mode real\"",
-    "server": "node --env-file-if-exists=.env --watch server/index.ts",
-    "build": "tsc -b && vite build",
+    "dev": "npm run dev -w @bank-ai/web",
+    "dev:real": "concurrently -k -n server,web -c green,cyan \"npm run server -w @bank-ai/server\" \"npm run dev -w @bank-ai/web -- --mode real\"",
+    "server": "npm run server -w @bank-ai/server",
+    "build": "tsc -b && npm run build -w @bank-ai/web",
     "lint": "oxlint",
-    "preview": "vite preview"
-  },
-  "dependencies": {
-    "@hono/node-server": "^2.0.6",
-    "@radix-ui/react-dialog": "^1.1.17",
-    "@tanstack/react-query": "^5.101.1",
-    "eruda": "^3.4.3",
-    "hono": "^4.12.27",
-    "lucide-react": "^1.21.0",
-    "openai": "^6.45.0",
-    "react": "^19.2.7",
-    "react-dom": "^19.2.7",
-    "react-markdown": "^10.1.0",
-    "react-router-dom": "^7.18.0",
-    "recharts": "^3.9.0",
-    "remark-directive": "^4.0.0",
-    "remark-gfm": "^4.0.1",
-    "sonner": "^2.0.7",
-    "unist-util-visit": "^5.1.0",
-    "zod": "^4.4.3",
-    "zustand": "^5.0.14"
+    "preview": "npm run preview -w @bank-ai/web"
   },
   "devDependencies": {
-    "@tailwindcss/vite": "^4.3.1",
-    "@types/node": "^26.0.0",
-    "@types/react": "^19.2.17",
-    "@types/react-dom": "^19.2.3",
-    "@vitejs/plugin-react": "^6.0.2",
     "concurrently": "^10.0.3",
-    "msw": "^2.14.6",
     "oxlint": "^1.69.0",
-    "tailwindcss": "^4.3.1",
-    "typescript": "~6.0.2",
-    "vite": "^8.1.0"
-  },
-  "msw": {
-    "workerDirectory": [
-      "public"
-    ]
+    "typescript": "~6.0.2"
   }
 }
