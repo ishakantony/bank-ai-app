@@ -6,6 +6,8 @@
     { "path": "./packages/blocks-runtime/tsconfig.json" },
     { "path": "./apps/web/tsconfig.app.json" },
     { "path": "./apps/web/tsconfig.node.json" },
+    { "path": "./apps/mobile-shell/tsconfig.app.json" },
+    { "path": "./apps/mobile-shell/tsconfig.node.json" },
     { "path": "./apps/server/tsconfig.json" },
     { "path": "./apps/blocks-spend/tsconfig.json" },
     { "path": "./apps/blocks-portfolio/tsconfig.json" },

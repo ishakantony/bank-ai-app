@@ -1,0 +1,231 @@
+@import 'tailwindcss';
+
+@theme {
+  --font-sans:
+    'Manrope', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  /* Geometric tech-bank display for headings + balances (tabular figures via
+     the .num utility). */
+  --font-display:
+    'Sora', 'Manrope', ui-sans-serif, system-ui, -apple-system, sans-serif;
+
+  /* Brand gradient stops — indigo → azure → cyan. Reads as a trustworthy,
+     fintech blue on a light canvas (vs. web's violet/magenta on dark). */
+  --color-brand-1: oklch(0.55 0.17 265); /* indigo */
+  --color-brand-2: oklch(0.62 0.16 245); /* azure */
+  --color-brand-3: oklch(0.72 0.13 205); /* cyan */
+  --color-brand-deep: oklch(0.4 0.13 260); /* deep royal — insight hero card */
+
+  /* Ambient background glow stops (pastel, used by AnimatedBackground). */
+  --color-glow-violet: oklch(0.82 0.09 290);
+  --color-glow-sky: oklch(0.84 0.08 235);
+  --color-glow-mint: oklch(0.86 0.08 165);
+  --color-glow-peach: oklch(0.88 0.07 60);
+
+  /* Semantic tones — darkened for contrast against light glass surfaces. */
+  --color-tone-positive: oklch(0.55 0.14 155); /* green  — gains, on-track */
+  --color-tone-negative: oklch(0.55 0.19 25); /* red    — losses, risk */
+  --color-tone-warning: oklch(0.62 0.14 75); /* amber  — attention */
+  --color-tone-info: oklch(0.55 0.13 245); /* blue   — neutral emphasis */
+
+  /* Surfaces & ink. `canvas` is the base page colour; `ink` is primary text. */
+  --color-canvas: oklch(0.98 0.006 255);
+  --color-ink: oklch(0.24 0.03 262);
+  --color-ink-soft: oklch(0.48 0.02 262);
+}
+
+@layer base {
+  html {
+    color-scheme: light;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100dvh;
+    font-family: var(--font-sans);
+    color: var(--color-ink);
+    /* A whisper of pastel light on an otherwise clean, near-white canvas — the
+       reference reads as flat white with cards floating on it, so the aurora is
+       intentionally faint (kept for the light-glass identity, not the mood).
+       Fixed so it doesn't scroll with content. */
+    background:
+      radial-gradient(
+        52rem 52rem at 50% -18%,
+        oklch(0.82 0.07 262 / 0.22),
+        transparent 62%
+      ),
+      radial-gradient(
+        40rem 40rem at 92% 4%,
+        oklch(0.86 0.06 232 / 0.18),
+        transparent 58%
+      ),
+      radial-gradient(
+        44rem 44rem at 2% 88%,
+        oklch(0.88 0.06 172 / 0.14),
+        transparent 58%
+      ),
+      var(--color-canvas);
+    background-attachment: fixed;
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+/* The angle custom property drives the clockwise rotating border + orb spin.
+   Registering it lets the browser interpolate the angle so it animates. */
+@property --angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@keyframes spin-angle {
+  to {
+    --angle: 360deg;
+  }
+}
+
+@keyframes orb-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  50% {
+    transform: scale(1.05);
+    filter: brightness(1.12);
+  }
+}
+
+@keyframes orb-morph {
+  0%,
+  100% {
+    border-radius: 50%;
+    transform: rotate(0deg) scale(1);
+  }
+  50% {
+    border-radius: 22%;
+    transform: rotate(180deg) scale(0.9);
+  }
+}
+
+@keyframes float-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@utility animate-float-in {
+  animation: float-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@utility animate-fade-in {
+  animation: fade-in 0.24s ease-out both;
+}
+
+/* Frosted light-glass surface — the light inversion of the dark app's
+   translucent white/5 cards. Used across dashboard cards, the bottom nav, and
+   auth panels. Pair with rounded-* + optional hover states inline. */
+@utility glass {
+  background: color-mix(in oklab, white 62%, transparent);
+  border: 1px solid color-mix(in oklab, white 70%, transparent);
+  backdrop-filter: blur(20px);
+  box-shadow:
+    0 12px 40px -18px oklch(0.4 0.09 262 / 0.35),
+    inset 0 1px 0 0 oklch(1 0 0 / 0.6);
+}
+
+/* A denser variant for panels that sit directly on the busy aurora (auth). */
+@utility glass-strong {
+  background: color-mix(in oklab, white 78%, transparent);
+  border: 1px solid color-mix(in oklab, white 80%, transparent);
+  backdrop-filter: blur(24px);
+  box-shadow:
+    0 24px 60px -24px oklch(0.4 0.1 262 / 0.4),
+    inset 0 1px 0 0 oklch(1 0 0 / 0.7);
+}
+
+/* Tabular, lined figures for money so digits don't jitter as balances change. */
+@utility num {
+  font-family: var(--font-display);
+  font-variant-numeric: tabular-nums lining-nums;
+  letter-spacing: -0.01em;
+}
+
+/* Hide the native scrollbar while keeping the element scrollable (carousel). */
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Slow, organic drift paths for the ambient background orbs. */
+@keyframes drift-1 {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(6rem, 4rem) scale(1.08);
+  }
+}
+
+@keyframes drift-2 {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1.05);
+  }
+  50% {
+    transform: translate(-7rem, 5rem) scale(0.95);
+  }
+}
+
+@keyframes drift-3 {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(5rem, -6rem) scale(1.1);
+  }
+}
+
+@keyframes drift-4 {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(0.98);
+  }
+  50% {
+    transform: translate(-5rem, -4rem) scale(1.06);
+  }
+}
+
+@keyframes drift-5 {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1.02);
+  }
+  50% {
+    transform: translate(4rem, 6rem) scale(0.92);
+  }
+}
+
+/* Respect users who prefer less motion: keep the colored glow, freeze drift. */
+@media (prefers-reduced-motion: reduce) {
+  .bg-orb {
+    animation: none !important;
+  }
+}

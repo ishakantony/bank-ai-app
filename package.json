@@ -10,6 +10,8 @@
   ],
   "scripts": {
     "dev": "npm run dev -w @bank-ai/web",
+    "dev:shell": "npm run dev -w @bank-ai/mobile-shell",
+    "build:shell": "npm run build -w @bank-ai/mobile-shell",
     "dev:mfe": "concurrently -k -n spend,portfolio,wealth,web -c magenta,yellow,blue,cyan \"npm run remote\" \"npm run remote:portfolio\" \"npm run remote:wealth\" \"npm run dev -w @bank-ai/web\"",
     "dev:real": "concurrently -k -n server,spend,portfolio,wealth,web -c green,magenta,yellow,blue,cyan \"npm run server -w @bank-ai/server\" \"npm run remote\" \"npm run remote:portfolio\" \"npm run remote:wealth\" \"npm run dev -w @bank-ai/web -- --mode real\"",
     "server": "npm run server -w @bank-ai/server",
