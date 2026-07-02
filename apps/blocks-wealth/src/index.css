@@ -1,0 +1,76 @@
+/*
+ * Self-contained styles for the wealth blocks. This stylesheet is bundled into
+ * the federated chunk and injected into the host document when a block loads,
+ * so the remote can use any Tailwind utility without the host having "seen" it.
+ *
+ * Preflight (Tailwind's base reset) is deliberately NOT imported — the host
+ * already ships it, and re-applying a global reset from an injected remote
+ * stylesheet would clobber the host's layout. We pull in only the theme tokens
+ * and the generated utilities.
+ */
+@import 'tailwindcss/theme' layer(theme);
+@import 'tailwindcss/utilities' layer(utilities);
+
+@theme {
+  /* Brand accent gradient stops (charts + the wizard drawer's gradient ring) */
+  --color-accent-1: oklch(0.62 0.21 280);
+  --color-accent-2: oklch(0.66 0.2 320);
+  --color-accent-3: oklch(0.78 0.16 200);
+
+  /* Surfaces (the wizard drawer sits on the deep ink) */
+  --color-ink: oklch(0.16 0.02 280);
+  --color-ink-deep: oklch(0.12 0.02 280);
+
+  /* Ambient glow stops reused as chart colours (driftBars "over" badge) */
+  --color-glow-warm: oklch(0.72 0.17 55);
+  --color-glow-green: oklch(0.7 0.16 155);
+
+  /* Highlight tones (wizard "completed" check) */
+  --color-tone-positive: oklch(0.78 0.15 155);
+  --color-tone-negative: oklch(0.7 0.19 25);
+  --color-tone-warning: oklch(0.82 0.15 80);
+  --color-tone-info: oklch(0.78 0.16 200);
+}
+
+/* The rotating conic-gradient border on the wizard drawer (mirrors the host's
+   ChatInput). The host registers `--angle` as an @property; declare it here too
+   so the remote's injected stylesheet animates even if it loads first. */
+@property --angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes spin-angle {
+  to {
+    --angle: 360deg;
+  }
+}
+
+@keyframes drawer-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@utility animate-drawer-in {
+  animation: drawer-in 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@utility animate-fade-in {
+  animation: fade-in 0.2s ease-out;
+}

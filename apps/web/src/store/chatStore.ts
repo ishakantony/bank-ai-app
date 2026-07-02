@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 import { sendChat } from '../api/chat'
-import { useBlockBus } from './blockBus'
+import { useBlockBus } from '@bank-ai/blocks-runtime'
 import type { Message, ThreadId } from '@bank-ai/shared'
 
 const EMPTY_THREADS: Record<ThreadId, Message[]> = {

@@ -1,18 +1,13 @@
 import { useEffect, useState } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
 import { Check, ChevronLeft, ChevronRight, X } from 'lucide-react'
-import { useBlockBus, type WizardEntry, type WizardFlow } from '../../../store/blockBus'
-import { useChatStore } from '../../../store/chatStore'
-
-interface WizardDrawerProps {
-  /** Bus id of the wizard being answered. */
-  id: string
-  entry: WizardEntry
-  /** Open-signal payload; `{ fresh: true }` restarts from scratch. */
-  payload?: unknown
-  /** Closes the overlay (host unmounts us). Partial answers are kept. */
-  onClose: () => void
-}
+import {
+  useBlockBus,
+  sendChatMessage,
+  type OverlayProps,
+  type WizardEntry,
+  type WizardFlow,
+} from '@bank-ai/blocks-runtime'
 
 function isFresh(payload: unknown): boolean {
   return (
@@ -43,16 +38,21 @@ function buildMessage(
  * Radix Dialog (focus trap, Escape/outside-click) and styled to the app's dark
  * glassmorphism with the rotating conic-gradient border from the chat input.
  *
+ * Loaded on demand by the host's `BlockOverlayHost` via the entry's
+ * `loadOverlay` — so it ships from this remote, not the host. It reads/writes
+ * the shared block bus and posts answers through the runtime's chat bridge
+ * (`sendChatMessage`), never importing the host's chat store.
+ *
  * Navigation tracks a path stack: the footer reads the *chosen* option —
  * `Next →` when it branches onward, `Submit` when it's terminal. Going back and
  * changing an earlier answer truncates everything downstream (the branch
  * changed). Closing keeps partial answers, so the card offers "Continue".
  */
-export default function WizardDrawer({ id, entry, payload, onClose }: WizardDrawerProps) {
-  const flow = entry.flow
+export default function WizardDrawer({ id, entry, payload, onClose }: OverlayProps) {
+  const flow = (entry as WizardEntry).flow
+  const threadId = (entry as WizardEntry).threadId
   const session = useBlockBus((s) => s.state[id])
   const patch = useBlockBus((s) => s.patch)
-  const sendMessage = useChatStore((s) => s.sendMessage)
 
   // Resume at the frontier unless this is a fresh (Reassess) open. Read from the
   // store synchronously so we don't flash question 1 before the effect runs.
@@ -103,7 +103,7 @@ export default function WizardDrawer({ id, entry, payload, onClose }: WizardDraw
 
   function submit() {
     patch(id, { done: true })
-    sendMessage(entry.threadId, buildMessage(flow, path, answers))
+    sendChatMessage(threadId, buildMessage(flow, path, answers))
     onClose()
   }
 

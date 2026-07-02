@@ -3,7 +3,7 @@ import { ArrowLeft } from 'lucide-react'
 import { MarkdownBasics } from '../components/docs/MarkdownBasics'
 import { BlockGallery } from '../components/docs/BlockGallery'
 import { Playground } from '../components/docs/Playground'
-import { ChatThreadProvider } from '../components/blocks/ChatThreadContext'
+import { ChatThreadProvider } from '@bank-ai/blocks-runtime'
 
 type Tab = 'basics' | 'gallery' | 'playground'
 

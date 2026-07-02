@@ -1,7 +1,6 @@
 import { useEffect } from 'react'
 import { ArrowRight, Check } from 'lucide-react'
-import { useBlockBus } from '../../../store/blockBus'
-import { useChatThread } from '../ChatThreadContext'
+import { useBlockBus, useChatThread } from '@bank-ai/blocks-runtime'
 import type { WizardData } from '@bank-ai/shared'
 
 /**
@@ -9,6 +8,9 @@ import type { WizardData } from '@bank-ai/shared'
  * block bus (so a later "Reassess" pill can reopen it by id), teases the first
  * question behind a blurred fade, and opens the drawer via a bus signal. Button
  * reflects session state: Get started → Continue (partial) → Completed (done).
+ *
+ * The registered entry carries `loadOverlay`, so the drawer ships from THIS
+ * remote — the host's `BlockOverlayHost` renders it without importing it.
  */
 export default function WizardCard({ data }: { data: WizardData }) {
   const threadId = useChatThread()
@@ -29,6 +31,7 @@ export default function WizardCard({ data }: { data: WizardData }) {
         start: data.start,
         questions: data.questions,
       },
+      loadOverlay: () => import('./WizardDrawer'),
     })
   }, [register, threadId, data])
 

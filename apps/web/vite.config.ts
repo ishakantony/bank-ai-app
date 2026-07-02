@@ -24,12 +24,17 @@ export default defineConfig({
       // React must be one instance across the boundary (hooks/context). recharts
       // and zod are shared as singletons too so a remote reuses the host's copy
       // instead of bundling its own — the host already ships them for its local
-      // blocks, so remote chunks stay small.
+      // blocks, so remote chunks stay small. `@bank-ai/blocks-runtime` (+ its
+      // zustand dep) is a singleton so the block bus, thread context and chat
+      // bridge are ONE instance across host + remotes — a remote's wizard must
+      // register into the same bus the host's BlockOverlayHost reads.
       shared: {
         react: { singleton: true },
         'react-dom': { singleton: true },
         recharts: { singleton: true },
         zod: { singleton: true },
+        zustand: { singleton: true },
+        '@bank-ai/blocks-runtime': { singleton: true },
       },
     }),
   ],

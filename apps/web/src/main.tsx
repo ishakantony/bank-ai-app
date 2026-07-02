@@ -6,8 +6,15 @@ import './index.css'
 import App from './App.tsx'
 import { fetchBlockRemotes } from './api/blockRemotes'
 import { registerRemoteBlocks } from './components/blocks/registry'
+import { setChatSend } from '@bank-ai/blocks-runtime'
+import { useChatStore } from './store/chatStore'
 
 const queryClient = new QueryClient()
+
+// Bind the block runtime's send-bridge to the chat store, so a block (local or
+// federated, e.g. the wizard drawer) can post into a thread without importing
+// the host store. The store action is stable, so this one-time wiring suffices.
+setChatSend((threadId, text) => useChatStore.getState().sendMessage(threadId, text))
 
 // Eruda — an on-screen devtools console for debugging inside mobile webviews
 // where no remote inspector is available. Lazy-imported so it never lands in

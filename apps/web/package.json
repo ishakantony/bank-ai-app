@@ -10,9 +10,9 @@
   },
   "dependencies": {
     "@bank-ai/blocks-kit": "*",
+    "@bank-ai/blocks-runtime": "*",
     "@bank-ai/shared": "*",
     "@module-federation/runtime": "^2.6.0",
-    "@radix-ui/react-dialog": "^1.1.17",
     "@tanstack/react-query": "^5.101.1",
     "eruda": "^3.4.3",
     "lucide-react": "^1.21.0",

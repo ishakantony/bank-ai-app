@@ -1,3 +1,4 @@
+import type { ComponentType } from 'react'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 import type { ThreadId } from '@bank-ai/shared'
@@ -20,6 +21,11 @@ import type { ThreadId } from '@bank-ai/shared'
  *
  * The wiring lives in the reply text as ids the model emits, so new
  * "block reacts to block" cases need no bespoke plumbing — just another id.
+ *
+ * This module lives in `@bank-ai/blocks-runtime` and is a Module Federation
+ * shared singleton, so the host and every block remote coordinate through one
+ * bus instance — a wizard shipped by a remote registers into the same bus the
+ * host's `BlockOverlayHost` and `suggestions` pills read.
  */
 
 /** A single question in a wizard flow. One option is chosen (single-select). */
@@ -45,12 +51,27 @@ export interface WizardFlow {
   questions: Record<string, WizardQuestion>
 }
 
+/** Props every overlay component (e.g. the wizard drawer) receives from the host. */
+export interface OverlayProps {
+  /** Bus id of the block being opened. */
+  id: string
+  entry: BlockEntry
+  /** Open-signal payload (e.g. `{ fresh: true }`). */
+  payload?: unknown
+  /** Closes the overlay (the host unmounts it). */
+  onClose: () => void
+}
+
 /** What a wizard block publishes to the bus so its drawer can be opened by id. */
 export interface WizardEntry {
   type: 'wizard'
   /** Thread the wizard was authored in — where the submitted answers are sent. */
   threadId: ThreadId
   flow: WizardFlow
+  /** Lazily loads the overlay this block opens. Ships alongside the block (so a
+   *  federated block carries its own drawer), letting `BlockOverlayHost` render
+   *  it generically without a compile-time import of the drawer. */
+  loadOverlay: () => Promise<{ default: ComponentType<OverlayProps> }>
 }
 
 /** A registered, addressable block. New overlay-bearing block types union in here. */

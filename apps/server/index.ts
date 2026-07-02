@@ -24,6 +24,12 @@ const blockRemotes: BlockRemoteManifest = {
         'http://localhost:9997/remoteEntry.js',
       blocks: ['portfolioValue', 'holdingsTable', 'allocationRing'],
     },
+    {
+      name: 'blocksWealth',
+      entry:
+        process.env.BLOCKS_WEALTH_ENTRY ?? 'http://localhost:9996/remoteEntry.js',
+      blocks: ['wizard', 'allocationDonut', 'driftBars', 'actionCard'],
+    },
   ],
 }
 

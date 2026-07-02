@@ -1,14 +1,5 @@
-import { lazy, Suspense, useEffect, useRef, useState } from 'react'
-import { useBlockBus, type BlockEntry } from '../../store/blockBus'
-
-/**
- * Maps a registered block's `type` to the overlay it renders. Lazy so heavy
- * overlay deps (Radix Dialog, etc.) stay out of the initial bundle and load
- * only when an overlay first opens. Adding an overlay-bearing block = one line.
- */
-const OVERLAYS = {
-  wizard: lazy(() => import('./wizard/WizardDrawer')),
-} satisfies Record<BlockEntry['type'], unknown>
+import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react'
+import { useBlockBus } from '@bank-ai/blocks-runtime'
 
 interface OpenOverlay {
   id: string
@@ -20,6 +11,11 @@ interface OpenOverlay {
  * `open` intent aimed at a registered block into its overlay — letting one
  * block (e.g. a "Reassess" suggestion pill) open another (the wizard drawer)
  * across messages, without either knowing about the other.
+ *
+ * The overlay component travels with the block: each registered entry carries a
+ * `loadOverlay` loader, so the drawer for a *federated* block is fetched from
+ * that remote on first open. This host stays generic — it never imports a
+ * specific overlay (heavy deps like Radix Dialog load only when one opens).
  */
 export function BlockOverlayHost() {
   const signals = useBlockBus((s) => s.signals)
@@ -48,11 +44,14 @@ export function BlockOverlayHost() {
     }
   }, [signals])
 
-  if (!open) return null
-  const entry = registry[open.id]
-  if (!entry) return null
+  const entry = open ? registry[open.id] : undefined
+  // Memoize the lazy overlay per entry so re-renders don't remount it mid-use.
+  const Overlay = useMemo(
+    () => (entry ? lazy(entry.loadOverlay) : null),
+    [entry],
+  )
 
-  const Overlay = OVERLAYS[entry.type]
+  if (!open || !entry || !Overlay) return null
   return (
     <Suspense fallback={null}>
       <Overlay

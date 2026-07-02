@@ -1,0 +1,16 @@
+{
+  "name": "@bank-ai/blocks-runtime",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@bank-ai/shared": "*",
+    "zustand": "^5.0.14"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0"
+  }
+}

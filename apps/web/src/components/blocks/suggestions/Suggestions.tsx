@@ -1,7 +1,5 @@
 import { ArrowUpRight, Sparkles } from 'lucide-react'
-import { useChatStore } from '../../../store/chatStore'
-import { useBlockBus } from '../../../store/blockBus'
-import { useChatThread } from '../ChatThreadContext'
+import { useBlockBus, useChatThread, sendChatMessage } from '@bank-ai/blocks-runtime'
 import type { SuggestionItem, SuggestionsData } from '@bank-ai/shared'
 
 /** Shared glassmorphism pill look — identical for prompts, links and signals. */
@@ -16,7 +14,6 @@ const PILL =
  */
 export default function Suggestions({ data }: { data: SuggestionsData }) {
   const threadId = useChatThread()
-  const sendMessage = useChatStore((s) => s.sendMessage)
   const signal = useBlockBus((s) => s.signal)
 
   return (
@@ -25,7 +22,7 @@ export default function Suggestions({ data }: { data: SuggestionsData }) {
         <SuggestionPill
           key={i}
           item={item}
-          onPrompt={(text) => threadId && sendMessage(threadId, text)}
+          onPrompt={(text) => threadId && sendChatMessage(threadId, text)}
           onSignal={(target, name, payload) => signal(target, name, payload)}
         />
       ))}

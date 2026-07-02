@@ -3,7 +3,7 @@ import { useChatStore } from '../store/chatStore'
 import type { ThreadId } from '@bank-ai/shared'
 import { MessageBubble } from './MessageBubble'
 import { TypingIndicator } from './TypingIndicator'
-import { ChatThreadProvider } from './blocks/ChatThreadContext'
+import { ChatThreadProvider } from '@bank-ai/blocks-runtime'
 
 interface MessageThreadProps {
   threadId: ThreadId
