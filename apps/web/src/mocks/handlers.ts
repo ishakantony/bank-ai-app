@@ -8,13 +8,19 @@ import type {
 } from '@bank-ai/shared'
 
 // Mirrors the Hono server's manifest so mock mode drives runtime block loading
-// too. Both point the host at the local spend remote (:9998).
+// too. Both point the host at the local spend (:9998) and portfolio (:9997)
+// remotes.
 const blockRemotes: BlockRemoteManifest = {
   remotes: [
     {
       name: 'blocksSpend',
       entry: 'http://localhost:9998/remoteEntry.js',
       blocks: ['spendTrend', 'spendDonut', 'spendBreakdown'],
+    },
+    {
+      name: 'blocksPortfolio',
+      entry: 'http://localhost:9997/remoteEntry.js',
+      blocks: ['portfolioValue', 'holdingsTable', 'allocationRing'],
     },
   ],
 }
@@ -335,6 +341,72 @@ Dining and groceries together make up half your spend. A RM2,000 monthly budget 
 ] }
 \`\`\``
 
+// Reached from the "Show my full portfolio" pill on the rebalancing reply.
+// Showcases the federated `portfolio` block remote (portfolioValue,
+// holdingsTable, allocationRing) — loaded at runtime from :9997.
+const portfolioOverview = `### Your portfolio at a glance
+
+Your investments are worth :hl[RM164,200]{tone=positive} today — up :hl[RM12,400 (8.2%)]{tone=positive} over the past year.
+
+\`\`\`bank:portfolioValue
+{
+  "value": 164200,
+  "currency": "RM",
+  "periodLabel": "Past 12 months",
+  "gain": 12400,
+  "gainPct": 8.2,
+  "series": [
+    { "label": "Jul", "value": 151800 },
+    { "label": "Sep", "value": 154300 },
+    { "label": "Nov", "value": 149600 },
+    { "label": "Jan", "value": 157100 },
+    { "label": "Mar", "value": 159900 },
+    { "label": "May", "value": 164200 }
+  ]
+}
+\`\`\`
+
+Here's how that value splits across your holdings:
+
+\`\`\`bank:holdingsTable
+{
+  "title": "Your holdings",
+  "currency": "RM",
+  "total": 164200,
+  "holdings": [
+    { "name": "EPF", "category": "epf", "value": 82400, "returnPct": 5.4 },
+    { "name": "ASB", "category": "asb", "value": 38600, "returnPct": 5.0 },
+    { "name": "Public Mutual PRS Growth", "category": "prs", "value": 21800, "returnPct": 9.1 },
+    { "name": "Global Equity Unit Trust", "category": "unitTrust", "value": 14200, "returnPct": -2.3 },
+    { "name": "Bursa shares", "category": "stocks", "value": 5400, "returnPct": 12.6 },
+    { "name": "Cash", "category": "cash", "value": 1800, "returnPct": 0 }
+  ]
+}
+\`\`\`
+
+And your split by asset class:
+
+\`\`\`bank:allocationRing
+{
+  "title": "Asset allocation",
+  "currency": "RM",
+  "total": 164200,
+  "slices": [
+    { "label": "Equities", "value": 82100 },
+    { "label": "Fixed income", "value": 41050 },
+    { "label": "Unit trusts", "value": 24630 },
+    { "label": "Cash", "value": 16420 }
+  ]
+}
+\`\`\`
+
+\`\`\`bank:suggestions
+{ "items": [
+  { "kind": "prompt", "label": "Rebalance my portfolio", "send": "Your investment portfolio needs rebalancing" },
+  { "kind": "link", "label": "Open the investing app", "url": "https://example.com/portfolio" }
+] }
+\`\`\``
+
 // Insight-specific replies, keyed by the insight title the welcome screen sends
 // as the user message. Looked up only on the `insights` thread.
 const insightReplies: Record<string, string> = {
@@ -377,10 +449,13 @@ Want me to prepare these trades for your review?
 \`\`\`bank:suggestions
 { "items": [
   { "kind": "prompt", "label": "Prepare the trades", "send": "Prepare these trades for review" },
-  { "kind": "prompt", "label": "Why did it drift?" },
-  { "kind": "link", "label": "View full portfolio", "url": "https://example.com/portfolio" }
+  { "kind": "prompt", "label": "Show my full portfolio", "send": "Show my full portfolio" },
+  { "kind": "prompt", "label": "Why did it drift?" }
 ] }
 \`\`\``,
+
+  'Show my full portfolio': portfolioOverview,
+  'Show my portfolio': portfolioOverview,
 
   'Spending this month': spendThisMonth,
   'Show me spending in June': spendThisMonth,
