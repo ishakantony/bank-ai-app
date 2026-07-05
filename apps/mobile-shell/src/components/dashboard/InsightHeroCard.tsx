@@ -8,11 +8,11 @@ const RING = ['#5fe3ff', '#b79bff', '#74e6a6', '#ffd36b']
 
 export function InsightHeroCard({ insight }: { insight: SpendInsight }) {
   return (
-    <div className="relative overflow-hidden rounded-3xl bg-gradient-to-bl from-brand-2 via-brand-1 to-brand-deep p-5 text-white shadow-[0_22px_50px_-24px_var(--color-brand-deep)]">
+    <div className="relative flex h-full flex-col overflow-hidden rounded-3xl bg-gradient-to-bl from-brand-2 via-brand-1 to-brand-deep p-5 text-white shadow-[0_22px_50px_-24px_var(--color-brand-deep)]">
       {/* Decorative interior glow */}
       <div className="pointer-events-none absolute -right-10 -top-12 size-40 rounded-full bg-white/15 blur-2xl" />
 
-      <div className="relative flex items-start gap-4">
+      <div className="relative flex flex-1 items-start gap-4">
         <p className="flex-1 text-[15px] leading-relaxed text-white/90">
           You spent{' '}
           <span className="num font-semibold text-[#8dfcb8]">
