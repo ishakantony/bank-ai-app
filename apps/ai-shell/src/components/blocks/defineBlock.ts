@@ -10,12 +10,16 @@ export interface LocalBlockDefinition {
   kind: 'local'
   schema: z.ZodType<unknown>
   Component: LazyExoticComponent<ComponentType<{ data: unknown }>>
+  /** Optional plain-text serialization of the block's data, for copy. */
+  toText?: (data: unknown) => string
 }
 
 /** The `{ schema, Component }` contract a federated remote exposes per block. */
 export interface RemoteBlockModule {
   schema: z.ZodType<unknown>
   Component: ComponentType<{ data: unknown }>
+  /** Optional plain-text serialization of the block's data, for copy. */
+  toText?: (data: unknown) => string
 }
 
 /**
@@ -47,6 +51,7 @@ export type BlockDefinition = LocalBlockDefinition | RemoteBlockDefinition
 export function defineBlock<S extends z.ZodTypeAny>(
   schema: S,
   loader: () => Promise<{ default: ComponentType<{ data: z.infer<S> }> }>,
+  toText?: (data: z.infer<S>) => string,
 ): BlockDefinition {
   return {
     kind: 'local',
@@ -54,5 +59,6 @@ export function defineBlock<S extends z.ZodTypeAny>(
     Component: lazy(loader) as LazyExoticComponent<
       ComponentType<{ data: unknown }>
     >,
+    toText: toText as ((data: unknown) => string) | undefined,
   }
 }

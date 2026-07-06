@@ -3,6 +3,8 @@ import { Check, Copy, RefreshCw, Square, ThumbsDown, ThumbsUp, Volume2 } from 'l
 import { toast } from 'sonner'
 import { useSpeech } from '../hooks/useSpeech'
 import { speechText } from '../hooks/speechText'
+import { copyText } from '../hooks/copyText'
+import { expandBlocksToText } from './blocks/blockText'
 import { useChatStore } from '../store/chatStore'
 import type { ThreadId } from '@bank-poc/shared'
 
@@ -48,7 +50,7 @@ export function MessageActions({
 
   const copy = async () => {
     try {
-      await navigator.clipboard.writeText(content)
+      await navigator.clipboard.writeText(copyText(await expandBlocksToText(content)))
       setCopied(true)
       clearTimeout(copiedTimer.current)
       copiedTimer.current = setTimeout(() => setCopied(false), 1500)
