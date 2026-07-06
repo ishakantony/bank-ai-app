@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import type { ThreadId } from '@bank-ai/shared'
+import type { ThreadId } from '@bank-poc/shared'
 import { blockCatalog, relevantBlocks } from './blocks.ts'
 
 /** A short framing per thread so replies stay on-topic. */

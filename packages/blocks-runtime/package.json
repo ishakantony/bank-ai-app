@@ -1,5 +1,5 @@
 {
-  "name": "@bank-ai/blocks-runtime",
+  "name": "@bank-poc/blocks-runtime",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -7,7 +7,7 @@
     ".": "./src/index.ts"
   },
   "dependencies": {
-    "@bank-ai/shared": "*",
+    "@bank-poc/shared": "*",
     "zustand": "^5.0.14"
   },
   "peerDependencies": {

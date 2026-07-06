@@ -1,5 +1,5 @@
 {
-  "name": "bank-ai-app",
+  "name": "bank-poc-app",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -9,20 +9,23 @@
     "packages/*"
   ],
   "scripts": {
-    "dev": "npm run dev -w @bank-ai/web",
-    "dev:shell": "npm run dev -w @bank-ai/mobile-shell",
-    "dev:shell:mfe": "concurrently -k -n promo,shell -c magenta,cyan \"npm run remote:promo\" \"npm run dev -w @bank-ai/mobile-shell\"",
-    "remote:promo": "npm run dev -w @bank-ai/promo-carousel",
-    "build:shell": "npm run build -w @bank-ai/mobile-shell",
-    "dev:mfe": "concurrently -k -n spend,portfolio,wealth,web -c magenta,yellow,blue,cyan \"npm run remote\" \"npm run remote:portfolio\" \"npm run remote:wealth\" \"npm run dev -w @bank-ai/web\"",
-    "dev:real": "concurrently -k -n server,spend,portfolio,wealth,web -c green,magenta,yellow,blue,cyan \"npm run server -w @bank-ai/server\" \"npm run remote\" \"npm run remote:portfolio\" \"npm run remote:wealth\" \"npm run dev -w @bank-ai/web -- --mode real\"",
-    "server": "npm run server -w @bank-ai/server",
-    "remote": "npm run dev -w @bank-ai/blocks-spend",
-    "remote:portfolio": "npm run dev -w @bank-ai/blocks-portfolio",
-    "remote:wealth": "npm run dev -w @bank-ai/blocks-wealth",
-    "build": "tsc -b && npm run build -w @bank-ai/web",
+    "dev:ai": "npm run dev:mfe",
+    "dev:mobile": "npm run dev:shell:mfe",
+    "dev:server": "npm run server",
+    "dev": "npm run dev -w @bank-poc/ai-shell",
+    "dev:shell": "npm run dev -w @bank-poc/mobile-shell",
+    "dev:shell:mfe": "concurrently -k -n promo,shell -c magenta,cyan \"npm run remote:promo\" \"npm run dev -w @bank-poc/mobile-shell\"",
+    "remote:promo": "npm run dev -w @bank-poc/mfe-mobile-promo-carousel",
+    "build:shell": "npm run build -w @bank-poc/mobile-shell",
+    "dev:mfe": "concurrently -k -n spend,portfolio,wealth,ai -c magenta,yellow,blue,cyan \"npm run remote\" \"npm run remote:portfolio\" \"npm run remote:wealth\" \"npm run dev -w @bank-poc/ai-shell\"",
+    "dev:real": "concurrently -k -n server,spend,portfolio,wealth,ai -c green,magenta,yellow,blue,cyan \"npm run server -w @bank-poc/server\" \"npm run remote\" \"npm run remote:portfolio\" \"npm run remote:wealth\" \"npm run dev -w @bank-poc/ai-shell -- --mode real\"",
+    "server": "npm run server -w @bank-poc/server",
+    "remote": "npm run dev -w @bank-poc/mfe-ai-blocks-spend",
+    "remote:portfolio": "npm run dev -w @bank-poc/mfe-ai-blocks-portfolio",
+    "remote:wealth": "npm run dev -w @bank-poc/mfe-ai-blocks-wealth",
+    "build": "tsc -b && npm run build -w @bank-poc/ai-shell",
     "lint": "oxlint",
-    "preview": "npm run preview -w @bank-ai/web"
+    "preview": "npm run preview -w @bank-poc/ai-shell"
   },
   "devDependencies": {
     "concurrently": "^10.0.3",

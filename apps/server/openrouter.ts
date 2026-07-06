@@ -1,6 +1,6 @@
 import OpenAI from 'openai'
 import type { ChatCompletionMessageParam } from 'openai/resources/chat/completions'
-import type { ThreadId } from '@bank-ai/shared'
+import type { ThreadId } from '@bank-poc/shared'
 import { buildSystemPrompt } from './prompt.ts'
 
 /** A single turn of conversation history sent by the client. */

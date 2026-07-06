@@ -1,5 +1,5 @@
 /**
- * @bank-ai/shared — the contract layer shared by the web app and the Hono
+ * @bank-poc/shared — the contract layer shared by the web app and the Hono
  * server. Holds the domain types and every custom block's Zod schema (the
  * single source of truth for each block's data shape). Consumed as raw TS
  * source (no build step): the web app resolves it via Vite and the server via

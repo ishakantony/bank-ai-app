@@ -1,5 +1,5 @@
 import { http, HttpResponse, delay } from 'msw'
-import type { BlockRemoteManifest } from '@bank-ai/shared'
+import type { BlockRemoteManifest } from '@bank-poc/shared'
 import type { AuthSession, DashboardData } from '../types'
 
 // The federated-widget manifest the shell registers at boot. The promo carousel

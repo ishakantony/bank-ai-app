@@ -1,5 +1,5 @@
 {
-  "name": "@bank-ai/blocks-kit",
+  "name": "@bank-poc/blocks-kit",
   "private": true,
   "version": "0.0.0",
   "type": "module",

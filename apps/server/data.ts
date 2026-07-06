@@ -1,4 +1,4 @@
-import type { Insight, Topic } from '@bank-ai/shared'
+import type { Insight, Topic } from '@bank-poc/shared'
 
 /**
  * Static seed data served by the real backend. This is intentionally a separate

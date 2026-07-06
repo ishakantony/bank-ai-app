@@ -1,7 +1,7 @@
 import type { ComponentType } from 'react'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
-import type { ThreadId } from '@bank-ai/shared'
+import type { ThreadId } from '@bank-poc/shared'
 
 /**
  * The block bus: a tiny, generic coordination layer for custom blocks.
@@ -22,7 +22,7 @@ import type { ThreadId } from '@bank-ai/shared'
  * The wiring lives in the reply text as ids the model emits, so new
  * "block reacts to block" cases need no bespoke plumbing — just another id.
  *
- * This module lives in `@bank-ai/blocks-runtime` and is a Module Federation
+ * This module lives in `@bank-poc/blocks-runtime` and is a Module Federation
  * shared singleton, so the host and every block remote coordinate through one
  * bus instance — a wizard shipped by a remote registers into the same bus the
  * host's `BlockOverlayHost` and `suggestions` pills read.

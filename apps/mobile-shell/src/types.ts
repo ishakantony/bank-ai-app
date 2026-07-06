@@ -1,7 +1,7 @@
 /**
  * Shell-local domain types. These describe the mock API payloads the shell
  * consumes (auth + the home dashboard). Kept here rather than in
- * `@bank-ai/shared` because they're specific to this app, not the chat contract.
+ * `@bank-poc/shared` because they're specific to this app, not the chat contract.
  */
 
 export interface AuthUser {

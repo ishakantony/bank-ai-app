@@ -1,6 +1,6 @@
 import { serve } from '@hono/node-server'
 import { Hono } from 'hono'
-import type { BlockRemoteManifest, ThreadId } from '@bank-ai/shared'
+import type { BlockRemoteManifest, ThreadId } from '@bank-poc/shared'
 import { insights, topics } from './data.ts'
 import { generateReply, type ChatTurn } from './openrouter.ts'
 

@@ -1,5 +1,5 @@
 {
-  "name": "@bank-ai/shared",
+  "name": "@bank-poc/shared",
   "private": true,
   "version": "0.0.0",
   "type": "module",

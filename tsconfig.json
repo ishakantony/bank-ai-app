@@ -4,14 +4,14 @@
     { "path": "./packages/shared/tsconfig.json" },
     { "path": "./packages/blocks-kit/tsconfig.json" },
     { "path": "./packages/blocks-runtime/tsconfig.json" },
-    { "path": "./apps/web/tsconfig.app.json" },
-    { "path": "./apps/web/tsconfig.node.json" },
+    { "path": "./apps/ai-shell/tsconfig.app.json" },
+    { "path": "./apps/ai-shell/tsconfig.node.json" },
     { "path": "./apps/mobile-shell/tsconfig.app.json" },
     { "path": "./apps/mobile-shell/tsconfig.node.json" },
     { "path": "./apps/server/tsconfig.json" },
-    { "path": "./apps/blocks-spend/tsconfig.json" },
-    { "path": "./apps/promo-carousel/tsconfig.json" },
-    { "path": "./apps/blocks-portfolio/tsconfig.json" },
-    { "path": "./apps/blocks-wealth/tsconfig.json" }
+    { "path": "./apps/mfe-ai-blocks-spend/tsconfig.json" },
+    { "path": "./apps/mfe-mobile-promo-carousel/tsconfig.json" },
+    { "path": "./apps/mfe-ai-blocks-portfolio/tsconfig.json" },
+    { "path": "./apps/mfe-ai-blocks-wealth/tsconfig.json" }
   ]
 }

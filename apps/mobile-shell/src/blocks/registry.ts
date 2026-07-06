@@ -1,6 +1,6 @@
 import type { ComponentType } from 'react'
 import { loadRemote, registerRemotes } from '@module-federation/runtime'
-import type { BlockRemoteManifest } from '@bank-ai/shared'
+import type { BlockRemoteManifest } from '@bank-poc/shared'
 
 /**
  * A module loaded from a federated remote. Two flavors share this shape:

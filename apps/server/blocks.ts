@@ -1,16 +1,16 @@
 import { z } from 'zod'
-import type { ThreadId } from '@bank-ai/shared'
+import type { ThreadId } from '@bank-poc/shared'
 import {
   actionCardSchema,
   allocationDonutSchema,
   driftBarsSchema,
   suggestionsSchema,
   wizardSchema,
-} from '@bank-ai/shared'
+} from '@bank-poc/shared'
 
 /**
  * Server-side catalog of the custom blocks the assistant may emit. The Zod
- * schemas are imported from `@bank-ai/shared` (the single source of truth for
+ * schemas are imported from `@bank-poc/shared` (the single source of truth for
  * each block's contract, shared with the web app); here we attach the
  * model-facing teaching material — a
  * one-line "use when", and one compact example of the exact ```bank:<name>```

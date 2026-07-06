@@ -1,0 +1,47 @@
+{
+  "name": "@bank-poc/ai-shell",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@bank-poc/blocks-kit": "*",
+    "@bank-poc/blocks-runtime": "*",
+    "@bank-poc/shared": "*",
+    "@module-federation/runtime": "^2.6.0",
+    "@tanstack/react-query": "^5.101.1",
+    "eruda": "^3.4.3",
+    "lucide-react": "^1.21.0",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "react-markdown": "^10.1.0",
+    "react-router-dom": "^7.18.0",
+    "recharts": "^3.9.0",
+    "remark-directive": "^4.0.0",
+    "remark-gfm": "^4.0.1",
+    "sonner": "^2.0.7",
+    "unist-util-visit": "^5.1.0",
+    "zod": "^4.4.3",
+    "zustand": "^5.0.14"
+  },
+  "devDependencies": {
+    "@module-federation/vite": "^1.16.12",
+    "@tailwindcss/vite": "^4.3.1",
+    "@types/node": "^26.0.0",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.2",
+    "msw": "^2.14.6",
+    "tailwindcss": "^4.3.1",
+    "vite": "^8.1.0"
+  },
+  "msw": {
+    "workerDirectory": [
+      "public"
+    ]
+  }
+}

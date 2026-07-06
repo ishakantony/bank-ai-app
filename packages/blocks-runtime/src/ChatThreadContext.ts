@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react'
-import type { ThreadId } from '@bank-ai/shared'
+import type { ThreadId } from '@bank-poc/shared'
 
 /**
  * The thread a message belongs to, provided by `MessageThread`. Lets a block
@@ -7,7 +7,7 @@ import type { ThreadId } from '@bank-ai/shared'
  * right thread without threading props through the generic `CustomBlock`
  * renderer (whose contract is `{ data }` only).
  *
- * Lives in `@bank-ai/blocks-runtime` (a Module Federation shared singleton) so
+ * Lives in `@bank-poc/blocks-runtime` (a Module Federation shared singleton) so
  * the context identity is the same for the host and every block remote.
  */
 const ChatThreadContext = createContext<ThreadId | null>(null)

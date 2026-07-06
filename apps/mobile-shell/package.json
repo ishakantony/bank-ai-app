@@ -1,5 +1,5 @@
 {
-  "name": "@bank-ai/mobile-shell",
+  "name": "@bank-poc/mobile-shell",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -9,7 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@bank-ai/shared": "*",
+    "@bank-poc/shared": "*",
     "@module-federation/runtime": "^2.6.0",
     "@tanstack/react-query": "^5.101.1",
     "lucide-react": "^1.21.0",

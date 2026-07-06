@@ -1,4 +1,4 @@
-import type { ThreadId } from '@bank-ai/shared'
+import type { ThreadId } from '@bank-poc/shared'
 
 /**
  * A one-slot indirection for sending a chat message from a block, so a block
@@ -6,7 +6,7 @@ import type { ThreadId } from '@bank-ai/shared'
  * `chatStore`. The host wires the real sender in once at boot with
  * `setChatSend`; blocks call `sendChatMessage`.
  *
- * Kept in `@bank-ai/blocks-runtime` (a Module Federation shared singleton) so
+ * Kept in `@bank-poc/blocks-runtime` (a Module Federation shared singleton) so
  * the sender the host registers is the one a remote block invokes.
  */
 type ChatSend = (threadId: ThreadId, text: string) => void

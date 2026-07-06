@@ -53,7 +53,7 @@ An **npm-workspaces monorepo** (`apps/*` + `packages/*`):
 
 ```
 apps/
-  web/          the React + Vite frontend (@bank-ai/web)
+  ai-shell/     the React + Vite AI frontend host (@bank-poc/ai-shell)
     src/
       api/          fetch wrappers (topics, insights, chat)
       components/   UI; blocks/ = custom reply blocks, welcome/ = per-topic screens
@@ -62,9 +62,14 @@ apps/
       pages/        WelcomePage, ChatPage, DocsPage
       store/        chatStore (Zustand)
       index.css     Tailwind v4 theme tokens, keyframes, utilities
-  server/       the Hono backend (@bank-ai/server) — real LLM mode
+  mobile-shell/ the mobile app host (@bank-poc/mobile-shell)
+  mfe-ai-blocks-spend/      MF remote — spend blocks (@bank-poc/mfe-ai-blocks-spend)
+  mfe-ai-blocks-portfolio/  MF remote — portfolio blocks (@bank-poc/mfe-ai-blocks-portfolio)
+  mfe-ai-blocks-wealth/     MF remote — wealth blocks (@bank-poc/mfe-ai-blocks-wealth)
+  mfe-mobile-promo-carousel/ MF remote — promo carousel (@bank-poc/mfe-mobile-promo-carousel)
+  server/       the Hono backend (@bank-poc/server) — real LLM mode
 packages/
-  shared/       @bank-ai/shared — domain types + block Zod schemas
+  shared/       @bank-poc/shared — domain types + block Zod schemas
                 (the contract shared by web and server; raw TS, no build)
 ```
 

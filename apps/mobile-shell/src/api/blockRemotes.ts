@@ -1,4 +1,4 @@
-import type { BlockRemoteManifest } from '@bank-ai/shared'
+import type { BlockRemoteManifest } from '@bank-poc/shared'
 
 /**
  * Fetch the federated-block manifest the shell registers at boot. The shell
