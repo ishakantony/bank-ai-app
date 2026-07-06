@@ -49,8 +49,20 @@ export function HomePage() {
             <QuickActions actions={data.quickActions} />
           </div>
 
-          {/* Assets: total + AI summary + expandable accounts, one glass card. */}
-          <div className="glass animate-float-in overflow-hidden rounded-3xl [animation-delay:180ms]">
+          {/* Assets: total + AI summary + expandable accounts, one glass card.
+              We drop `.glass`'s 1px layout border here so the highlighted
+              summary band bleeds full-width to the card edge (overflow-hidden
+              otherwise clips children to inside the border, revealing a white
+              hairline beside the tinted band). Definition comes from the drop
+              shadow + inset top highlight instead. */}
+          <div
+            className="glass animate-float-in overflow-hidden rounded-3xl [animation-delay:180ms]"
+            style={{
+              border: 'none',
+              boxShadow:
+                '0 12px 40px -18px oklch(0.4 0.09 262 / 0.35), inset 0 1px 0 0 oklch(1 0 0 / 0.6)',
+            }}
+          >
             <TotalAssets
               amount={data.totalAssets}
               hidden={balancesHidden}
