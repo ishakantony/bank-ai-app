@@ -36,14 +36,33 @@
   --color-ink-soft: oklch(0.48 0.02 262);
 }
 
-/* Frosted light-glass surface — matches the host's dashboard cards. */
+/* Frosted light-glass surface — matches the host's dashboard cards.
+ * No drop shadow: the cards sit flat on the bento gradient backdrop; only a
+ * 1px inner top highlight remains to give the frosted edge some definition. */
 @utility glass {
   background: color-mix(in oklab, white 62%, transparent);
   border: 1px solid color-mix(in oklab, white 70%, transparent);
   backdrop-filter: blur(20px);
-  box-shadow:
-    0 12px 40px -18px oklch(0.4 0.09 262 / 0.35),
-    inset 0 1px 0 0 oklch(1 0 0 / 0.6);
+  box-shadow: inset 0 1px 0 0 oklch(1 0 0 / 0.6);
+}
+
+/* Bento backdrop for each carousel slide — a light vertical gradient that fades
+ * to transparent at the top and tucks under the chrome above with rounded
+ * bottom corners. Second declaration is the wide-gamut (display-p3) variant;
+ * browsers that don't understand it fall back to the sRGB line above. */
+@utility bento-bg {
+  background: linear-gradient(
+    360deg,
+    #eeeeef 0%,
+    #f7f7f7 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  background: linear-gradient(
+    360deg,
+    color(display-p3 0.933 0.933 0.937) 0%,
+    color(display-p3 0.969 0.969 0.969) 50%,
+    color(display-p3 1 1 1 / 0) 100%
+  );
 }
 
 /* Tabular, lined figures for money so digits don't jitter as balances change. */

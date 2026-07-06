@@ -40,7 +40,9 @@ export function HomePage() {
         <div className="mt-5 space-y-6">
           {/* The promo carousel is a self-fetching federated widget: the shell
               just mounts it and knows nothing about promo/insight data. */}
-          <div className="animate-float-in">
+          {/* -mx-4 cancels AppShell's px-4 so the carousel scroll track is full-bleed;
+              the remote re-adds the inset inside its own scroller so cards stay aligned. */}
+          <div className="animate-float-in -mx-4">
             <RemoteWidget name="promoCarousel" />
           </div>
 

@@ -81,7 +81,7 @@ export default function PromoCarousel() {
 /** Loading placeholder that reserves the carousel's height (matches h-60). */
 function CarouselSkeleton() {
   return (
-    <div>
+    <div className="px-4">
       <div className="glass h-60 w-full animate-pulse rounded-3xl" />
       <div className="mt-3 flex justify-center gap-1.5">
         {[0, 1, 2].map((i) => (
@@ -136,14 +136,17 @@ function Carousel({ slides }: { slides: CarouselSlide[] }) {
       <div
         ref={scrollerRef}
         onScroll={handleScroll}
-        className="no-scrollbar flex snap-x snap-mandatory gap-3 overflow-x-auto"
+        className="no-scrollbar flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 scroll-px-4"
       >
         {slides.map((slide, i) => (
-          <div key={i} className="h-60 w-full shrink-0 snap-start">
+          <div
+            key={i}
+            className="bento-bg flex h-[244px] w-full shrink-0 snap-start flex-col items-start justify-center gap-3 rounded-b-3xl px-1.5 pb-1.5"
+          >
             {slide.kind === 'full' ? (
-              slide.card
+              <div className="h-full w-full">{slide.card}</div>
             ) : (
-              <div className="grid h-full grid-cols-2 grid-rows-2 gap-3">
+              <div className="grid h-full w-full grid-cols-2 grid-rows-2 gap-3">
                 {slide.tiles.map((promo, t) => (
                   <PromoTile
                     key={promo.id}

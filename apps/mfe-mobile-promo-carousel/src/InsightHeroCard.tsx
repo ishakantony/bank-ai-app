@@ -14,7 +14,7 @@ function formatRM(value: number): string {
 
 export function InsightHeroCard({ insight }: { insight: SpendInsight }) {
   return (
-    <div className="relative flex h-full flex-col overflow-hidden rounded-3xl bg-gradient-to-bl from-brand-2 via-brand-1 to-brand-deep p-5 text-white shadow-[0_22px_50px_-24px_var(--color-brand-deep)]">
+    <div className="relative flex h-full flex-col overflow-hidden rounded-3xl bg-gradient-to-bl from-brand-2 via-brand-1 to-brand-deep p-5 text-white">
       {/* Decorative interior glow */}
       <div className="pointer-events-none absolute -right-10 -top-12 size-40 rounded-full bg-white/15 blur-2xl" />
 
