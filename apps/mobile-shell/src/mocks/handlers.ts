@@ -103,7 +103,7 @@ function nameFromEmail(email: string): string {
 }
 
 const dashboard: DashboardData = {
-  greetingName: 'Aisyah',
+  greetingName: 'Ishak',
   quickActions: [
     { id: 'duitnow', label: 'DuitNow', icon: 'duitnow' },
     { id: 'exchange', label: 'Currency Exchange', icon: 'exchange' },
