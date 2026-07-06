@@ -14,6 +14,15 @@ const blockRemotes: BlockRemoteManifest = {
       entry: 'http://localhost:9995/remoteEntry.js',
       blocks: ['promoCarousel'],
     },
+    // Team B's AI insight cards. The carousel resolves an AI feed descriptor's
+    // `block` id against this list to know which remote to load — so a new AI
+    // card ships by adding its id to a remote's `blocks[]` here, zero carousel
+    // changes.
+    {
+      name: 'mobileAiInsight',
+      entry: 'http://localhost:9994/remoteEntry.js',
+      blocks: ['insightCard'],
+    },
   ],
 }
 
@@ -22,27 +31,64 @@ const blockRemotes: BlockRemoteManifest = {
 // federated code runs inside the host page, so its relative fetch('/api/promos')
 // resolves against the host origin and is intercepted by this worker.
 const promos = {
+  // The insight slot is an AI card: the carousel delegates it to Team B's
+  // `insightCard` remote (resolved by block id via /api/block-remotes) and
+  // passes `data` through opaquely. If that remote is down or the data is bad,
+  // the carousel degrades gracefully — swap this for the plain SpendInsight
+  // shape (`{ amount, month, deltaPct, blurb, donut }`) for the non-AI path.
   insight: {
-    amount: 6800,
-    month: 'May',
-    deltaPct: 45,
-    blurb:
-      'a 45% increase compared to your 6-month historical average. Your Raya travel and dining drove most of it.',
-    donut: [
-      { label: 'Dining', value: 2450 },
-      { label: 'Travel', value: 1980 },
-      { label: 'Shopping', value: 1420 },
-      { label: 'Groceries', value: 950 },
-    ],
+    kind: 'ai',
+    block: 'insightCard',
+    data: {
+      period: 'May',
+      headline:
+        'Raya travel and dining drove your spend — up 45% on your 6-month rhythm.',
+      amount: 6800,
+      currency: 'RM',
+      delta: '+45% vs 6-mo avg',
+      deltaTone: 'warning',
+      cta: 'Full Insight',
+      // Tapping opens the Bank AI chat on the insights topic, seeded with this
+      // prompt — a specific insight conversation.
+      topic: 'insights',
+      prompt: 'Break down my May spending and why it jumped 45%',
+      categories: [
+        { label: 'Dining', amount: 2450 },
+        { label: 'Travel', amount: 1980 },
+        { label: 'Shopping', amount: 1420 },
+        { label: 'Groceries', amount: 950 },
+      ],
+    },
   },
-  // Six promos feed the carousel's two bento slides (groups of three).
+  // Six tiles feed the carousel's two bento slides (groups of three). Bento
+  // cells can be normal promos OR AI banners (same `{ kind:'ai', block, data }`
+  // descriptor as the insight slot) — the carousel delegates the AI ones to the
+  // `insightCard` remote opaquely, so a bento mixes promo banners with AI
+  // banners. Each AI tile's `data.variant` matches the cell it lands in: the
+  // FIRST tile of a slide is the large one (left→row-span-2 tall, top→col-span-2
+  // wide); the rest are single `compact` cells.
   promos: [
+    // Slide 1 bento (left layout): AI tall lead + two promo tiles.
     {
-      id: 'asb',
-      kind: 'offer',
-      eyebrow: 'Wealth',
-      title: 'Top up ASB before month-end for bonus units 📈',
-      thumb: '📈',
+      id: 'ai-dining',
+      kind: 'ai',
+      block: 'insightCard',
+      data: {
+        variant: 'tall',
+        period: 'Q2',
+        headline: 'Dining is your fastest-growing category this quarter.',
+        amount: 2450,
+        currency: 'RM',
+        delta: '+18%',
+        deltaTone: 'warning',
+        topic: 'insights',
+        prompt: 'Why is my dining spend growing this quarter?',
+        categories: [
+          { label: 'Dining', amount: 2450 },
+          { label: 'Shopping', amount: 1420 },
+          { label: 'Transport', amount: 980 },
+        ],
+      },
     },
     {
       id: 'foodie',
@@ -53,6 +99,35 @@ const promos = {
       thumb: '🍜',
     },
     {
+      id: 'news',
+      kind: 'news',
+      eyebrow: '15 Nov 2024 · Market News',
+      title: 'Ringgit firms as BNM holds OPR at 3.00%',
+      thumb: '📰',
+    },
+    // Slide 2 bento (top layout): AI wide lead + a promo tile + AI compact.
+    {
+      id: 'ai-cashflow',
+      kind: 'ai',
+      block: 'insightCard',
+      data: {
+        variant: 'wide',
+        period: 'This week',
+        headline: 'Spending is tracking below your weekly budget — nice one.',
+        amount: 820,
+        currency: 'RM',
+        delta: '−12% vs budget',
+        deltaTone: 'positive',
+        topic: 'insights',
+        prompt: 'How am I tracking against my weekly budget?',
+        categories: [
+          { label: 'Groceries', amount: 360 },
+          { label: 'Transport', amount: 260 },
+          { label: 'Dining', amount: 200 },
+        ],
+      },
+    },
+    {
       id: 'petrol',
       kind: 'offer',
       eyebrow: 'Cards',
@@ -61,26 +136,26 @@ const promos = {
       thumb: '⛽',
     },
     {
-      id: 'news',
-      kind: 'news',
-      eyebrow: '15 Nov 2024 · Market News',
-      title: 'Ringgit firms as BNM holds OPR at 3.00%',
-      thumb: '📰',
-    },
-    {
-      id: 'fd',
-      kind: 'offer',
-      eyebrow: 'Fixed Deposit',
-      title: 'p.a. on a 12-month FD-i, locked in today',
-      highlight: '4.10%',
-      thumb: '🏦',
-    },
-    {
-      id: 'travel',
-      kind: 'offer',
-      eyebrow: 'Protection',
-      title: 'Travel cover from RM9 per trip ✈️',
-      thumb: '✈️',
+      id: 'ai-subs',
+      kind: 'ai',
+      block: 'insightCard',
+      data: {
+        variant: 'compact',
+        period: 'Subscriptions',
+        headline: 'Three active subscriptions renew this month.',
+        amount: 189,
+        currency: 'RM',
+        delta: '3 active',
+        deltaTone: 'info',
+        // No `topic` — this one opens a plain regular chat (seeded with the
+        // prompt) rather than a specific insight thread.
+        prompt: 'What subscriptions do I have renewing this month?',
+        categories: [
+          { label: 'Streaming', amount: 89 },
+          { label: 'Cloud', amount: 60 },
+          { label: 'Fitness', amount: 40 },
+        ],
+      },
     },
   ],
 }

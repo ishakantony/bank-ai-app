@@ -15,6 +15,23 @@ export interface PromoCard {
   thumb?: string
 }
 
+/**
+ * An AI card in the feed — for the insight slot OR any bento cell. The carousel
+ * treats it opaquely: it delegates to a Team-B-owned federated card by `block`
+ * id and passes `data` through untouched (`RemoteAiCard` resolves + validates
+ * it). So a bento can mix normal promo banners with AI banners, and new AI cards
+ * ship with no carousel change. `id` keys the tile in the bento grid.
+ */
+export interface AiTile {
+  id: string
+  kind: 'ai'
+  block: string
+  data: unknown
+}
+
+/** A single bento cell: a normal promo tile or a delegated AI banner. */
+export type BentoTileData = PromoCard | AiTile
+
 /** One slice of the monthly-spend donut on the insight hero card. */
 export interface DonutSlice {
   label: string

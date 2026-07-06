@@ -1,0 +1,48 @@
+/*
+ * Self-contained styles for the mobile AI insight card. This stylesheet is
+ * bundled into the federated chunk and injected into the host document when the
+ * card loads, so the remote can use any Tailwind utility without the shell
+ * having "seen" it.
+ *
+ * Preflight (Tailwind's base reset) is deliberately NOT imported — the shell
+ * already ships it, and re-applying a global reset from an injected remote
+ * stylesheet would clobber the shell's layout. We pull in only the theme tokens
+ * and the generated utilities. Palette mirrors the promo carousel so the AI card
+ * sits seamlessly among the shell's cards.
+ */
+@import 'tailwindcss/theme' layer(theme);
+@import 'tailwindcss/utilities' layer(utilities);
+
+@theme {
+  --font-sans:
+    'Manrope', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display:
+    'Sora', 'Manrope', ui-sans-serif, system-ui, -apple-system, sans-serif;
+
+  /* Brand gradient stops — indigo → azure → cyan (insight card + accents). */
+  --color-brand-1: oklch(0.55 0.17 265); /* indigo */
+  --color-brand-2: oklch(0.62 0.16 245); /* azure */
+  --color-brand-3: oklch(0.72 0.13 205); /* cyan */
+  --color-brand-deep: oklch(0.4 0.13 260); /* deep royal — card base */
+
+  /* Ink surface for the action pill. */
+  --color-ink: oklch(0.24 0.03 262);
+
+  /* Delta-badge tones: a muted tint (used at /25 for the pill background) plus
+   * a brighter -fg for the text so it reads on the deep card. */
+  --color-tone-positive: oklch(0.72 0.16 155);
+  --color-tone-positive-fg: oklch(0.86 0.15 155);
+  --color-tone-negative: oklch(0.68 0.19 25);
+  --color-tone-negative-fg: oklch(0.82 0.16 25);
+  --color-tone-warning: oklch(0.8 0.15 80);
+  --color-tone-warning-fg: oklch(0.9 0.13 85);
+  --color-tone-info: oklch(0.75 0.14 230);
+  --color-tone-info-fg: oklch(0.86 0.12 230);
+}
+
+/* Tabular, lined figures for money so digits don't jitter. */
+@utility num {
+  font-family: var(--font-display);
+  font-variant-numeric: tabular-nums lining-nums;
+  letter-spacing: -0.01em;
+}

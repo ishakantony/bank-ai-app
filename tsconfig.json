@@ -11,6 +11,7 @@
     { "path": "./apps/server/tsconfig.json" },
     { "path": "./apps/mfe-ai-blocks-spend/tsconfig.json" },
     { "path": "./apps/mfe-mobile-promo-carousel/tsconfig.json" },
+    { "path": "./apps/mfe-mobile-ai-insight/tsconfig.json" },
     { "path": "./apps/mfe-ai-blocks-portfolio/tsconfig.json" },
     { "path": "./apps/mfe-ai-blocks-wealth/tsconfig.json" }
   ]

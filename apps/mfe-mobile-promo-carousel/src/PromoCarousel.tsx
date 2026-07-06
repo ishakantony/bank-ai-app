@@ -1,8 +1,53 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { z } from 'zod'
 import { ArrowUpRight, Newspaper } from 'lucide-react'
-import type { PromoCard } from './types'
+import type { BentoTileData, PromoCard } from './types'
 import { InsightHeroCard } from './InsightHeroCard'
+import { RemoteAiCard } from './RemoteAiCard'
+
+/**
+ * An AI card descriptor in the feed: a logical `block` id + opaque `data`. Used
+ * both for the insight slot and for AI banners inside a bento. The carousel
+ * never inspects `data` (hence `unknown`) — it delegates to `RemoteAiCard`.
+ */
+const aiCardSchema = z.object({
+  kind: z.literal('ai'),
+  block: z.string(),
+  data: z.unknown(),
+})
+
+/** A bento cell: a normal promo tile, or an AI banner (adds `id` for its key). */
+const bentoTileSchema = z.union([
+  aiCardSchema.extend({ id: z.string() }),
+  z.object({
+    id: z.string(),
+    kind: z.enum(['news', 'offer']),
+    eyebrow: z.string(),
+    title: z.string(),
+    highlight: z.string().optional(),
+    thumb: z.string().optional(),
+  }),
+])
+
+/**
+ * The insight slot is one of two shapes:
+ *   - an AI card `{ kind: 'ai', block, data }` — the carousel delegates it to a
+ *     Team-B-owned federated card by block id, passing `data` opaquely (never
+ *     inspecting it — hence `unknown`). This is the whole coupling surface: the
+ *     feed names a logical block, and `RemoteAiCard` resolves + validates it.
+ *   - the plain `SpendInsight` shape — the built-in text/SVG hero (fallback).
+ * Tried AI-first; the plain shape has no `kind`, so the union stays unambiguous.
+ */
+const insightSchema = z.union([
+  aiCardSchema,
+  z.object({
+    amount: z.number(),
+    month: z.string(),
+    deltaPct: z.number(),
+    blurb: z.string(),
+    donut: z.array(z.object({ label: z.string(), value: z.number() })),
+  }),
+])
 
 /**
  * Runtime shape of the `/api/promos` payload this widget owns. The remote is
@@ -10,23 +55,8 @@ import { InsightHeroCard } from './InsightHeroCard'
  * with the host) rather than trusting a host-supplied schema.
  */
 const promosResponseSchema = z.object({
-  insight: z.object({
-    amount: z.number(),
-    month: z.string(),
-    deltaPct: z.number(),
-    blurb: z.string(),
-    donut: z.array(z.object({ label: z.string(), value: z.number() })),
-  }),
-  promos: z.array(
-    z.object({
-      id: z.string(),
-      kind: z.enum(['news', 'offer']),
-      eyebrow: z.string(),
-      title: z.string(),
-      highlight: z.string().optional(),
-      thumb: z.string().optional(),
-    }),
-  ),
+  insight: insightSchema,
+  promos: z.array(bentoTileSchema),
 })
 
 type PromosResponse = z.infer<typeof promosResponseSchema>
@@ -69,8 +99,17 @@ export default function PromoCarousel() {
   if (!data) return <CarouselSkeleton />
 
   const { insight, promos } = data
+  // When the feed flags the insight slot as an AI card, delegate rendering to
+  // the Team B remote (block-agnostic, resolved by id at runtime), falling back
+  // to nothing on failure; otherwise render the built-in text/SVG hero as today.
+  const insightCard =
+    'kind' in insight ? (
+      <RemoteAiCard block={insight.block} data={insight.data} />
+    ) : (
+      <InsightHeroCard insight={insight} />
+    )
   const slides: CarouselSlide[] = [
-    { kind: 'full', card: <InsightHeroCard insight={insight} /> },
+    { kind: 'full', card: insightCard },
     { kind: 'bento', layout: 'left', tiles: promos.slice(0, 3) },
     { kind: 'bento', layout: 'top', tiles: promos.slice(3, 6) },
   ]
@@ -106,7 +145,7 @@ function CarouselSkeleton() {
  */
 export type CarouselSlide =
   | { kind: 'full'; card: ReactNode }
-  | { kind: 'bento'; layout: 'left' | 'top'; tiles: PromoCard[] }
+  | { kind: 'bento'; layout: 'left' | 'top'; tiles: BentoTileData[] }
 
 /** In a bento, only the lead (first) tile spans; the rest fill single cells. */
 const LEAD_SPAN: Record<'left' | 'top', string> = {
@@ -147,10 +186,10 @@ function Carousel({ slides }: { slides: CarouselSlide[] }) {
               <div className="h-full w-full">{slide.card}</div>
             ) : (
               <div className="grid h-full w-full grid-cols-2 grid-rows-2 gap-3">
-                {slide.tiles.map((promo, t) => (
-                  <PromoTile
-                    key={promo.id}
-                    promo={promo}
+                {slide.tiles.map((tile, t) => (
+                  <BentoTile
+                    key={tile.id}
+                    tile={tile}
                     className={t === 0 ? LEAD_SPAN[slide.layout] : ''}
                   />
                 ))}
@@ -172,6 +211,29 @@ function Carousel({ slides }: { slides: CarouselSlide[] }) {
       </div>
     </div>
   )
+}
+
+/**
+ * One bento cell. Branches on the tile kind: an AI banner is delegated to its
+ * Team-B card (block-agnostic — the span class sizes the cell, the card adapts
+ * its own layout to fill it), a normal tile renders as today. Written once; adding
+ * new AI cards never touches this. On AI failure the cell is empty (graceful).
+ */
+function BentoTile({
+  tile,
+  className = '',
+}: {
+  tile: BentoTileData
+  className?: string
+}) {
+  if (tile.kind === 'ai') {
+    return (
+      <div className={`h-full w-full ${className}`}>
+        <RemoteAiCard block={tile.block} data={tile.data} />
+      </div>
+    )
+  }
+  return <PromoTile promo={tile} className={className} />
 }
 
 function PromoTile({
