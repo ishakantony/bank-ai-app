@@ -1,0 +1,62 @@
+/*
+ * Self-contained styles for the promo carousel. This stylesheet is bundled into
+ * the federated chunk and injected into the host document when the widget loads,
+ * so the remote can use any Tailwind utility without the host having "seen" it.
+ *
+ * Preflight (Tailwind's base reset) is deliberately NOT imported — the host
+ * already ships it, and re-applying a global reset from an injected remote
+ * stylesheet would clobber the host's layout. We pull in only the theme tokens
+ * and the generated utilities. Only the tokens/utilities the carousel + insight
+ * hero actually reference are declared below.
+ */
+@import 'tailwindcss/theme' layer(theme);
+@import 'tailwindcss/utilities' layer(utilities);
+
+@theme {
+  --font-sans:
+    'Manrope', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display:
+    'Sora', 'Manrope', ui-sans-serif, system-ui, -apple-system, sans-serif;
+
+  /* Brand gradient stops — indigo → azure → cyan (insight hero + accents). */
+  --color-brand-1: oklch(0.55 0.17 265); /* indigo */
+  --color-brand-2: oklch(0.62 0.16 245); /* azure */
+  --color-brand-3: oklch(0.72 0.13 205); /* cyan */
+  --color-brand-deep: oklch(0.4 0.13 260); /* deep royal — insight hero card */
+
+  /* Ambient glow stops (offer-tile thumb backdrop). */
+  --color-glow-violet: oklch(0.82 0.09 290);
+  --color-glow-peach: oklch(0.88 0.07 60);
+
+  /* Semantic tone — green for the highlighted offer fragment. */
+  --color-tone-positive: oklch(0.55 0.14 155);
+
+  /* Ink text tones. */
+  --color-ink: oklch(0.24 0.03 262);
+  --color-ink-soft: oklch(0.48 0.02 262);
+}
+
+/* Frosted light-glass surface — matches the host's dashboard cards. */
+@utility glass {
+  background: color-mix(in oklab, white 62%, transparent);
+  border: 1px solid color-mix(in oklab, white 70%, transparent);
+  backdrop-filter: blur(20px);
+  box-shadow:
+    0 12px 40px -18px oklch(0.4 0.09 262 / 0.35),
+    inset 0 1px 0 0 oklch(1 0 0 / 0.6);
+}
+
+/* Tabular, lined figures for money so digits don't jitter as balances change. */
+@utility num {
+  font-family: var(--font-display);
+  font-variant-numeric: tabular-nums lining-nums;
+  letter-spacing: -0.01em;
+}
+
+/* Hide the native scrollbar while keeping the element scrollable (carousel). */
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}

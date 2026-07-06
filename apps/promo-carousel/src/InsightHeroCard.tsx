@@ -1,10 +1,16 @@
 import { Sparkles } from 'lucide-react'
-import type { SpendInsight } from '../../types'
-import { formatRM } from '../../utils/format'
+import type { SpendInsight } from './types'
 import { Donut } from './Donut'
 
 // Bright ring colors that pop on the deep-blue card.
 const RING = ['#5fe3ff', '#b79bff', '#74e6a6', '#ffd36b']
+
+const MYR_WHOLE = new Intl.NumberFormat('en-MY', { maximumFractionDigits: 0 })
+
+/** Format a whole MYR amount as `RMx,xxx` (RM prefix, no space) per house style. */
+function formatRM(value: number): string {
+  return `RM${MYR_WHOLE.format(value)}`
+}
 
 export function InsightHeroCard({ insight }: { insight: SpendInsight }) {
   return (
@@ -16,7 +22,7 @@ export function InsightHeroCard({ insight }: { insight: SpendInsight }) {
         <p className="flex-1 text-[15px] leading-relaxed text-white/90">
           You spent{' '}
           <span className="num font-semibold text-[#8dfcb8]">
-            {formatRM(insight.amount, { whole: true })}
+            {formatRM(insight.amount)}
           </span>{' '}
           in {insight.month} — {insight.blurb}
         </p>

@@ -1,4 +1,4 @@
-import type { DonutSlice } from '../../types'
+import type { DonutSlice } from './types'
 
 interface DonutProps {
   slices: DonutSlice[]

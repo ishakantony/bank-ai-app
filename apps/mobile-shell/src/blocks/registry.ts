@@ -1,17 +1,19 @@
+import type { ComponentType } from 'react'
 import { loadRemote, registerRemotes } from '@module-federation/runtime'
 import type { BlockRemoteManifest } from '@bank-ai/shared'
 
 /**
- * A block loaded from a federated remote. The shell renders none of these yet —
- * this is the host-ready wiring so a remote MFE can be dropped in later with no
- * build change. Each remote exposes `<name>` as a `{ schema, Component }` pair;
- * the host would Zod-validate incoming data against the remote-provided schema
- * before rendering (no compile-time dependency on the remote's data shape).
+ * A module loaded from a federated remote. Two flavors share this shape:
+ *   - a data-driven block — exposes `{ schema, Component }`; the host validates
+ *     incoming data against the remote-provided schema, then passes it as `data`.
+ *   - a self-fetching widget — exposes just `{ Component }` and takes no props;
+ *     the host merely mounts it and the remote owns its own data (see
+ *     RemoteWidget / the promo-carousel remote).
+ * Kept intentionally loose — validated at runtime, not via generated types.
  */
 export interface RemoteBlockModule {
-  // Kept intentionally loose — validated at runtime, not via generated types.
-  schema: { parse: (data: unknown) => unknown }
-  Component: (props: { data: unknown }) => unknown
+  schema?: { parse: (data: unknown) => unknown }
+  Component: ComponentType<{ data?: unknown }>
 }
 
 interface RemoteBlockEntry {

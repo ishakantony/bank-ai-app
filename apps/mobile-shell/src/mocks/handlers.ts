@@ -2,31 +2,26 @@ import { http, HttpResponse, delay } from 'msw'
 import type { BlockRemoteManifest } from '@bank-ai/shared'
 import type { AuthSession, DashboardData } from '../types'
 
-// No block remotes are wired for the shell yet — an empty manifest still
-// exercises the boot-time registration path (main.tsx → registerRemoteBlocks),
-// so adding a remote MFE later is a backend-only change. Mirror the Hono
-// server's shape when that lands.
-const blockRemotes: BlockRemoteManifest = { remotes: [] }
-
-// The single mock password that "works" — anything else 401s so the error
-// toast is demonstrable. Register accepts any input.
-const DEMO_PASSWORD = 'password'
-
-function fakeToken(): string {
-  return `tok_${Math.random().toString(36).slice(2)}${Date.now().toString(36)}`
+// The federated-widget manifest the shell registers at boot. The promo carousel
+// is a self-fetching remote widget (mounted by RemoteWidget on the home page);
+// it owns its own `/api/promos` data, so the shell knows nothing about it beyond
+// where to load it from. There's no real backend for the shell — mirror this
+// shape on the Hono server if one is added later.
+const blockRemotes: BlockRemoteManifest = {
+  remotes: [
+    {
+      name: 'promoCarousel',
+      entry: 'http://localhost:9995/remoteEntry.js',
+      blocks: ['promoCarousel'],
+    },
+  ],
 }
 
-/** Derive a friendly display name from an email local-part, capitalized. */
-function nameFromEmail(email: string): string {
-  const local = email.split('@')[0]?.replace(/[._-]+/g, ' ').trim() || 'there'
-  return local
-    .split(' ')
-    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-    .join(' ')
-}
-
-const dashboard: DashboardData = {
-  greetingName: 'Aisyah',
+// Content for the promo carousel. Owned here (not on /api/dashboard) because the
+// carousel is a self-contained federated widget that fetches this itself: the
+// federated code runs inside the host page, so its relative fetch('/api/promos')
+// resolves against the host origin and is intercepted by this worker.
+const promos = {
   insight: {
     amount: 6800,
     month: 'May',
@@ -40,13 +35,6 @@ const dashboard: DashboardData = {
       { label: 'Groceries', value: 950 },
     ],
   },
-  quickActions: [
-    { id: 'duitnow', label: 'DuitNow', icon: 'duitnow' },
-    { id: 'exchange', label: 'Currency Exchange', icon: 'exchange' },
-    { id: 'jompay', label: 'JomPAY', icon: 'jompay' },
-    { id: 'ai', label: 'Bank AI', icon: 'ai' },
-    { id: 'more', label: 'More', icon: 'more' },
-  ],
   // Six promos feed the carousel's two bento slides (groups of three).
   promos: [
     {
@@ -94,6 +82,34 @@ const dashboard: DashboardData = {
       title: 'Travel cover from RM9 per trip ✈️',
       thumb: '✈️',
     },
+  ],
+}
+
+// The single mock password that "works" — anything else 401s so the error
+// toast is demonstrable. Register accepts any input.
+const DEMO_PASSWORD = 'password'
+
+function fakeToken(): string {
+  return `tok_${Math.random().toString(36).slice(2)}${Date.now().toString(36)}`
+}
+
+/** Derive a friendly display name from an email local-part, capitalized. */
+function nameFromEmail(email: string): string {
+  const local = email.split('@')[0]?.replace(/[._-]+/g, ' ').trim() || 'there'
+  return local
+    .split(' ')
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(' ')
+}
+
+const dashboard: DashboardData = {
+  greetingName: 'Aisyah',
+  quickActions: [
+    { id: 'duitnow', label: 'DuitNow', icon: 'duitnow' },
+    { id: 'exchange', label: 'Currency Exchange', icon: 'exchange' },
+    { id: 'jompay', label: 'JomPAY', icon: 'jompay' },
+    { id: 'ai', label: 'Bank AI', icon: 'ai' },
+    { id: 'more', label: 'More', icon: 'more' },
   ],
   totalAssets: 95300,
   accounts: [
@@ -178,6 +194,12 @@ export const handlers = [
   http.get('/api/dashboard', async () => {
     await delay(500)
     return HttpResponse.json(dashboard)
+  }),
+
+  // Owned by the promo-carousel remote widget, which fetches this itself.
+  http.get('/api/promos', async () => {
+    await delay(500)
+    return HttpResponse.json(promos)
   }),
 
   http.get('/api/block-remotes', async () => {

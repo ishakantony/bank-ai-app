@@ -1,6 +1,99 @@
-import { useRef, useState, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { z } from 'zod'
 import { ArrowUpRight, Newspaper } from 'lucide-react'
-import type { PromoCard } from '../../types'
+import type { PromoCard } from './types'
+import { InsightHeroCard } from './InsightHeroCard'
+
+/**
+ * Runtime shape of the `/api/promos` payload this widget owns. The remote is
+ * self-fetching, so it validates the response itself (zod is a shared singleton
+ * with the host) rather than trusting a host-supplied schema.
+ */
+const promosResponseSchema = z.object({
+  insight: z.object({
+    amount: z.number(),
+    month: z.string(),
+    deltaPct: z.number(),
+    blurb: z.string(),
+    donut: z.array(z.object({ label: z.string(), value: z.number() })),
+  }),
+  promos: z.array(
+    z.object({
+      id: z.string(),
+      kind: z.enum(['news', 'offer']),
+      eyebrow: z.string(),
+      title: z.string(),
+      highlight: z.string().optional(),
+      thumb: z.string().optional(),
+    }),
+  ),
+})
+
+type PromosResponse = z.infer<typeof promosResponseSchema>
+
+/**
+ * The exposed widget. Owns everything about the carousel — including fetching
+ * its own content from `/api/promos` (plain fetch, not TanStack Query, so the
+ * remote stays self-contained). The host mounts this with no props; the widget
+ * renders its own loading/error states and builds the slides itself.
+ *
+ * The relative `fetch('/api/promos')` resolves against the host origin (the
+ * federated code runs inside the host page), so the host's MSW/backend answers.
+ */
+export default function PromoCarousel() {
+  const [data, setData] = useState<PromosResponse | null>(null)
+  const [error, setError] = useState(false)
+
+  useEffect(() => {
+    let cancelled = false
+    setError(false)
+    fetch('/api/promos')
+      .then(async (res) => {
+        if (!res.ok) throw new Error(`Failed to load promos (${res.status})`)
+        return promosResponseSchema.parse(await res.json())
+      })
+      .then((parsed) => {
+        if (!cancelled) setData(parsed)
+      })
+      .catch(() => {
+        if (!cancelled) setError(true)
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  // Widget owns its own states: a subtle skeleton while loading, and nothing on
+  // error (the shell already renders the rest of the dashboard around it).
+  if (error) return null
+  if (!data) return <CarouselSkeleton />
+
+  const { insight, promos } = data
+  const slides: CarouselSlide[] = [
+    { kind: 'full', card: <InsightHeroCard insight={insight} /> },
+    { kind: 'bento', layout: 'left', tiles: promos.slice(0, 3) },
+    { kind: 'bento', layout: 'top', tiles: promos.slice(3, 6) },
+  ]
+
+  return <Carousel slides={slides} />
+}
+
+/** Loading placeholder that reserves the carousel's height (matches h-60). */
+function CarouselSkeleton() {
+  return (
+    <div>
+      <div className="glass h-60 w-full animate-pulse rounded-3xl" />
+      <div className="mt-3 flex justify-center gap-1.5">
+        {[0, 1, 2].map((i) => (
+          <span
+            key={i}
+            className={`h-1.5 rounded-full bg-ink-soft/30 ${i === 0 ? 'w-5' : 'w-1.5'}`}
+          />
+        ))}
+      </div>
+    </div>
+  )
+}
 
 /**
  * One slide of the promo carousel. Each item in the `slides` array fully
@@ -26,7 +119,7 @@ const LEAD_SPAN: Record<'left' | 'top', string> = {
  * entirely by the `slides` array — its length sets the number of slides and
  * the dot count, and each descriptor picks its own layout.
  */
-export function PromoCarousel({ slides }: { slides: CarouselSlide[] }) {
+function Carousel({ slides }: { slides: CarouselSlide[] }) {
   const scrollerRef = useRef<HTMLDivElement>(null)
   const [active, setActive] = useState(0)
 

@@ -3,8 +3,7 @@ import { AppShell } from '../components/AppShell'
 import { useAuthStore } from '../store/authStore'
 import { useDashboard } from '../hooks/useDashboard'
 import { DashboardHeader } from '../components/dashboard/DashboardHeader'
-import { InsightHeroCard } from '../components/dashboard/InsightHeroCard'
-import { PromoCarousel } from '../components/dashboard/PromoCarousel'
+import { RemoteWidget } from '../components/RemoteWidget'
 import { QuickActions } from '../components/dashboard/QuickActions'
 import { TotalAssets } from '../components/dashboard/TotalAssets'
 import { BankingSummaryCard } from '../components/dashboard/BankingSummaryCard'
@@ -39,17 +38,10 @@ export function HomePage() {
         </div>
       ) : (
         <div className="mt-5 space-y-6">
+          {/* The promo carousel is a self-fetching federated widget: the shell
+              just mounts it and knows nothing about promo/insight data. */}
           <div className="animate-float-in">
-            <PromoCarousel
-              slides={[
-                {
-                  kind: 'full',
-                  card: <InsightHeroCard insight={data.insight} />,
-                },
-                { kind: 'bento', layout: 'left', tiles: data.promos.slice(0, 3) },
-                { kind: 'bento', layout: 'top', tiles: data.promos.slice(3, 6) },
-              ]}
-            />
+            <RemoteWidget name="promoCarousel" />
           </div>
 
           <div className="animate-float-in [animation-delay:120ms]">

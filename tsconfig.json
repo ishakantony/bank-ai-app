@@ -10,6 +10,7 @@
     { "path": "./apps/mobile-shell/tsconfig.node.json" },
     { "path": "./apps/server/tsconfig.json" },
     { "path": "./apps/blocks-spend/tsconfig.json" },
+    { "path": "./apps/promo-carousel/tsconfig.json" },
     { "path": "./apps/blocks-portfolio/tsconfig.json" },
     { "path": "./apps/blocks-wealth/tsconfig.json" }
   ]
