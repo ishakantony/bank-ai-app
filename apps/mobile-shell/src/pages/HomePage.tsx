@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { AppShell } from '../components/AppShell'
 import { useAuthStore } from '../store/authStore'
 import { useDashboard } from '../hooks/useDashboard'
 import { DashboardHeader } from '../components/dashboard/DashboardHeader'
@@ -18,7 +17,7 @@ export function HomePage() {
   const name = data?.greetingName ?? user?.name?.split(' ')[0] ?? 'there'
 
   return (
-    <AppShell>
+    <>
       <DashboardHeader name={name} />
 
       {isPending ? (
@@ -67,6 +66,6 @@ export function HomePage() {
           </div>
         </div>
       )}
-    </AppShell>
+    </>
   )
 }

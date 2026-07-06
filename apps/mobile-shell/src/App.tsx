@@ -1,6 +1,7 @@
 import { Routes, Route } from 'react-router-dom'
 import { Toaster } from 'sonner'
 import { AnimatedBackground } from './components/AnimatedBackground'
+import { AppShell } from './components/AppShell'
 import { RequireAuth } from './components/RequireAuth'
 import { LoginPage } from './pages/LoginPage'
 import { RegisterPage } from './pages/RegisterPage'
@@ -14,25 +15,26 @@ export default function App() {
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        {/* Shared layout: AppShell (and its BottomNav) mounts once and persists
+            across these routes, so the active-pill animation runs on every nav. */}
         <Route
-          path="/"
           element={
             <RequireAuth>
-              <HomePage />
+              <AppShell />
             </RequireAuth>
           }
-        />
-        {(['payments', 'invest', 'discover', 'services'] as const).map((tab) => (
-          <Route
-            key={tab}
-            path={`/${tab}`}
-            element={
-              <RequireAuth>
-                <PlaceholderPage tab={tab} />
-              </RequireAuth>
-            }
-          />
-        ))}
+        >
+          <Route path="/" element={<HomePage />} />
+          {(['payments', 'invest', 'discover', 'services'] as const).map(
+            (tab) => (
+              <Route
+                key={tab}
+                path={`/${tab}`}
+                element={<PlaceholderPage tab={tab} />}
+              />
+            ),
+          )}
+        </Route>
       </Routes>
       {/* Light-glass toasts. Offset clears the floating bottom nav. */}
       <Toaster

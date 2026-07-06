@@ -66,12 +66,12 @@ export function BottomNav() {
   return (
     <nav
       ref={navRef}
-      className="glass relative mx-auto flex w-full max-w-md items-stretch justify-between gap-1 rounded-[2.25rem] px-2 py-2"
+      className="glass relative mx-auto flex w-full max-w-md items-stretch justify-between gap-1 rounded-[2.25rem] px-1.5 py-1"
     >
       {pill.width > 0 && (
         <div
           aria-hidden
-          className="pointer-events-none absolute top-1/2 rounded-full motion-safe:transition-[transform,width] motion-safe:duration-300 motion-safe:ease-out"
+          className="pointer-events-none absolute left-0 top-1/2 rounded-full motion-safe:transition-[transform,width] motion-safe:duration-300 motion-safe:ease-out"
           style={{
             transform: `translateX(${pill.left}px) translateY(-50%)`,
             width: `${pill.width}px`,
