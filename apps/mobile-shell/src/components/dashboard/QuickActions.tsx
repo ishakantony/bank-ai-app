@@ -17,17 +17,25 @@ const ICONS: Record<QuickActionIcon, LucideIcon> = {
   more: ChevronDown,
 }
 
+/** The Bank AI shell app, configurable via env with a dev-server fallback. */
+const AI_SHELL_URL = import.meta.env.VITE_AI_SHELL_URL ?? 'http://localhost:9999'
+
 export function QuickActions({ actions }: { actions: QuickAction[] }) {
   return (
     <div className="flex items-start justify-between gap-1">
       {actions.map((action) => {
         const Icon = ICONS[action.icon]
         const isMore = action.icon === 'more'
+        const isAi = action.icon === 'ai'
         return (
           <button
             key={action.id}
             type="button"
-            onClick={() => toast(`${action.label} is coming soon.`)}
+            onClick={() =>
+              isAi
+                ? window.open(AI_SHELL_URL, '_blank', 'noopener,noreferrer')
+                : toast(`${action.label} is coming soon.`)
+            }
             className="group flex flex-1 flex-col items-center gap-1.5"
           >
             <span
