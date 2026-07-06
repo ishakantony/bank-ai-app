@@ -34,16 +34,30 @@ export function ChatPage() {
 
   const [draft, setDraft] = useState('')
 
-  // A ?message= deeplink seeds the general thread once, then we strip the param
-  // so a refresh resumes the persisted thread instead of re-sending.
+  // A ?message= deeplink seeds the thread once, then we strip the param so a
+  // refresh resumes the persisted thread instead of re-sending. The general
+  // thread resets fresh; any other thread appends + requests a reply.
   const seeded = useRef(false)
   useEffect(() => {
     if (messageParam && !seeded.current) {
       seeded.current = true
-      startGeneralFresh(messageParam)
-      setSearchParams({}, { replace: true })
+      if (threadId === 'general') {
+        startGeneralFresh(messageParam)
+      } else {
+        sendMessage(threadId, messageParam)
+      }
+      // Strip only ?message= — keep ?topic= so the thread selection survives
+      // (clearing it too would flip the view back to the general thread).
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams(prev)
+          next.delete('message')
+          return next
+        },
+        { replace: true },
+      )
     }
-  }, [messageParam, startGeneralFresh, setSearchParams])
+  }, [messageParam, threadId, startGeneralFresh, sendMessage, setSearchParams])
 
   function handleSubmit(text: string) {
     sendMessage(threadId, text)
