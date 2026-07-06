@@ -1,37 +1,42 @@
-import { useRef, useState } from 'react'
+import { useRef, useState, type ReactNode } from 'react'
 import { ArrowUpRight, Newspaper } from 'lucide-react'
-import type { PromoCard, SpendInsight } from '../../types'
-import { InsightHeroCard } from './InsightHeroCard'
-
-const SLIDES = 3
+import type { PromoCard } from '../../types'
 
 /**
- * The full promo area above Quick Actions: a 3-slide, full-width snap carousel.
- *   1. one full-bleed feature card (this month's spend insight)
- *   2. bento — one tall card on the left, two stacked on the right
- *   3. bento — one wide card on top, two side-by-side below
- * The six promos fill the two bento slides in groups of three.
+ * One slide of the promo carousel. Each item in the `slides` array fully
+ * describes what to render for that slide:
+ *   - `full`  — a single full-bleed card (any node, e.g. the insight hero).
+ *   - `bento` — three promo tiles in one of two arrangements:
+ *       · `left` — one tall card on the left, two stacked on the right.
+ *       · `top`  — one wide card on top, two side-by-side below.
+ * In both bentos the FIRST tile is the large one.
  */
-export function PromoCarousel({
-  insight,
-  promos,
-}: {
-  insight: SpendInsight
-  promos: PromoCard[]
-}) {
+export type CarouselSlide =
+  | { kind: 'full'; card: ReactNode }
+  | { kind: 'bento'; layout: 'left' | 'top'; tiles: PromoCard[] }
+
+/** In a bento, only the lead (first) tile spans; the rest fill single cells. */
+const LEAD_SPAN: Record<'left' | 'top', string> = {
+  left: 'row-span-2',
+  top: 'col-span-2',
+}
+
+/**
+ * The full promo area above Quick Actions: a full-width snap carousel driven
+ * entirely by the `slides` array — its length sets the number of slides and
+ * the dot count, and each descriptor picks its own layout.
+ */
+export function PromoCarousel({ slides }: { slides: CarouselSlide[] }) {
   const scrollerRef = useRef<HTMLDivElement>(null)
   const [active, setActive] = useState(0)
 
   function handleScroll() {
     const el = scrollerRef.current
-    if (!el) return
+    if (!el || slides.length === 0) return
     // Each slide is exactly one scroller-width wide; index ≈ scroll / width.
-    const slideWidth = el.scrollWidth / SLIDES
+    const slideWidth = el.scrollWidth / slides.length
     setActive(Math.round(el.scrollLeft / slideWidth))
   }
-
-  const bentoA = promos.slice(0, 3)
-  const bentoB = promos.slice(3, 6)
 
   return (
     <div>
@@ -40,28 +45,27 @@ export function PromoCarousel({
         onScroll={handleScroll}
         className="no-scrollbar flex snap-x snap-mandatory gap-3 overflow-x-auto"
       >
-        {/* Slide 1 — single full card. */}
-        <div className="h-60 w-full shrink-0 snap-start">
-          <InsightHeroCard insight={insight} />
-        </div>
-
-        {/* Slide 2 — tall card left (row-span-2), two stacked right. */}
-        <div className="grid h-60 w-full shrink-0 snap-start grid-cols-2 grid-rows-2 gap-3">
-          {bentoA[0] && <PromoTile promo={bentoA[0]} className="row-span-2" />}
-          {bentoA[1] && <PromoTile promo={bentoA[1]} />}
-          {bentoA[2] && <PromoTile promo={bentoA[2]} />}
-        </div>
-
-        {/* Slide 3 — wide card top (col-span-2), two side-by-side below. */}
-        <div className="grid h-60 w-full shrink-0 snap-start grid-cols-2 grid-rows-2 gap-3">
-          {bentoB[0] && <PromoTile promo={bentoB[0]} className="col-span-2" />}
-          {bentoB[1] && <PromoTile promo={bentoB[1]} />}
-          {bentoB[2] && <PromoTile promo={bentoB[2]} />}
-        </div>
+        {slides.map((slide, i) => (
+          <div key={i} className="h-60 w-full shrink-0 snap-start">
+            {slide.kind === 'full' ? (
+              slide.card
+            ) : (
+              <div className="grid h-full grid-cols-2 grid-rows-2 gap-3">
+                {slide.tiles.map((promo, t) => (
+                  <PromoTile
+                    key={promo.id}
+                    promo={promo}
+                    className={t === 0 ? LEAD_SPAN[slide.layout] : ''}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        ))}
       </div>
 
       <div className="mt-3 flex justify-center gap-1.5">
-        {Array.from({ length: SLIDES }).map((_, i) => (
+        {slides.map((_, i) => (
           <span
             key={i}
             className={`h-1.5 rounded-full transition-all duration-300 ${

@@ -3,6 +3,7 @@ import { AppShell } from '../components/AppShell'
 import { useAuthStore } from '../store/authStore'
 import { useDashboard } from '../hooks/useDashboard'
 import { DashboardHeader } from '../components/dashboard/DashboardHeader'
+import { InsightHeroCard } from '../components/dashboard/InsightHeroCard'
 import { PromoCarousel } from '../components/dashboard/PromoCarousel'
 import { QuickActions } from '../components/dashboard/QuickActions'
 import { TotalAssets } from '../components/dashboard/TotalAssets'
@@ -39,7 +40,16 @@ export function HomePage() {
       ) : (
         <div className="mt-5 space-y-6">
           <div className="animate-float-in">
-            <PromoCarousel insight={data.insight} promos={data.promos} />
+            <PromoCarousel
+              slides={[
+                {
+                  kind: 'full',
+                  card: <InsightHeroCard insight={data.insight} />,
+                },
+                { kind: 'bento', layout: 'left', tiles: data.promos.slice(0, 3) },
+                { kind: 'bento', layout: 'top', tiles: data.promos.slice(3, 6) },
+              ]}
+            />
           </div>
 
           <div className="animate-float-in [animation-delay:120ms]">
