@@ -1,17 +1,12 @@
 import { Link, useSearchParams } from 'react-router-dom'
 import { ArrowLeft } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { MarkdownBasics } from '../components/docs/MarkdownBasics'
 import { BlockGallery } from '../components/docs/BlockGallery'
 import { Playground } from '../components/docs/Playground'
 import { ChatThreadProvider } from '@bank-poc/blocks-runtime'
 
 type Tab = 'basics' | 'gallery' | 'playground'
-
-const TABS: { id: Tab; label: string }[] = [
-  { id: 'basics', label: 'Markdown Basics' },
-  { id: 'gallery', label: 'Custom Blocks' },
-  { id: 'playground', label: 'Playground' },
-]
 
 /**
  * `/docs` — living documentation for the reply-authoring system. Three tabs
@@ -26,10 +21,17 @@ const TABS: { id: Tab; label: string }[] = [
  * render as static previews.
  */
 export function DocsPage() {
+  const { t } = useTranslation()
   const [params, setParams] = useSearchParams()
   const raw = params.get('tab')
   const tab: Tab =
     raw === 'basics' || raw === 'playground' ? raw : 'gallery'
+
+  const TABS: { id: Tab; label: string }[] = [
+    { id: 'basics', label: t('docs.tabs.basics') },
+    { id: 'gallery', label: t('docs.tabs.gallery') },
+    { id: 'playground', label: t('docs.tabs.playground') },
+  ]
 
   function selectTab(next: Tab) {
     setParams(
@@ -49,15 +51,14 @@ export function DocsPage() {
           className="inline-flex items-center gap-1.5 text-sm text-white/55 transition hover:text-white/85"
         >
           <ArrowLeft className="size-4" />
-          Bank AI
+          {t('docs.backLink')}
         </Link>
         <div>
           <h1 className="text-2xl font-semibold text-white">
-            Blocks &amp; Markdown
+            {t('docs.title')}
           </h1>
           <p className="mt-1 text-sm text-white/55">
-            A living reference for everything an assistant reply can render — and
-            a playground to try it yourself.
+            {t('docs.subtitle')}
           </p>
         </div>
         <div className="inline-flex gap-1 rounded-full border border-white/10 bg-white/5 p-1 backdrop-blur-md">

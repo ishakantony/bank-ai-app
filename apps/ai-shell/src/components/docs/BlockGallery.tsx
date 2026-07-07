@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { ChevronRight, Search, TriangleAlert } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { Markdown } from '../Markdown'
 import { blockRegistry } from '../blocks/registry'
 import { blockGuides, exampleFence, type BlockDoc } from './blockDocs'
@@ -36,6 +37,7 @@ function matches(entry: Entry, query: string): boolean {
  * never mounts every block (and its lazy chunk) at once. Scales to many blocks.
  */
 function BlockSection({ name, doc }: Entry) {
+  const { t } = useTranslation()
   const [open, setOpen] = useState(false)
   const guide = blockGuides[name]
 
@@ -77,11 +79,7 @@ function BlockSection({ name, doc }: Entry) {
           {!doc ? (
             <p className="flex items-center gap-2 text-sm text-white/55">
               <TriangleAlert className="size-4 shrink-0 text-tone-warning" />
-              Documentation pending — add a{' '}
-              <code className="rounded bg-white/10 px-1 py-0.5 font-mono text-xs text-accent-3">
-                docs.ts
-              </code>{' '}
-              to this block's folder.
+              {t('docs.gallery.docPending')}
             </p>
           ) : (
             doc.examples.map((ex) => {
@@ -92,7 +90,7 @@ function BlockSection({ name, doc }: Entry) {
                     <span className="text-xs font-medium uppercase tracking-wide text-white/40">
                       {ex.label}
                     </span>
-                    <CopyButton value={source} label="Copy source" />
+                    <CopyButton value={source} label={t('docs.gallery.copySource')} />
                   </div>
                   {ex.caption ? (
                     <p className="text-[13px] text-white/55">{ex.caption}</p>
@@ -126,6 +124,7 @@ function BlockSection({ name, doc }: Entry) {
  * each block's preview renders lazily on expand.
  */
 export function BlockGallery() {
+  const { t } = useTranslation()
   const [query, setQuery] = useState('')
   const [category, setCategory] = useState<string | null>(null)
 
@@ -154,7 +153,7 @@ export function BlockGallery() {
   return (
     <div className="animate-float-in space-y-6 pb-16">
       <section className="space-y-2">
-        <h2 className="text-lg font-semibold text-white">Custom blocks</h2>
+        <h2 className="text-lg font-semibold text-white">{t('docs.gallery.heading')}</h2>
         <p className="text-sm text-white/55">
           Embed rich UI in a reply by writing a{' '}
           <code className="rounded bg-white/10 px-1 py-0.5 font-mono text-xs text-accent-3">
@@ -181,7 +180,7 @@ export function BlockGallery() {
             type="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search blocks by name, purpose or keyword…"
+            placeholder={t('docs.gallery.searchPlaceholder')}
             className="w-full rounded-xl border border-white/10 bg-black/30 py-2.5 pl-9 pr-3 text-sm text-white/85 outline-none transition placeholder:text-white/35 focus:border-white/25 focus-visible:ring-2 focus-visible:ring-accent-1/40"
           />
         </div>
@@ -192,7 +191,7 @@ export function BlockGallery() {
               onClick={() => setCategory(null)}
               className={`${chip} ${category === null ? chipOn : chipOff}`}
             >
-              All
+              {t('docs.gallery.all')}
             </button>
             {categories.map((c) => (
               <button
@@ -211,7 +210,7 @@ export function BlockGallery() {
       <div className="space-y-2.5">
         {visible.length === 0 ? (
           <p className="rounded-xl border border-white/10 bg-white/[0.03] px-4 py-6 text-center text-sm text-white/45">
-            No blocks match “{query}”.
+            {t('docs.gallery.noMatch', { query })}
           </p>
         ) : (
           visible.map((e) => <BlockSection key={e.name} {...e} />)

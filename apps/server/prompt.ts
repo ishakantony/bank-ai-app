@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import type { ThreadId } from '@bank-poc/shared'
+import type { Locale, ThreadId } from '@bank-poc/shared'
 import { blockCatalog, relevantBlocks } from './blocks.ts'
 
 /** A short framing per thread so replies stay on-topic. */
@@ -52,12 +52,31 @@ ${spec.example}`
 }
 
 /**
+ * A language directive appended to the system prompt so the model answers
+ * in-language — prose *and* the text inside any `bank:<name>` block JSON. Omitted
+ * for English (the persona's default voice).
+ */
+const LANGUAGE_DIRECTIVE: Record<Locale, string> = {
+  en: '',
+  ms: 'Respond in Bahasa Malaysia. All prose and any text inside block JSON (labels, titles, options) must be in Bahasa Malaysia; keep numbers, currency (RM), and block field names unchanged.',
+  zh: 'Respond in Simplified Chinese. All prose and any text inside block JSON (labels, titles, options) must be in Simplified Chinese; keep numbers, currency (RM), and block field names unchanged.',
+}
+
+/**
  * Build the full system prompt for a thread: persona + thread framing + the
  * specs for only the blocks relevant to that thread (generated from the Zod
- * schemas, so they always match what the frontend validates).
+ * schemas, so they always match what the frontend validates), plus a language
+ * directive so the reply comes back in the user's chosen locale.
  */
-export function buildSystemPrompt(threadId: ThreadId): string {
+export function buildSystemPrompt(threadId: ThreadId, locale: Locale = 'en'): string {
   const blocks = relevantBlocks(threadId)
   const specs = blocks.map(renderBlockSpec).join('\n\n')
-  return [PERSONA, `## Context\n${THREAD_CONTEXT[threadId]}`, BLOCK_RULES, specs].join('\n\n')
+  const directive = LANGUAGE_DIRECTIVE[locale]
+  return [
+    PERSONA,
+    `## Context\n${THREAD_CONTEXT[threadId]}`,
+    ...(directive ? [`## Language\n${directive}`] : []),
+    BLOCK_RULES,
+    specs,
+  ].join('\n\n')
 }

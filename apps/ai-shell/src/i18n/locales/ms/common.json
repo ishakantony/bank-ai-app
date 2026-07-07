@@ -1,0 +1,137 @@
+{
+  "brand": "Bank AI",
+  "welcome": {
+    "hero": "Apa yang boleh saya bantu?"
+  },
+  "chat": {
+    "inputPlaceholder": "Tanya Bank AI apa sahaja…",
+    "replying": "Bank AI sedang membalas…",
+    "sendMessage": "Hantar mesej",
+    "backToHome": "Kembali ke laman utama",
+    "newChat": "Sembang baharu",
+    "errorSending": "Terdapat masalah semasa menghantar mesej itu.",
+    "retry": "Cuba lagi",
+    "typing": [
+      "Menyambung dengan selamat…",
+      "Sedang menyemak untuk anda…",
+      "Menyemak akaun anda…",
+      "Hampir siap…"
+    ]
+  },
+  "footer": {
+    "disclaimer": "Respons AI mungkin tidak tepat, gunakannya dengan berhati-hati."
+  },
+  "topicGrid": {
+    "loadError": "Tidak dapat memuatkan topik.",
+    "tryAgain": "Cuba lagi"
+  },
+  "messageActions": {
+    "regenerate": "Jana semula respons",
+    "copy": "Salin mesej",
+    "copied": "Disalin",
+    "like": "Suka mesej",
+    "dislike": "Tak suka mesej",
+    "readAloud": "Baca dengan kuat",
+    "stopReading": "Berhenti membaca",
+    "feedbackThanks": "Terima kasih atas maklum balas anda",
+    "copyFailed": "Tidak dapat menyalin ke papan keratan"
+  },
+  "languageSwitcher": {
+    "label": "Bahasa",
+    "en": "English",
+    "ms": "Bahasa Malaysia",
+    "zh": "中文"
+  },
+  "welcomeScreens": {
+    "transfer": {
+      "heading": "Hantar wang dalam beberapa saat",
+      "subtitle": "Bayar sesiapa sahaja dengan segera dan selamat — beritahu saya siapa dan berapa.",
+      "availableBalance": "Baki tersedia",
+      "account": "Akaun Semasa ··· 4471",
+      "sendToContact": "Hantar kepada kenalan",
+      "sendToContactSend": "Saya mahu menghantar wang kepada salah seorang kenalan saya.",
+      "payNewPayee": "Bayar penerima baharu",
+      "payNewPayeeSend": "Bantu saya menyediakan dan membayar penerima baharu.",
+      "checkLimits": "Semak had saya",
+      "checkLimitsSend": "Apakah had pemindahan semasa saya?"
+    },
+    "cards": {
+      "heading": "Urus kad anda",
+      "subtitle": "Bekukan, gantikan atau perhalusi kawalan pada kad anda.",
+      "freeze": "Bekukan kad saya",
+      "freezeSend": "Sila bekukan kad saya.",
+      "replace": "Pesan kad gantian",
+      "replaceSend": "Saya perlu memesan kad gantian.",
+      "controls": "Laraskan kawalan kad",
+      "controlsSend": "Saya mahu melaraskan kawalan perbelanjaan kad saya."
+    },
+    "savings": {
+      "heading": "Kembangkan simpanan anda",
+      "subtitle": "Jejaki matlamat dan bina tabiat.",
+      "goalName": "Tabung percutian",
+      "progress": "{{progress}}% tercapai — teruskan usaha!",
+      "newGoal": "Buka matlamat baharu",
+      "newGoalSend": "Saya mahu membuka matlamat simpanan baharu.",
+      "autoSave": "Sediakan simpanan automatik",
+      "autoSaveSend": "Bantu saya menyediakan pemindahan simpanan automatik berulang.",
+      "project": "Unjurkan pertumbuhan saya",
+      "projectSend": "Berapa lama lagi sehingga saya mencapai matlamat simpanan saya?"
+    },
+    "security": {
+      "heading": "Anda dilindungi",
+      "subtitle": "Tiada aktiviti mencurigakan dikesan. Saya boleh bertindak pantas jika ada sesuatu yang tidak kena.",
+      "statusBanner": "Status akaun: selamat · disemak sebentar tadi",
+      "review": "Semak aktiviti terkini",
+      "reviewSend": "Tunjukkan aktiviti akaun terkini saya.",
+      "report": "Laporkan transaksi",
+      "reportSend": "Saya mahu melaporkan transaksi yang mencurigakan.",
+      "lock": "Kunci akaun saya",
+      "lockSend": "Sila kunci akaun saya dengan segera."
+    },
+    "insights": {
+      "heading": "Wawasan kewangan anda",
+      "loadError": "Tidak dapat memuatkan wawasan.",
+      "tryAgain": "Cuba lagi"
+    },
+    "generic": {
+      "getStarted": "Mula dengan {{name}}",
+      "getStartedSend": "Bantu saya dengan {{name}}."
+    }
+  },
+  "docs": {
+    "backLink": "Bank AI",
+    "title": "Blok & Markdown",
+    "subtitle": "Rujukan hidup untuk segala yang boleh dipaparkan oleh respons pembantu — dan taman permainan untuk mencubanya sendiri.",
+    "tabs": {
+      "basics": "Asas Markdown",
+      "gallery": "Blok Tersuai",
+      "playground": "Taman Permainan"
+    },
+    "gallery": {
+      "heading": "Blok tersuai",
+      "searchPlaceholder": "Cari blok mengikut nama, tujuan atau kata kunci…",
+      "all": "Semua",
+      "noMatch": "Tiada blok sepadan dengan “{{query}}”.",
+      "docPending": "Dokumentasi belum tersedia — tambah docs.ts pada folder blok ini.",
+      "copySource": "Salin sumber"
+    },
+    "playground": {
+      "startFrom": "Mula daripada",
+      "copyMarkdown": "Salin markdown",
+      "share": "Kongsi",
+      "shareCopied": "Pautan kongsi disalin ke papan keratan",
+      "shareFailed": "Tidak dapat menyalin pautan",
+      "insertBlock": "Sisip blok",
+      "filterBlocks": "Tapis blok…",
+      "noBlocks": "Tiada blok sepadan.",
+      "markdown": "Markdown",
+      "viewport": "Port pandangan",
+      "compare": "Banding",
+      "fit": "Muat",
+      "custom": "Tersuai",
+      "preview": "Pratonton",
+      "comparing": "Pratonton · membandingkan {{count}}",
+      "selectDevices": "Pilih satu atau lebih peranti untuk dibandingkan."
+    }
+  }
+}

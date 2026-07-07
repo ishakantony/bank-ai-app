@@ -1,9 +1,11 @@
 import { PiggyBank, Target, Repeat, TrendingUp } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import type { WelcomeProps } from './types'
 import { QuickAction } from './QuickAction'
 
 /** Savings & Goals — a goal-progress card up top, suggestions below. */
 export function SavingsWelcome({ onSend }: WelcomeProps) {
+  const { t } = useTranslation()
   const progress = 64
 
   return (
@@ -13,15 +15,15 @@ export function SavingsWelcome({ onSend }: WelcomeProps) {
           <PiggyBank className="size-6" strokeWidth={1.75} />
         </span>
         <div>
-          <h2 className="text-xl font-semibold text-white">Grow your savings</h2>
-          <p className="text-sm text-white/55">Track goals and build the habit.</p>
+          <h2 className="text-xl font-semibold text-white">{t('welcomeScreens.savings.heading')}</h2>
+          <p className="text-sm text-white/55">{t('welcomeScreens.savings.subtitle')}</p>
         </div>
       </div>
 
       {/* Goal progress card */}
       <div className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-md">
         <div className="flex items-baseline justify-between">
-          <span className="text-sm font-medium text-white">Holiday fund</span>
+          <span className="text-sm font-medium text-white">{t('welcomeScreens.savings.goalName')}</span>
           <span className="text-sm text-white/60">RM1,920 / RM3,000</span>
         </div>
         <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-white/10">
@@ -30,24 +32,24 @@ export function SavingsWelcome({ onSend }: WelcomeProps) {
             style={{ width: `${progress}%` }}
           />
         </div>
-        <p className="mt-2 text-xs text-white/45">{progress}% there — keep it up!</p>
+        <p className="mt-2 text-xs text-white/45">{t('welcomeScreens.savings.progress', { progress })}</p>
       </div>
 
       <div className="flex flex-wrap gap-2.5">
         <QuickAction
-          label="Open a new goal"
+          label={t('welcomeScreens.savings.newGoal')}
           icon={Target}
-          onClick={() => onSend('I want to open a new savings goal.')}
+          onClick={() => onSend(t('welcomeScreens.savings.newGoalSend'))}
         />
         <QuickAction
-          label="Set up auto-save"
+          label={t('welcomeScreens.savings.autoSave')}
           icon={Repeat}
-          onClick={() => onSend('Help me set up a recurring auto-save transfer.')}
+          onClick={() => onSend(t('welcomeScreens.savings.autoSaveSend'))}
         />
         <QuickAction
-          label="Project my growth"
+          label={t('welcomeScreens.savings.project')}
           icon={TrendingUp}
-          onClick={() => onSend('How long until I reach my savings goal?')}
+          onClick={() => onSend(t('welcomeScreens.savings.projectSend'))}
         />
       </div>
     </div>

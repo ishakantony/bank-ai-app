@@ -1,6 +1,6 @@
 import OpenAI from 'openai'
 import type { ChatCompletionMessageParam } from 'openai/resources/chat/completions'
-import type { ThreadId } from '@bank-poc/shared'
+import { DEFAULT_LOCALE, type Locale, type ThreadId } from '@bank-poc/shared'
 import { buildSystemPrompt } from './prompt.ts'
 
 /** A single turn of conversation history sent by the client. */
@@ -41,12 +41,13 @@ function getClient(): OpenAI {
 export async function generateReply(
   threadId: ThreadId,
   messages: ChatTurn[],
+  locale: Locale = DEFAULT_LOCALE,
 ): Promise<string> {
   const model = process.env.OPENROUTER_MODEL
   if (!model) throw new Error('OPENROUTER_MODEL is not set')
 
   const payload: ChatCompletionMessageParam[] = [
-    { role: 'system', content: buildSystemPrompt(threadId) },
+    { role: 'system', content: buildSystemPrompt(threadId, locale) },
     ...messages.map((m) => ({ role: m.role, content: m.content })),
   ]
 

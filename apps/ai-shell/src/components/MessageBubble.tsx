@@ -1,5 +1,6 @@
 import { useEffect, useMemo } from 'react'
 import { RotateCw } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { useChatStore } from '../store/chatStore'
 import { useTypewriter } from '../hooks/useTypewriter'
 import { Markdown } from './Markdown'
@@ -18,6 +19,7 @@ interface MessageBubbleProps {
 }
 
 export function MessageBubble({ message, threadId, isLast, onReveal }: MessageBubbleProps) {
+  const { t } = useTranslation()
   const retryLast = useChatStore((s) => s.retryLast)
   const finishStreaming = useChatStore((s) => s.finishStreaming)
 
@@ -51,14 +53,14 @@ export function MessageBubble({ message, threadId, isLast, onReveal }: MessageBu
   if (message.status === 'error') {
     return (
       <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-3.5 py-3 text-sm text-white/60">
-        <span>Something went wrong sending that.</span>
+        <span>{t('chat.errorSending')}</span>
         <button
           type="button"
           onClick={() => retryLast(threadId)}
           className="inline-flex items-center gap-1 font-medium text-accent-3 underline-offset-2 hover:underline"
         >
           <RotateCw className="size-3.5" />
-          Retry
+          {t('chat.retry')}
         </button>
       </div>
     )

@@ -1,8 +1,10 @@
 import { ArrowLeft, SquarePen } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { useChatStore } from '../store/chatStore'
 import type { ThreadId } from '@bank-poc/shared'
 import { Orb } from './Orb'
+import { LanguageSwitcher } from './LanguageSwitcher'
 
 interface ChatHeaderProps {
   threadId: ThreadId
@@ -11,6 +13,7 @@ interface ChatHeaderProps {
 /** Slim top bar: back to home, compact brand, and a new-chat reset. */
 export function ChatHeader({ threadId }: ChatHeaderProps) {
   const navigate = useNavigate()
+  const { t } = useTranslation()
   const clearThread = useChatStore((s) => s.clearThread)
 
   function handleNewChat() {
@@ -23,7 +26,7 @@ export function ChatHeader({ threadId }: ChatHeaderProps) {
       <button
         type="button"
         onClick={() => navigate('/')}
-        aria-label="Back to home"
+        aria-label={t('chat.backToHome')}
         className="grid size-9 place-items-center rounded-full text-white/70 transition hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-1/70"
       >
         <ArrowLeft className="size-5" />
@@ -32,18 +35,21 @@ export function ChatHeader({ threadId }: ChatHeaderProps) {
       <div className="flex items-center gap-2">
         <Orb size={24} active={false} />
         <span className="bg-gradient-to-r from-accent-1 via-accent-2 to-accent-3 bg-clip-text text-base font-bold tracking-tight text-transparent">
-          Bank AI
+          {t('brand')}
         </span>
       </div>
 
-      <button
-        type="button"
-        onClick={handleNewChat}
-        aria-label="New chat"
-        className="grid size-9 place-items-center rounded-full text-white/70 transition hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-1/70"
-      >
-        <SquarePen className="size-5" />
-      </button>
+      <div className="flex items-center gap-1">
+        <LanguageSwitcher />
+        <button
+          type="button"
+          onClick={handleNewChat}
+          aria-label={t('chat.newChat')}
+          className="grid size-9 place-items-center rounded-full text-white/70 transition hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-1/70"
+        >
+          <SquarePen className="size-5" />
+        </button>
+      </div>
     </header>
   )
 }

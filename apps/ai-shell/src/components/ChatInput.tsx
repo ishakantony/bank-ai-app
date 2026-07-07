@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { ArrowUp } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { Orb } from './Orb'
 
 interface ChatInputProps {
@@ -16,6 +17,7 @@ export function ChatInput({
   onSubmit,
   disabled = false,
 }: ChatInputProps) {
+  const { t } = useTranslation()
   const [focused, setFocused] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const canSend = !disabled && value.trim().length > 0
@@ -81,7 +83,7 @@ export function ChatInput({
           }}
           disabled={disabled}
           rows={1}
-          placeholder={disabled ? 'Bank AI is replying…' : 'Ask Bank AI anything…'}
+          placeholder={disabled ? t('chat.replying') : t('chat.inputPlaceholder')}
           className="no-scrollbar max-h-40 flex-1 resize-none bg-transparent py-1.5 text-[15px] leading-relaxed text-white placeholder:text-white/40 focus:outline-none disabled:cursor-not-allowed disabled:opacity-60"
         />
 
@@ -94,7 +96,7 @@ export function ChatInput({
           onPointerDown={(e) => e.preventDefault()}
           onClick={submit}
           disabled={!canSend}
-          aria-label="Send message"
+          aria-label={t('chat.sendMessage')}
           className="grid size-9 shrink-0 place-items-center rounded-full bg-gradient-to-br from-accent-1 to-accent-2 text-white shadow-lg transition duration-200 enabled:hover:scale-105 disabled:cursor-not-allowed disabled:opacity-40"
         >
           <ArrowUp className="size-5" strokeWidth={2.25} />

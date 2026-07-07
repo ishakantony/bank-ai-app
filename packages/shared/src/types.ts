@@ -1,3 +1,12 @@
+/**
+ * The languages the app is available in. The single source of truth shared by
+ * the client (react-i18next + query keys) and both backends (mock + Hono),
+ * which pick a locale from the request's `Accept-Language` header.
+ */
+export type Locale = 'en' | 'ms' | 'zh'
+export const LOCALES: Locale[] = ['en', 'ms', 'zh']
+export const DEFAULT_LOCALE: Locale = 'en'
+
 /** A suggested conversation starter shown on the welcome screen. */
 export interface Topic {
   id: TopicId

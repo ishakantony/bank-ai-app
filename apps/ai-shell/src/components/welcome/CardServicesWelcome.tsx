@@ -1,9 +1,11 @@
 import { Snowflake, RefreshCw, Settings2, Wifi } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import type { WelcomeProps } from './types'
 import { QuickAction } from './QuickAction'
 
 /** Card Services — leads with a faux card visual, then a stacked action list. */
 export function CardServicesWelcome({ onSend }: WelcomeProps) {
+  const { t } = useTranslation()
   return (
     <div className="animate-float-in flex flex-col gap-6 py-8">
       {/* Faux payment card */}
@@ -11,7 +13,7 @@ export function CardServicesWelcome({ onSend }: WelcomeProps) {
         <div className="absolute -right-8 -top-8 size-32 rounded-full bg-white/15 blur-2xl" />
         <div className="flex h-full flex-col justify-between text-white">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium tracking-wide">Bank AI</span>
+            <span className="text-sm font-medium tracking-wide">{t('brand')}</span>
             <Wifi className="size-5 rotate-90 opacity-80" />
           </div>
           <div>
@@ -24,27 +26,27 @@ export function CardServicesWelcome({ onSend }: WelcomeProps) {
       </div>
 
       <div>
-        <h2 className="text-xl font-semibold text-white">Manage your cards</h2>
+        <h2 className="text-xl font-semibold text-white">{t('welcomeScreens.cards.heading')}</h2>
         <p className="mt-1 text-sm text-white/55">
-          Freeze, replace, or fine-tune the controls on your card.
+          {t('welcomeScreens.cards.subtitle')}
         </p>
       </div>
 
       <div className="flex flex-col gap-2.5">
         <QuickAction
-          label="Freeze my card"
+          label={t('welcomeScreens.cards.freeze')}
           icon={Snowflake}
-          onClick={() => onSend('Please freeze my card.')}
+          onClick={() => onSend(t('welcomeScreens.cards.freezeSend'))}
         />
         <QuickAction
-          label="Order a replacement"
+          label={t('welcomeScreens.cards.replace')}
           icon={RefreshCw}
-          onClick={() => onSend('I need to order a replacement card.')}
+          onClick={() => onSend(t('welcomeScreens.cards.replaceSend'))}
         />
         <QuickAction
-          label="Adjust card controls"
+          label={t('welcomeScreens.cards.controls')}
           icon={Settings2}
-          onClick={() => onSend('I want to adjust my card spending controls.')}
+          onClick={() => onSend(t('welcomeScreens.cards.controlsSend'))}
         />
       </div>
     </div>

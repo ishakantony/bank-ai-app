@@ -2,6 +2,7 @@ import { useCallback, useMemo, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { Columns2, Search, Share2 } from 'lucide-react'
 import { toast } from 'sonner'
+import { useTranslation } from 'react-i18next'
 import { Markdown } from '../Markdown'
 import { exampleFence } from './blockDocs'
 import { useBlockDocs } from './useBlockDocs'
@@ -48,6 +49,7 @@ function decodeMd(value: string | null): string | null {
  * be copied or shared via a self-contained URL.
  */
 export function Playground() {
+  const { t } = useTranslation()
   const [params] = useSearchParams()
   const taRef = useRef<HTMLTextAreaElement>(null)
   const [value, setValue] = useState(
@@ -131,8 +133,8 @@ export function Playground() {
   function share() {
     const url = `${window.location.origin}${window.location.pathname}?tab=playground&md=${encodeMd(value)}`
     navigator.clipboard.writeText(url).then(
-      () => toast('Share link copied to clipboard'),
-      () => toast('Couldn’t copy the link'),
+      () => toast(t('docs.playground.shareCopied')),
+      () => toast(t('docs.playground.shareFailed')),
     )
   }
 
@@ -141,7 +143,7 @@ export function Playground() {
       {/* Toolbar: starters + document actions */}
       <div className="flex flex-wrap items-center gap-2">
         <span className="text-xs font-medium uppercase tracking-wide text-white/40">
-          Start from
+          {t('docs.playground.startFrom')}
         </span>
         {STARTERS.map((s) => (
           <button
@@ -154,14 +156,14 @@ export function Playground() {
           </button>
         ))}
         <div className="ml-auto flex items-center gap-2">
-          <CopyButton value={value} label="Copy markdown" />
+          <CopyButton value={value} label={t('docs.playground.copyMarkdown')} />
           <button
             type="button"
             onClick={share}
             className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-2.5 py-1 text-xs font-medium text-white/70 transition hover:border-white/25 hover:bg-white/10 hover:text-white/90"
           >
             <Share2 className="size-3.5" />
-            Share
+            {t('docs.playground.share')}
           </button>
         </div>
       </div>
@@ -170,7 +172,7 @@ export function Playground() {
       <div className="space-y-2.5">
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-xs font-medium uppercase tracking-wide text-white/40">
-            Insert block
+            {t('docs.playground.insertBlock')}
           </span>
           <div className="relative">
             <Search className="pointer-events-none absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-white/35" />
@@ -178,14 +180,14 @@ export function Playground() {
               type="search"
               value={blockQuery}
               onChange={(e) => setBlockQuery(e.target.value)}
-              placeholder="Filter blocks…"
+              placeholder={t('docs.playground.filterBlocks')}
               className="w-44 rounded-full border border-white/10 bg-black/30 py-1.5 pl-8 pr-3 text-[13px] text-white/85 outline-none transition placeholder:text-white/35 focus:border-white/25 focus-visible:ring-2 focus-visible:ring-accent-1/40"
             />
           </div>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           {filteredBlocks.length === 0 ? (
-            <span className="text-xs text-white/40">No blocks match.</span>
+            <span className="text-xs text-white/40">{t('docs.playground.noBlocks')}</span>
           ) : (
             filteredBlocks.map(([name, doc]) => (
               <button
@@ -203,7 +205,7 @@ export function Playground() {
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-xs font-medium uppercase tracking-wide text-white/40">
-            Markdown
+            {t('docs.playground.markdown')}
           </span>
           {MARKDOWN_SNIPPETS.map((s) => (
             <button
@@ -221,7 +223,7 @@ export function Playground() {
       {/* Viewport presets */}
       <div className="flex flex-wrap items-center gap-2">
         <span className="text-xs font-medium uppercase tracking-wide text-white/40">
-          Viewport
+          {t('docs.playground.viewport')}
         </span>
         <button
           type="button"
@@ -230,7 +232,7 @@ export function Playground() {
           onClick={() => (compare ? setCompare(false) : enableCompare())}
         >
           <Columns2 className="size-3.5" />
-          Compare
+          {t('docs.playground.compare')}
         </button>
         {!compare && (
           <button
@@ -238,7 +240,7 @@ export function Playground() {
             className={viewportId === null ? PILL_ACTIVE : PILL}
             onClick={() => setViewportId(null)}
           >
-            Fit
+            {t('docs.playground.fit')}
           </button>
         )}
         {VIEWPORTS.map((v) => {
@@ -263,7 +265,7 @@ export function Playground() {
           }
           onClick={() => (compare ? toggleCompareId('custom') : setViewportId('custom'))}
         >
-          Custom
+          {t('docs.playground.custom')}
         </button>
         {(compare ? compareIds.includes('custom') : viewportId === 'custom') && (
           <div className="flex items-center gap-1.5 text-[13px] text-white/55">
@@ -291,7 +293,7 @@ export function Playground() {
         <div className="grid gap-4 md:grid-cols-2">
           <div className="flex flex-col">
             <div className="mb-2 text-xs font-medium uppercase tracking-wide text-white/40">
-              Markdown
+              {t('docs.playground.markdown')}
             </div>
             <textarea
               ref={taRef}
@@ -303,7 +305,7 @@ export function Playground() {
           </div>
           <div className="flex flex-col">
             <div className="mb-2 text-xs font-medium uppercase tracking-wide text-white/40">
-              Preview
+              {t('docs.playground.preview')}
             </div>
             <div className="min-h-[28rem] flex-1 rounded-2xl border border-white/10 bg-white/[0.04] p-4 backdrop-blur-md">
               <Markdown content={value} />
@@ -314,7 +316,7 @@ export function Playground() {
         <div className="space-y-4">
           <div className="flex flex-col">
             <div className="mb-2 text-xs font-medium uppercase tracking-wide text-white/40">
-              Markdown
+              {t('docs.playground.markdown')}
             </div>
             <textarea
               ref={taRef}
@@ -326,11 +328,11 @@ export function Playground() {
           </div>
           <div className="flex flex-col">
             <div className="mb-2 text-xs font-medium uppercase tracking-wide text-white/40">
-              Preview{compare ? ` · comparing ${frames.length}` : ''}
+              {compare ? t('docs.playground.comparing', { count: frames.length }) : t('docs.playground.preview')}
             </div>
             {frames.length === 0 ? (
               <div className="rounded-2xl border border-dashed border-white/10 bg-white/[0.02] p-8 text-center text-sm text-white/45">
-                Select one or more devices to compare.
+                {t('docs.playground.selectDevices')}
               </div>
             ) : (
               <div className="overflow-x-auto py-2">

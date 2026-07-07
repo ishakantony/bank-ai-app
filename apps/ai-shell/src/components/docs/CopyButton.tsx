@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Check, Copy } from 'lucide-react'
 import { toast } from 'sonner'
+import { useTranslation } from 'react-i18next'
 
 interface CopyButtonProps {
   /** Text written to the clipboard on click. */
@@ -14,7 +15,9 @@ interface CopyButtonProps {
  * transient check on success and a toast if the clipboard write fails. Mirrors
  * the copy affordance in `MessageActions`.
  */
-export function CopyButton({ value, label = 'Copy' }: CopyButtonProps) {
+export function CopyButton({ value, label }: CopyButtonProps) {
+  const { t } = useTranslation()
+  const resolvedLabel = label ?? t('messageActions.copy')
   const [copied, setCopied] = useState(false)
   const timer = useRef<ReturnType<typeof setTimeout>>(undefined)
 
@@ -27,7 +30,7 @@ export function CopyButton({ value, label = 'Copy' }: CopyButtonProps) {
       clearTimeout(timer.current)
       timer.current = setTimeout(() => setCopied(false), 1500)
     } catch {
-      toast('Couldn’t copy to clipboard')
+      toast(t('messageActions.copyFailed'))
     }
   }
 
@@ -35,7 +38,7 @@ export function CopyButton({ value, label = 'Copy' }: CopyButtonProps) {
     <button
       type="button"
       onClick={copy}
-      aria-label={copied ? 'Copied' : label}
+      aria-label={copied ? t('messageActions.copied') : resolvedLabel}
       className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-2.5 py-1 text-xs font-medium text-white/70 transition hover:border-white/25 hover:bg-white/10 hover:text-white/90"
     >
       {copied ? (
@@ -43,7 +46,7 @@ export function CopyButton({ value, label = 'Copy' }: CopyButtonProps) {
       ) : (
         <Copy className="size-3.5" />
       )}
-      {copied ? 'Copied' : label}
+      {copied ? t('messageActions.copied') : resolvedLabel}
     </button>
   )
 }

@@ -1,0 +1,137 @@
+{
+  "brand": "Bank AI",
+  "welcome": {
+    "hero": "What can I help?"
+  },
+  "chat": {
+    "inputPlaceholder": "Ask Bank AI anything…",
+    "replying": "Bank AI is replying…",
+    "sendMessage": "Send message",
+    "backToHome": "Back to home",
+    "newChat": "New chat",
+    "errorSending": "Something went wrong sending that.",
+    "retry": "Retry",
+    "typing": [
+      "Connecting securely…",
+      "Looking into that for you…",
+      "Checking your accounts…",
+      "Almost there…"
+    ]
+  },
+  "footer": {
+    "disclaimer": "AI responses can be wrong, use it with caution."
+  },
+  "topicGrid": {
+    "loadError": "Couldn't load topics.",
+    "tryAgain": "Try again"
+  },
+  "messageActions": {
+    "regenerate": "Regenerate response",
+    "copy": "Copy message",
+    "copied": "Copied",
+    "like": "Like message",
+    "dislike": "Dislike message",
+    "readAloud": "Read aloud",
+    "stopReading": "Stop reading",
+    "feedbackThanks": "Thanks for your feedback",
+    "copyFailed": "Couldn't copy to clipboard"
+  },
+  "languageSwitcher": {
+    "label": "Language",
+    "en": "English",
+    "ms": "Bahasa Malaysia",
+    "zh": "中文"
+  },
+  "welcomeScreens": {
+    "transfer": {
+      "heading": "Send money in seconds",
+      "subtitle": "Pay anyone instantly and securely — just tell me who and how much.",
+      "availableBalance": "Available balance",
+      "account": "Everyday Checking ··· 4471",
+      "sendToContact": "Send to a contact",
+      "sendToContactSend": "I want to send money to one of my contacts.",
+      "payNewPayee": "Pay a new payee",
+      "payNewPayeeSend": "Help me set up and pay a new payee.",
+      "checkLimits": "Check my limits",
+      "checkLimitsSend": "What are my current transfer limits?"
+    },
+    "cards": {
+      "heading": "Manage your cards",
+      "subtitle": "Freeze, replace, or fine-tune the controls on your card.",
+      "freeze": "Freeze my card",
+      "freezeSend": "Please freeze my card.",
+      "replace": "Order a replacement",
+      "replaceSend": "I need to order a replacement card.",
+      "controls": "Adjust card controls",
+      "controlsSend": "I want to adjust my card spending controls."
+    },
+    "savings": {
+      "heading": "Grow your savings",
+      "subtitle": "Track goals and build the habit.",
+      "goalName": "Holiday fund",
+      "progress": "{{progress}}% there — keep it up!",
+      "newGoal": "Open a new goal",
+      "newGoalSend": "I want to open a new savings goal.",
+      "autoSave": "Set up auto-save",
+      "autoSaveSend": "Help me set up a recurring auto-save transfer.",
+      "project": "Project my growth",
+      "projectSend": "How long until I reach my savings goal?"
+    },
+    "security": {
+      "heading": "You're protected",
+      "subtitle": "No suspicious activity detected. I can act fast if anything looks off.",
+      "statusBanner": "Account status: secure · last checked just now",
+      "review": "Review recent activity",
+      "reviewSend": "Show me my recent account activity.",
+      "report": "Report a transaction",
+      "reportSend": "I want to report a suspicious transaction.",
+      "lock": "Lock my account",
+      "lockSend": "Please lock my account immediately."
+    },
+    "insights": {
+      "heading": "Your financial insights",
+      "loadError": "Couldn't load insights.",
+      "tryAgain": "Try again"
+    },
+    "generic": {
+      "getStarted": "Get started with {{name}}",
+      "getStartedSend": "Help me with {{name}}."
+    }
+  },
+  "docs": {
+    "backLink": "Bank AI",
+    "title": "Blocks & Markdown",
+    "subtitle": "A living reference for everything an assistant reply can render — and a playground to try it yourself.",
+    "tabs": {
+      "basics": "Markdown Basics",
+      "gallery": "Custom Blocks",
+      "playground": "Playground"
+    },
+    "gallery": {
+      "heading": "Custom blocks",
+      "searchPlaceholder": "Search blocks by name, purpose or keyword…",
+      "all": "All",
+      "noMatch": "No blocks match “{{query}}”.",
+      "docPending": "Documentation pending — add a docs.ts to this block's folder.",
+      "copySource": "Copy source"
+    },
+    "playground": {
+      "startFrom": "Start from",
+      "copyMarkdown": "Copy markdown",
+      "share": "Share",
+      "shareCopied": "Share link copied to clipboard",
+      "shareFailed": "Couldn't copy the link",
+      "insertBlock": "Insert block",
+      "filterBlocks": "Filter blocks…",
+      "noBlocks": "No blocks match.",
+      "markdown": "Markdown",
+      "viewport": "Viewport",
+      "compare": "Compare",
+      "fit": "Fit",
+      "custom": "Custom",
+      "preview": "Preview",
+      "comparing": "Preview · comparing {{count}}",
+      "selectDevices": "Select one or more devices to compare."
+    }
+  }
+}

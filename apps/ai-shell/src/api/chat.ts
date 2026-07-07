@@ -1,4 +1,5 @@
 import type { Role, ThreadId } from '@bank-poc/shared'
+import { apiFetch } from './http'
 
 /** A single conversation turn sent to the backend (client-only fields stripped). */
 export interface ChatTurn {
@@ -19,7 +20,7 @@ export interface SendChatResponse {
 export async function sendChat(
   body: SendChatRequest,
 ): Promise<SendChatResponse> {
-  const res = await fetch('/api/chat', {
+  const res = await apiFetch('/api/chat', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),

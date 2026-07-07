@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { useTopics } from '../hooks/useTopics'
 import type { Topic } from '@bank-poc/shared'
 import { TopicCard } from './TopicCard'
@@ -7,18 +8,19 @@ interface TopicGridProps {
 }
 
 export function TopicGrid({ onSelect }: TopicGridProps) {
+  const { t } = useTranslation()
   const { data, isPending, isError, refetch } = useTopics()
 
   if (isError) {
     return (
       <div className="rounded-2xl border border-white/10 bg-white/5 p-6 text-center text-sm text-white/60">
-        Couldn&apos;t load topics.{' '}
+        {t('topicGrid.loadError')}{' '}
         <button
           type="button"
           onClick={() => refetch()}
           className="font-medium text-accent-3 underline-offset-2 hover:underline"
         >
-          Try again
+          {t('topicGrid.tryAgain')}
         </button>
       </div>
     )

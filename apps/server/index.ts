@@ -1,10 +1,22 @@
 import { serve } from '@hono/node-server'
 import { Hono } from 'hono'
-import type { BlockRemoteManifest, ThreadId } from '@bank-poc/shared'
+import {
+  DEFAULT_LOCALE,
+  LOCALES,
+  type BlockRemoteManifest,
+  type Locale,
+  type ThreadId,
+} from '@bank-poc/shared'
 import { insights, topics } from './data.ts'
 import { generateReply, type ChatTurn } from './openrouter.ts'
 
 const app = new Hono()
+
+/** Pick the request's locale from `Accept-Language`, defaulting to English. */
+function resolveLocale(acceptLanguage: string | undefined): Locale {
+  const raw = acceptLanguage?.split(',')[0]?.split('-')[0]
+  return LOCALES.includes(raw as Locale) ? (raw as Locale) : DEFAULT_LOCALE
+}
 
 // Which block remotes exist and where to load them from. The URL is
 // env-configurable (default: the local dev remote) so the same server can point
@@ -33,16 +45,17 @@ const blockRemotes: BlockRemoteManifest = {
   ],
 }
 
-app.get('/api/topics', (c) => c.json(topics))
-app.get('/api/insights', (c) => c.json(insights))
+app.get('/api/topics', (c) => c.json(topics[resolveLocale(c.req.header('Accept-Language'))]))
+app.get('/api/insights', (c) => c.json(insights[resolveLocale(c.req.header('Accept-Language'))]))
 app.get('/api/block-remotes', (c) => c.json(blockRemotes))
 
 app.post('/api/chat', async (c) => {
+  const locale = resolveLocale(c.req.header('Accept-Language'))
   const body = await c.req.json<{ threadId?: ThreadId; messages?: ChatTurn[] }>()
   const threadId: ThreadId = body.threadId ?? 'general'
   const messages = body.messages ?? []
   try {
-    const reply = await generateReply(threadId, messages)
+    const reply = await generateReply(threadId, messages, locale)
     return c.json({ reply })
   } catch (err) {
     // Surface the failure so the frontend shows its error bubble + retry.

@@ -1,0 +1,137 @@
+{
+  "brand": "Bank AI",
+  "welcome": {
+    "hero": "有什么可以帮您?"
+  },
+  "chat": {
+    "inputPlaceholder": "向 Bank AI 提问任何问题…",
+    "replying": "Bank AI 正在回复…",
+    "sendMessage": "发送消息",
+    "backToHome": "返回主页",
+    "newChat": "新对话",
+    "errorSending": "发送时出了点问题。",
+    "retry": "重试",
+    "typing": [
+      "正在安全连接…",
+      "正在为您查询…",
+      "正在检查您的账户…",
+      "就快好了…"
+    ]
+  },
+  "footer": {
+    "disclaimer": "AI 回复可能有误,请谨慎使用。"
+  },
+  "topicGrid": {
+    "loadError": "无法加载主题。",
+    "tryAgain": "重试"
+  },
+  "messageActions": {
+    "regenerate": "重新生成回复",
+    "copy": "复制消息",
+    "copied": "已复制",
+    "like": "赞这条消息",
+    "dislike": "踩这条消息",
+    "readAloud": "朗读",
+    "stopReading": "停止朗读",
+    "feedbackThanks": "感谢您的反馈",
+    "copyFailed": "无法复制到剪贴板"
+  },
+  "languageSwitcher": {
+    "label": "语言",
+    "en": "English",
+    "ms": "Bahasa Malaysia",
+    "zh": "中文"
+  },
+  "welcomeScreens": {
+    "transfer": {
+      "heading": "几秒钟内转账",
+      "subtitle": "即时、安全地向任何人付款 — 只需告诉我收款人和金额。",
+      "availableBalance": "可用余额",
+      "account": "日常往来账户 ··· 4471",
+      "sendToContact": "转给联系人",
+      "sendToContactSend": "我想转账给我的一位联系人。",
+      "payNewPayee": "支付新收款人",
+      "payNewPayeeSend": "帮我设置并支付新收款人。",
+      "checkLimits": "查看我的限额",
+      "checkLimitsSend": "我目前的转账限额是多少?"
+    },
+    "cards": {
+      "heading": "管理您的卡片",
+      "subtitle": "冻结、更换或微调您卡片的控制设置。",
+      "freeze": "冻结我的卡",
+      "freezeSend": "请冻结我的卡。",
+      "replace": "申请补发卡片",
+      "replaceSend": "我需要申请一张补发卡片。",
+      "controls": "调整卡片控制",
+      "controlsSend": "我想调整我的卡片消费控制。"
+    },
+    "savings": {
+      "heading": "增长您的储蓄",
+      "subtitle": "追踪目标,养成习惯。",
+      "goalName": "度假基金",
+      "progress": "已完成 {{progress}}% — 继续加油!",
+      "newGoal": "开设新目标",
+      "newGoalSend": "我想开设一个新的储蓄目标。",
+      "autoSave": "设置自动储蓄",
+      "autoSaveSend": "帮我设置一个定期自动储蓄转账。",
+      "project": "预测我的增长",
+      "projectSend": "还要多久才能达到我的储蓄目标?"
+    },
+    "security": {
+      "heading": "您已受到保护",
+      "subtitle": "未检测到可疑活动。如有异常,我可以迅速处理。",
+      "statusBanner": "账户状态:安全 · 刚刚检查过",
+      "review": "查看近期活动",
+      "reviewSend": "显示我近期的账户活动。",
+      "report": "举报交易",
+      "reportSend": "我想举报一笔可疑交易。",
+      "lock": "锁定我的账户",
+      "lockSend": "请立即锁定我的账户。"
+    },
+    "insights": {
+      "heading": "您的财务洞察",
+      "loadError": "无法加载洞察。",
+      "tryAgain": "重试"
+    },
+    "generic": {
+      "getStarted": "开始使用{{name}}",
+      "getStartedSend": "帮我处理{{name}}。"
+    }
+  },
+  "docs": {
+    "backLink": "Bank AI",
+    "title": "区块与 Markdown",
+    "subtitle": "助手回复可呈现的一切内容的实时参考 — 以及一个可供您亲自尝试的演练场。",
+    "tabs": {
+      "basics": "Markdown 基础",
+      "gallery": "自定义区块",
+      "playground": "演练场"
+    },
+    "gallery": {
+      "heading": "自定义区块",
+      "searchPlaceholder": "按名称、用途或关键词搜索区块…",
+      "all": "全部",
+      "noMatch": "没有匹配“{{query}}”的区块。",
+      "docPending": "文档待补充 — 请在该区块的文件夹中添加 docs.ts。",
+      "copySource": "复制源代码"
+    },
+    "playground": {
+      "startFrom": "起始于",
+      "copyMarkdown": "复制 markdown",
+      "share": "分享",
+      "shareCopied": "分享链接已复制到剪贴板",
+      "shareFailed": "无法复制链接",
+      "insertBlock": "插入区块",
+      "filterBlocks": "筛选区块…",
+      "noBlocks": "没有匹配的区块。",
+      "markdown": "Markdown",
+      "viewport": "视口",
+      "compare": "对比",
+      "fit": "自适应",
+      "custom": "自定义",
+      "preview": "预览",
+      "comparing": "预览 · 正在对比 {{count}}",
+      "selectDevices": "选择一个或多个设备进行对比。"
+    }
+  }
+}

@@ -1,4 +1,5 @@
 import type { BlockRemoteManifest } from '@bank-poc/shared'
+import { apiFetch } from './http'
 
 /**
  * Fetch the block-remote manifest — which federated block remotes exist and
@@ -6,7 +7,7 @@ import type { BlockRemoteManifest } from '@bank-poc/shared'
  * the block registry.
  */
 export async function fetchBlockRemotes(): Promise<BlockRemoteManifest> {
-  const res = await fetch('/api/block-remotes')
+  const res = await apiFetch('/api/block-remotes')
   if (!res.ok) {
     throw new Error(`Failed to load block remotes (${res.status})`)
   }

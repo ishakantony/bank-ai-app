@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Check, Copy, RefreshCw, Square, ThumbsDown, ThumbsUp, Volume2 } from 'lucide-react'
 import { toast } from 'sonner'
+import { useTranslation } from 'react-i18next'
 import { useSpeech } from '../hooks/useSpeech'
 import { speechText } from '../hooks/speechText'
 import { copyText } from '../hooks/copyText'
@@ -9,6 +10,13 @@ import { useChatStore } from '../store/chatStore'
 import type { ThreadId } from '@bank-poc/shared'
 
 type Feedback = 'up' | 'down' | null
+
+/** i18n language → BCP-47 tag so speech synthesis picks the right voice. */
+const SPEECH_LANG: Record<string, string> = {
+  en: 'en-US',
+  ms: 'ms-MY',
+  zh: 'zh-CN',
+}
 
 interface MessageActionsProps {
   /** Raw markdown source of the assistant reply, used for copy. */
@@ -32,6 +40,7 @@ export function MessageActions({
   messageId,
   canRegenerate,
 }: MessageActionsProps) {
+  const { t, i18n } = useTranslation()
   const [feedback, setFeedback] = useState<Feedback>(null)
   const [copied, setCopied] = useState(false)
   const copiedTimer = useRef<ReturnType<typeof setTimeout>>(undefined)
@@ -39,12 +48,13 @@ export function MessageActions({
   const pending = useChatStore((s) => s.pending)
   const { speaking, toggle: toggleSpeech, supported: canSpeak } = useSpeech()
   const spoken = useMemo(() => speechText(content), [content])
+  const speechLang = SPEECH_LANG[i18n.language.split('-')[0]] ?? i18n.language
 
   useEffect(() => () => clearTimeout(copiedTimer.current), [])
 
   const rate = (value: Exclude<Feedback, null>) => {
     const next = feedback === value ? null : value
-    if (next) toast('Thanks for your feedback')
+    if (next) toast(t('messageActions.feedbackThanks'))
     setFeedback(next)
   }
 
@@ -55,7 +65,7 @@ export function MessageActions({
       clearTimeout(copiedTimer.current)
       copiedTimer.current = setTimeout(() => setCopied(false), 1500)
     } catch {
-      toast('Couldn’t copy to clipboard')
+      toast(t('messageActions.copyFailed'))
     }
   }
 
@@ -66,7 +76,7 @@ export function MessageActions({
           type="button"
           onClick={() => regenerate(threadId, messageId)}
           disabled={pending != null}
-          aria-label="Regenerate response"
+          aria-label={t('messageActions.regenerate')}
           className="rounded-lg p-1.5 transition hover:bg-white/10 hover:text-white/80 disabled:opacity-40"
         >
           <RefreshCw className="size-4" />
@@ -75,7 +85,7 @@ export function MessageActions({
       <button
         type="button"
         onClick={copy}
-        aria-label={copied ? 'Copied' : 'Copy message'}
+        aria-label={copied ? t('messageActions.copied') : t('messageActions.copy')}
         className="rounded-lg p-1.5 transition hover:bg-white/10 hover:text-white/80"
       >
         {copied ? (
@@ -87,7 +97,7 @@ export function MessageActions({
       <button
         type="button"
         onClick={() => rate('up')}
-        aria-label="Like message"
+        aria-label={t('messageActions.like')}
         aria-pressed={feedback === 'up'}
         className={`rounded-lg p-1.5 transition hover:bg-white/10 hover:text-white/80 ${
           feedback === 'up' ? 'text-accent-3' : ''
@@ -98,7 +108,7 @@ export function MessageActions({
       <button
         type="button"
         onClick={() => rate('down')}
-        aria-label="Dislike message"
+        aria-label={t('messageActions.dislike')}
         aria-pressed={feedback === 'down'}
         className={`rounded-lg p-1.5 transition hover:bg-white/10 hover:text-white/80 ${
           feedback === 'down' ? 'text-tone-negative' : ''
@@ -109,8 +119,8 @@ export function MessageActions({
       {canSpeak && spoken ? (
         <button
           type="button"
-          onClick={() => toggleSpeech(spoken)}
-          aria-label={speaking ? 'Stop reading' : 'Read aloud'}
+          onClick={() => toggleSpeech(spoken, speechLang)}
+          aria-label={speaking ? t('messageActions.stopReading') : t('messageActions.readAloud')}
           aria-pressed={speaking}
           className={`rounded-lg p-1.5 transition hover:bg-white/10 hover:text-white/80 ${
             speaking ? 'text-accent-3' : ''

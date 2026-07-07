@@ -1,26 +1,28 @@
+import { useTranslation } from 'react-i18next'
 import { useInsights } from '../../hooks/useInsights'
 import type { WelcomeProps } from './types'
 import { InsightCard } from './InsightCard'
 
 /** Insights — a "Your financial insights" hero over a column of insight tiles. */
 export function InsightsWelcome({ onSend }: WelcomeProps) {
+  const { t } = useTranslation()
   const { data, isPending, isError, refetch } = useInsights()
 
   return (
     <div className="flex flex-col gap-6 py-8">
       <h2 className="animate-float-in text-3xl font-semibold text-white">
-        Your financial insights
+        {t('welcomeScreens.insights.heading')}
       </h2>
 
       {isError ? (
         <div className="rounded-2xl border border-white/10 bg-white/5 p-6 text-center text-sm text-white/60">
-          Couldn&apos;t load insights.{' '}
+          {t('welcomeScreens.insights.loadError')}{' '}
           <button
             type="button"
             onClick={() => refetch()}
             className="font-medium text-accent-3 underline-offset-2 hover:underline"
           >
-            Try again
+            {t('welcomeScreens.insights.tryAgain')}
           </button>
         </div>
       ) : (

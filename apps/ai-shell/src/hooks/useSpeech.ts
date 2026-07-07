@@ -35,10 +35,22 @@ export function useSpeech() {
   }, [update])
 
   const speak = useCallback(
-    (text: string) => {
+    (text: string, lang?: string) => {
       if (!speechSupported || !text) return
       speechSynthesis.cancel() // single-channel: interrupt whatever's playing
       const utterance = new SpeechSynthesisUtterance(text)
+      if (lang) {
+        // Without a lang the engine uses its default (usually English) voice,
+        // which silently skips characters it can't pronounce (e.g. Chinese).
+        // Set the BCP-47 tag and, if the browser has one loaded, a matching
+        // voice so the reply is read in the language it was written in.
+        utterance.lang = lang
+        const base = lang.split('-')[0]
+        const voice = speechSynthesis
+          .getVoices()
+          .find((v) => v.lang === lang || v.lang.split('-')[0] === base)
+        if (voice) utterance.voice = voice
+      }
       utterance.onend = () => update(false)
       utterance.onerror = () => update(false)
       update(true)
@@ -48,9 +60,9 @@ export function useSpeech() {
   )
 
   const toggle = useCallback(
-    (text: string) => {
+    (text: string, lang?: string) => {
       if (speakingRef.current) stop()
-      else speak(text)
+      else speak(text, lang)
     },
     [speak, stop],
   )
