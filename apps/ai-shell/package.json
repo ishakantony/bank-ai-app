@@ -13,6 +13,7 @@
     "@bank-poc/blocks-runtime": "*",
     "@bank-poc/shared": "*",
     "@module-federation/runtime": "^2.6.0",
+    "@radix-ui/react-select": "^2.3.3",
     "@tanstack/react-query": "^5.101.1",
     "eruda": "^3.4.3",
     "i18next": "^25.6.0",

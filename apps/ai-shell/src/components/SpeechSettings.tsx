@@ -1,9 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { RotateCcw, SlidersHorizontal, Volume2 } from 'lucide-react'
+import * as Select from '@radix-ui/react-select'
+import { Check, ChevronDown, RotateCcw, SlidersHorizontal, Volume2 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useSpeech, useVoices } from '../hooks/useSpeech'
 import { useSpeechStore } from '../store/speechStore'
+
+/** Radix Select forbids an empty-string item value, so "Auto" uses a sentinel. */
+const AUTO_VOICE = '__auto__'
 
 /** i18n language → BCP-47 tag, mirroring the map in MessageActions. */
 const SPEECH_LANG: Record<string, string> = {
@@ -22,7 +26,10 @@ export function SpeechSettings() {
   const { t, i18n } = useTranslation()
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
-  const panelRef = useRef<HTMLDivElement>(null)
+  // Tracked as state (not a ref) so the Radix Select below can portal its
+  // listbox *into* the panel — keeping item clicks inside the outside-click
+  // boundary instead of dismissing the whole popover.
+  const [panelEl, setPanelEl] = useState<HTMLDivElement | null>(null)
   const triggerRef = useRef<HTMLButtonElement>(null)
   // The panel is portaled to <body> so it escapes the chat header's fading
   // mask (AppShell's overlay bar), which would otherwise clip a tall dropdown.
@@ -69,10 +76,7 @@ export function SpeechSettings() {
     if (!open) return
     function onPointerDown(e: PointerEvent) {
       const target = e.target as Node
-      if (
-        !ref.current?.contains(target) &&
-        !panelRef.current?.contains(target)
-      )
+      if (!ref.current?.contains(target) && !panelEl?.contains(target))
         setOpen(false)
     }
     function onKey(e: KeyboardEvent) {
@@ -84,7 +88,7 @@ export function SpeechSettings() {
       document.removeEventListener('pointerdown', onPointerDown)
       document.removeEventListener('keydown', onKey)
     }
-  }, [open])
+  }, [open, panelEl])
 
   if (!supported) return null
 
@@ -114,32 +118,48 @@ export function SpeechSettings() {
       {open
         ? createPortal(
             <div
-              ref={panelRef}
+              ref={setPanelEl}
               role="dialog"
               aria-label={t('speechSettings.label')}
               style={{ top: pos.top, right: pos.right }}
               className="fixed z-50 w-72 space-y-4 rounded-xl border border-white/10 bg-ink-deep/95 p-4 shadow-2xl backdrop-blur-xl"
             >
           <div className="space-y-1.5">
-            <label
-              htmlFor="speech-voice"
-              className="text-xs font-medium text-white/60"
-            >
+            <span className="text-xs font-medium text-white/60">
               {t('speechSettings.voice')}
-            </label>
-            <select
-              id="speech-voice"
-              value={voiceURI ?? ''}
-              onChange={(e) => setVoice(e.target.value || null)}
-              className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white/90 transition hover:border-white/25 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-1/70"
+            </span>
+            <Select.Root
+              value={voiceURI ?? AUTO_VOICE}
+              onValueChange={(v) => setVoice(v === AUTO_VOICE ? null : v)}
             >
-              <option value="">{t('speechSettings.auto')}</option>
-              {listed.map((v) => (
-                <option key={v.voiceURI} value={v.voiceURI}>
-                  {v.name} ({v.lang})
-                </option>
-              ))}
-            </select>
+              <Select.Trigger
+                aria-label={t('speechSettings.voice')}
+                className="flex w-full items-center justify-between gap-2 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-left text-sm text-white/90 transition hover:border-white/25 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-1/70 data-[state=open]:border-white/25"
+              >
+                <Select.Value placeholder={t('speechSettings.auto')} />
+                <Select.Icon>
+                  <ChevronDown className="size-4 text-white/50" />
+                </Select.Icon>
+              </Select.Trigger>
+              <Select.Portal container={panelEl}>
+                <Select.Content
+                  position="popper"
+                  sideOffset={6}
+                  className="z-50 max-h-64 w-[var(--radix-select-trigger-width)] overflow-hidden rounded-lg border border-white/10 bg-ink-deep/95 p-1 shadow-2xl backdrop-blur-xl"
+                >
+                  <Select.Viewport className="space-y-0.5">
+                    <VoiceItem value={AUTO_VOICE} label={t('speechSettings.auto')} />
+                    {listed.map((v) => (
+                      <VoiceItem
+                        key={v.voiceURI}
+                        value={v.voiceURI}
+                        label={`${v.name} (${v.lang})`}
+                      />
+                    ))}
+                  </Select.Viewport>
+                </Select.Content>
+              </Select.Portal>
+            </Select.Root>
           </div>
 
           <Slider
@@ -190,6 +210,21 @@ export function SpeechSettings() {
           )
         : null}
     </div>
+  )
+}
+
+/** A single option in the Radix voice Select, styled to the glass theme. */
+function VoiceItem({ value, label }: { value: string; label: string }) {
+  return (
+    <Select.Item
+      value={value}
+      className="flex cursor-pointer items-center justify-between gap-2 rounded-md px-3 py-2 text-sm text-white/80 outline-none transition select-none data-[highlighted]:bg-white/10 data-[highlighted]:text-white data-[state=checked]:text-white"
+    >
+      <Select.ItemText>{label}</Select.ItemText>
+      <Select.ItemIndicator>
+        <Check className="size-4 text-accent-3" />
+      </Select.ItemIndicator>
+    </Select.Item>
   )
 }
 
