@@ -5,6 +5,7 @@ import { useChatStore } from '../store/chatStore'
 import type { ThreadId } from '@bank-poc/shared'
 import { Orb } from './Orb'
 import { LanguageSwitcher } from './LanguageSwitcher'
+import { SpeechSettings } from './SpeechSettings'
 
 interface ChatHeaderProps {
   threadId: ThreadId
@@ -40,6 +41,7 @@ export function ChatHeader({ threadId }: ChatHeaderProps) {
       </div>
 
       <div className="flex items-center gap-1">
+        <SpeechSettings />
         <LanguageSwitcher />
         <button
           type="button"

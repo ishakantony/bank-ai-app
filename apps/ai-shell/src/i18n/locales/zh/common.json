@@ -42,6 +42,17 @@
     "ms": "Bahasa Malaysia",
     "zh": "中文"
   },
+  "speechSettings": {
+    "label": "朗读设置",
+    "voice": "语音",
+    "auto": "自动（匹配语言）",
+    "speed": "语速",
+    "pitch": "音调",
+    "volume": "音量",
+    "preview": "试听",
+    "reset": "重置",
+    "sample": "您向 Aisyah 转账 RM250 的 DuitNow 交易已成功。"
+  },
   "welcomeScreens": {
     "transfer": {
       "heading": "几秒钟内转账",

@@ -42,6 +42,17 @@
     "ms": "Bahasa Malaysia",
     "zh": "中文"
   },
+  "speechSettings": {
+    "label": "Read-aloud settings",
+    "voice": "Voice",
+    "auto": "Auto (match language)",
+    "speed": "Speed",
+    "pitch": "Pitch",
+    "volume": "Volume",
+    "preview": "Preview",
+    "reset": "Reset",
+    "sample": "Your DuitNow transfer of RM250 to Aisyah was successful."
+  },
   "welcomeScreens": {
     "transfer": {
       "heading": "Send money in seconds",

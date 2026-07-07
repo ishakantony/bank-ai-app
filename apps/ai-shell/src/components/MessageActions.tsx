@@ -7,6 +7,7 @@ import { speechText } from '../hooks/speechText'
 import { copyText } from '../hooks/copyText'
 import { expandBlocksToText } from './blocks/blockText'
 import { useChatStore } from '../store/chatStore'
+import { useSpeechStore } from '../store/speechStore'
 import type { ThreadId } from '@bank-poc/shared'
 
 type Feedback = 'up' | 'down' | null
@@ -49,6 +50,10 @@ export function MessageActions({
   const { speaking, toggle: toggleSpeech, supported: canSpeak } = useSpeech()
   const spoken = useMemo(() => speechText(content), [content])
   const speechLang = SPEECH_LANG[i18n.language.split('-')[0]] ?? i18n.language
+  const voiceURI = useSpeechStore((s) => s.voiceURI)
+  const speechRate = useSpeechStore((s) => s.rate)
+  const pitch = useSpeechStore((s) => s.pitch)
+  const volume = useSpeechStore((s) => s.volume)
 
   useEffect(() => () => clearTimeout(copiedTimer.current), [])
 
@@ -119,7 +124,15 @@ export function MessageActions({
       {canSpeak && spoken ? (
         <button
           type="button"
-          onClick={() => toggleSpeech(spoken, speechLang)}
+          onClick={() =>
+            toggleSpeech(spoken, {
+              lang: speechLang,
+              voiceURI,
+              rate: speechRate,
+              pitch,
+              volume,
+            })
+          }
           aria-label={speaking ? t('messageActions.stopReading') : t('messageActions.readAloud')}
           aria-pressed={speaking}
           className={`rounded-lg p-1.5 transition hover:bg-white/10 hover:text-white/80 ${

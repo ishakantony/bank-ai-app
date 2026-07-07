@@ -42,6 +42,17 @@
     "ms": "Bahasa Malaysia",
     "zh": "中文"
   },
+  "speechSettings": {
+    "label": "Tetapan baca kuat",
+    "voice": "Suara",
+    "auto": "Auto (ikut bahasa)",
+    "speed": "Kelajuan",
+    "pitch": "Nada",
+    "volume": "Kelantangan",
+    "preview": "Pratonton",
+    "reset": "Set semula",
+    "sample": "Pemindahan DuitNow anda sebanyak RM250 kepada Aisyah berjaya."
+  },
   "welcomeScreens": {
     "transfer": {
       "heading": "Hantar wang dalam beberapa saat",

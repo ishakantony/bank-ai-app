@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { Check, Globe } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { LOCALES, type Locale } from '@bank-poc/shared'
@@ -16,15 +17,40 @@ export function LanguageSwitcher() {
   const { t, i18n } = useTranslation()
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
+  const panelRef = useRef<HTMLUListElement>(null)
+  const triggerRef = useRef<HTMLButtonElement>(null)
+  // The list is portaled to <body> so it escapes the chat header's fading mask
+  // (AppShell's overlay bar), which would otherwise clip the dropdown.
+  const [pos, setPos] = useState({ top: 0, right: 0 })
   const current = (LOCALES as string[]).includes(i18n.language)
     ? (i18n.language as Locale)
     : 'en'
 
-  // Close on outside click / Escape.
+  // Anchor the portaled list under the trigger's right edge (mirrors `right-0
+  // mt-2`). Recomputed on open and on viewport resize.
+  useEffect(() => {
+    if (!open) return
+    const place = () => {
+      const rect = triggerRef.current?.getBoundingClientRect()
+      if (rect)
+        setPos({ top: rect.bottom + 8, right: window.innerWidth - rect.right })
+    }
+    place()
+    window.addEventListener('resize', place)
+    return () => window.removeEventListener('resize', place)
+  }, [open])
+
+  // Close on outside click / Escape. The list lives in a portal, so it isn't a
+  // DOM descendant of the trigger — check both refs before closing.
   useEffect(() => {
     if (!open) return
     function onPointerDown(e: PointerEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
+      const target = e.target as Node
+      if (
+        !ref.current?.contains(target) &&
+        !panelRef.current?.contains(target)
+      )
+        setOpen(false)
     }
     function onKey(e: KeyboardEvent) {
       if (e.key === 'Escape') setOpen(false)
@@ -45,6 +71,7 @@ export function LanguageSwitcher() {
   return (
     <div ref={ref} className="relative">
       <button
+        ref={triggerRef}
         type="button"
         onClick={() => setOpen((o) => !o)}
         aria-label={t('languageSwitcher.label')}
@@ -56,12 +83,15 @@ export function LanguageSwitcher() {
         {SHORT[current]}
       </button>
 
-      {open ? (
-        <ul
-          role="listbox"
-          className="absolute right-0 z-20 mt-2 w-44 overflow-hidden rounded-xl border border-white/10 bg-ink-deep/95 p-1 shadow-2xl backdrop-blur-xl"
-        >
-          {LOCALES.map((locale) => (
+      {open
+        ? createPortal(
+            <ul
+              ref={panelRef}
+              role="listbox"
+              style={{ top: pos.top, right: pos.right }}
+              className="fixed z-50 w-44 overflow-hidden rounded-xl border border-white/10 bg-ink-deep/95 p-1 shadow-2xl backdrop-blur-xl"
+            >
+              {LOCALES.map((locale) => (
             <li key={locale}>
               <button
                 type="button"
@@ -76,9 +106,11 @@ export function LanguageSwitcher() {
                 ) : null}
               </button>
             </li>
-          ))}
-        </ul>
-      ) : null}
+              ))}
+            </ul>,
+            document.body,
+          )
+        : null}
     </div>
   )
 }
