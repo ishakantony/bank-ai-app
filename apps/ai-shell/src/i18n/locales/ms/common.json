@@ -116,7 +116,8 @@
     "tabs": {
       "basics": "Asas Markdown",
       "gallery": "Blok Tersuai",
-      "playground": "Taman Permainan"
+      "playground": "Taman Permainan",
+      "bento": "Bento"
     },
     "gallery": {
       "heading": "Blok tersuai",
@@ -143,6 +144,21 @@
       "preview": "Pratonton",
       "comparing": "Pratonton · membandingkan {{count}}",
       "selectDevices": "Pilih satu atau lebih peranti untuk dibandingkan."
+    },
+    "bento": {
+      "startFrom": "Mula daripada",
+      "copyJson": "Salin JSON",
+      "share": "Kongsi",
+      "shareCopied": "Pautan kongsi disalin ke papan keratan",
+      "shareFailed": "Tidak dapat menyalin pautan",
+      "preview": "Pratonton · semua varian",
+      "invalidJson": "JSON tidak sah",
+      "validationFailed": "Pengesahan skema gagal",
+      "fixToPreview": "Betulkan ralat untuk melihat pratonton.",
+      "renderError": "Ralat paparan",
+      "remoteLoading": "Memuatkan remote kad insight…",
+      "remoteError": "Remote kad insight tidak tersedia",
+      "remoteHint": "Mulakannya dengan `npm run remote:mobile-ai` (atau `npm run dev:docs`), kemudian muat semula."
     }
   }
 }

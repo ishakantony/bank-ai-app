@@ -116,7 +116,8 @@
     "tabs": {
       "basics": "Markdown 基础",
       "gallery": "自定义区块",
-      "playground": "演练场"
+      "playground": "演练场",
+      "bento": "便当卡"
     },
     "gallery": {
       "heading": "自定义区块",
@@ -143,6 +144,21 @@
       "preview": "预览",
       "comparing": "预览 · 正在对比 {{count}}",
       "selectDevices": "选择一个或多个设备进行对比。"
+    },
+    "bento": {
+      "startFrom": "起始于",
+      "copyJson": "复制 JSON",
+      "share": "分享",
+      "shareCopied": "分享链接已复制到剪贴板",
+      "shareFailed": "无法复制链接",
+      "preview": "预览 · 全部变体",
+      "invalidJson": "JSON 无效",
+      "validationFailed": "结构校验失败",
+      "fixToPreview": "修正错误后即可查看预览。",
+      "renderError": "渲染错误",
+      "remoteLoading": "正在加载 insight 卡片远程模块…",
+      "remoteError": "insight 卡片远程模块不可用",
+      "remoteHint": "请运行 `npm run remote:mobile-ai`（或 `npm run dev:docs`）后重新加载。"
     }
   }
 }

@@ -4,9 +4,10 @@ import { useTranslation } from 'react-i18next'
 import { MarkdownBasics } from '../components/docs/MarkdownBasics'
 import { BlockGallery } from '../components/docs/BlockGallery'
 import { Playground } from '../components/docs/Playground'
+import { BentoPlayground } from '../components/docs/BentoPlayground'
 import { ChatThreadProvider } from '@bank-poc/blocks-runtime'
 
-type Tab = 'basics' | 'gallery' | 'playground'
+type Tab = 'basics' | 'gallery' | 'playground' | 'bento'
 
 /**
  * `/docs` — living documentation for the reply-authoring system. Three tabs
@@ -25,12 +26,13 @@ export function DocsPage() {
   const [params, setParams] = useSearchParams()
   const raw = params.get('tab')
   const tab: Tab =
-    raw === 'basics' || raw === 'playground' ? raw : 'gallery'
+    raw === 'basics' || raw === 'playground' || raw === 'bento' ? raw : 'gallery'
 
   const TABS: { id: Tab; label: string }[] = [
     { id: 'basics', label: t('docs.tabs.basics') },
     { id: 'gallery', label: t('docs.tabs.gallery') },
     { id: 'playground', label: t('docs.tabs.playground') },
+    { id: 'bento', label: t('docs.tabs.bento') },
   ]
 
   function selectTab(next: Tab) {
@@ -84,6 +86,8 @@ export function DocsPage() {
           <MarkdownBasics />
         ) : tab === 'playground' ? (
           <Playground />
+        ) : tab === 'bento' ? (
+          <BentoPlayground />
         ) : (
           <BlockGallery />
         )}

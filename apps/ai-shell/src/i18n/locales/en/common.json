@@ -116,7 +116,8 @@
     "tabs": {
       "basics": "Markdown Basics",
       "gallery": "Custom Blocks",
-      "playground": "Playground"
+      "playground": "Playground",
+      "bento": "Bento"
     },
     "gallery": {
       "heading": "Custom blocks",
@@ -143,6 +144,21 @@
       "preview": "Preview",
       "comparing": "Preview · comparing {{count}}",
       "selectDevices": "Select one or more devices to compare."
+    },
+    "bento": {
+      "startFrom": "Start from",
+      "copyJson": "Copy JSON",
+      "share": "Share",
+      "shareCopied": "Share link copied to clipboard",
+      "shareFailed": "Couldn't copy the link",
+      "preview": "Preview · all variants",
+      "invalidJson": "Invalid JSON",
+      "validationFailed": "Schema validation failed",
+      "fixToPreview": "Fix the errors to see a preview.",
+      "renderError": "Render error",
+      "remoteLoading": "Loading the insight-card remote…",
+      "remoteError": "Insight-card remote unavailable",
+      "remoteHint": "Start it with `npm run remote:mobile-ai` (or `npm run dev:docs`), then reload."
     }
   }
 }
