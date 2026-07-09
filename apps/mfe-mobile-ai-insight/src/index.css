@@ -28,6 +28,10 @@
   /* Ink surface for the action pill. */
   --color-ink: oklch(0.24 0.03 262);
 
+  /* Bright mint for "positive" fills — the gauge arc, progress bar + its glow
+   * knob. Sits apart from the tone palette (which is for delta badges). */
+  --color-glow-green: #8dfcb8;
+
   /* Delta-badge tones: a muted tint (used at /25 for the pill background) plus
    * a brighter -fg for the text so it reads on the deep card. */
   --color-tone-positive: oklch(0.72 0.16 155);

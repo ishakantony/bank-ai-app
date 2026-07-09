@@ -39,25 +39,30 @@ const promos = {
   insight: {
     kind: 'ai',
     block: 'insightCard',
+    // Hero slot → the `donut` preset: where the month's spend went, by category.
     data: {
-      period: 'May',
-      headline:
-        'Raya travel and dining drove your spend — up 45% on your 6-month rhythm.',
-      amount: 6800,
-      currency: 'RM',
-      delta: '+45% vs 6-mo avg',
-      deltaTone: 'warning',
-      cta: 'Full Insight',
-      // Tapping opens the Bank AI chat on the insights topic, seeded with this
-      // prompt — a specific insight conversation.
-      topic: 'insights',
-      prompt: 'Break down my May spending and why it jumped 45%',
-      categories: [
-        { label: 'Dining', amount: 2450 },
-        { label: 'Travel', amount: 1980 },
-        { label: 'Shopping', amount: 1420 },
-        { label: 'Groceries', amount: 950 },
-      ],
+      variant: 'hero',
+      preset: 'donut',
+      data: {
+        period: 'May',
+        headline:
+          'Raya travel and dining drove your spend — here’s where your RM6,800 went.',
+        amount: 6800,
+        currency: 'RM',
+        delta: '4 categories',
+        deltaTone: 'info',
+        cta: 'Full Insight',
+        // Tapping opens the Bank AI chat on the insights topic, seeded with this
+        // prompt — a specific insight conversation.
+        topic: 'insights',
+        prompt: 'Break down my May spending and why it jumped 45%',
+        slices: [
+          { label: 'Dining', value: 2450 },
+          { label: 'Travel', value: 1980 },
+          { label: 'Shopping', value: 1420 },
+          { label: 'Groceries', value: 950 },
+        ],
+      },
     },
   },
   // Six tiles feed the carousel's two bento slides (groups of three). Bento
@@ -66,28 +71,30 @@ const promos = {
   // `insightCard` remote opaquely, so a bento mixes promo banners with AI
   // banners. Each AI tile's `data.variant` matches the cell it lands in: the
   // FIRST tile of a slide is the large one (left→row-span-2 tall, top→col-span-2
-  // wide); the rest are single `compact` cells.
+  // wide); the rest are single `compact` cells. Each tile also carries a `preset`
+  // so the bento showcases the full range (gauge / progress / countdown).
   promos: [
     // Slide 1 bento (left layout): AI tall lead + two promo tiles.
     {
       id: 'ai-dining',
       kind: 'ai',
       block: 'insightCard',
+      // Bento tall lead → the `gauge` preset: dining budget used this quarter.
       data: {
         variant: 'tall',
-        period: 'Q2',
-        headline: 'Dining is your fastest-growing category this quarter.',
-        amount: 2450,
-        currency: 'RM',
-        delta: '+18%',
-        deltaTone: 'warning',
-        topic: 'insights',
-        prompt: 'Why is my dining spend growing this quarter?',
-        categories: [
-          { label: 'Dining', amount: 2450 },
-          { label: 'Shopping', amount: 1420 },
-          { label: 'Transport', amount: 980 },
-        ],
+        preset: 'gauge',
+        data: {
+          period: 'Q2',
+          headline: 'You’ve used most of your dining budget this quarter.',
+          value: 82,
+          max: 100,
+          unit: '%',
+          label: 'Dining budget',
+          delta: '+18%',
+          deltaTone: 'warning',
+          topic: 'insights',
+          prompt: 'Why is my dining spend growing this quarter?',
+        },
       },
     },
     {
@@ -110,21 +117,22 @@ const promos = {
       id: 'ai-cashflow',
       kind: 'ai',
       block: 'insightCard',
+      // Bento wide lead → the `progress` preset: weekly budget used so far.
       data: {
         variant: 'wide',
-        period: 'This week',
-        headline: 'Spending is tracking below your weekly budget — nice one.',
-        amount: 820,
-        currency: 'RM',
-        delta: '−12% vs budget',
-        deltaTone: 'positive',
-        topic: 'insights',
-        prompt: 'How am I tracking against my weekly budget?',
-        categories: [
-          { label: 'Groceries', amount: 360 },
-          { label: 'Transport', amount: 260 },
-          { label: 'Dining', amount: 200 },
-        ],
+        preset: 'progress',
+        data: {
+          period: 'This week',
+          headline: 'Spending is tracking below your weekly budget — nice one.',
+          value: 620,
+          max: 1000,
+          label: 'Weekly budget used',
+          valueLabel: 'RM620 of RM1,000',
+          delta: '−12% vs budget',
+          deltaTone: 'positive',
+          topic: 'insights',
+          prompt: 'How am I tracking against my weekly budget?',
+        },
       },
     },
     {
@@ -139,22 +147,24 @@ const promos = {
       id: 'ai-subs',
       kind: 'ai',
       block: 'insightCard',
+      // Bento compact → the `countdown` preset: subscriptions renewing this month.
       data: {
         variant: 'compact',
-        period: 'Subscriptions',
-        headline: 'Three active subscriptions renew this month.',
-        amount: 189,
-        currency: 'RM',
-        delta: '3 active',
-        deltaTone: 'info',
-        // No `topic` — this one opens a plain regular chat (seeded with the
-        // prompt) rather than a specific insight thread.
-        prompt: 'What subscriptions do I have renewing this month?',
-        categories: [
-          { label: 'Streaming', amount: 89 },
-          { label: 'Cloud', amount: 60 },
-          { label: 'Fitness', amount: 40 },
-        ],
+        preset: 'countdown',
+        data: {
+          period: 'Subscriptions',
+          headline: 'Three active subscriptions renew this month.',
+          month: 'Jul',
+          day: 28,
+          count: 3,
+          unit: 'renewals',
+          caption: 'renew this month · RM189',
+          delta: '3 active',
+          deltaTone: 'info',
+          // No `topic` — this one opens a plain regular chat (seeded with the
+          // prompt) rather than a specific insight thread.
+          prompt: 'What subscriptions do I have renewing this month?',
+        },
       },
     },
   ],

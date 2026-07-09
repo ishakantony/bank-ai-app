@@ -6,8 +6,12 @@ import { z } from 'zod'
  * the carousel (Team A) can Zod-validate the feed's opaque `data` against it at
  * runtime, without any compile-time dependency on this shape.
  *
- * The card renders a full-bleed spend insight for the mobile home carousel: a
- * headline blurb + hero amount + a delta badge, above a category bar chart.
+ * The exposed schema is deliberately **lenient**: `data` is `unknown`. This is
+ * so an unknown/malformed `preset` payload still passes the carousel's boundary
+ * `safeParse` and reaches the card, which then validates against the matched
+ * preset's own schema and degrades to a fallback card (rather than being
+ * rejected at the boundary and disappearing). Per-preset validation lives inside
+ * the card — see `presets/`.
  */
 export const insightCardSchema = z.object({
   /**
@@ -17,27 +21,38 @@ export const insightCardSchema = z.object({
    * `compact` for a single bento cell. Defaults to `hero`.
    */
   variant: z.enum(['hero', 'wide', 'tall', 'compact']).optional(),
-  /** Prose blurb shown above/next to the hero amount (hidden on `compact`). */
+  /**
+   * Which inner visualization to render in the card body. Selects a preset from
+   * the registry (`presets/`): `categories` (default — ranked bar chart),
+   * `donut`, `gauge`, `progress`, `countdown`. An unknown preset degrades to a
+   * default fallback card. Defaults to `categories`.
+   */
+  preset: z.string().optional(),
+  /**
+   * The per-preset payload. Opaque at the boundary (`unknown`); the card
+   * validates it against the matched preset's schema (each extends
+   * `baseCardSchema`) and falls back if it doesn't fit.
+   */
+  data: z.unknown(),
+})
+
+export type InsightCardData = z.infer<typeof insightCardSchema>
+
+/**
+ * The chrome fields every preset shares — the deep-blue card's headline, period
+ * eyebrow, delta badge, and deep-link. Each preset's schema `.extend()`s this
+ * with its own visualization fields, so the shared `CardScaffold` can render the
+ * chrome uniformly while the preset owns only its body.
+ */
+export const baseCardSchema = z.object({
+  /** Prose blurb shown above the visual (clamped; hidden on `compact`). */
   headline: z.string(),
   /** The period this insight covers, shown as an eyebrow, e.g. "June". */
   period: z.string(),
-  /** Hero stat: total spend for the period. */
-  amount: z.number().nonnegative(),
-  /** Currency prefix; defaults to "RM". */
-  currency: z.string().optional(),
   /** Optional delta badge text, e.g. "+45% vs 6-mo avg". */
   delta: z.string().optional(),
   /** Badge tone; defaults to "warning". */
   deltaTone: z.enum(['positive', 'negative', 'warning', 'info']).optional(),
-  /** Category spend driving the bar chart (largest first reads best). */
-  categories: z
-    .array(
-      z.object({
-        label: z.string(),
-        amount: z.number().nonnegative(),
-      }),
-    )
-    .min(1),
   /** Optional call-to-action label on the card's action pill. */
   cta: z.string().optional(),
   /**
@@ -53,4 +68,5 @@ export const insightCardSchema = z.object({
   prompt: z.string().optional(),
 })
 
-export type InsightCardData = z.infer<typeof insightCardSchema>
+/** The chrome fields shared by every preset, resolved once by `CardScaffold`. */
+export type BaseCardData = z.infer<typeof baseCardSchema>
