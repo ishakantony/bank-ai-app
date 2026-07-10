@@ -1,15 +1,14 @@
 import { z } from 'zod'
-import { baseCardSchema } from '../schema'
 import { MINT } from '../card-chrome'
-import { definePreset } from './types'
+import { defineWidget } from './types'
 
 /**
- * `progress` — a big-percent goal bar. The completion percent is the prominent
- * stat; the body is a CSS track with a mint fill and a glowing knob at the fill
- * head (the pattern from the AI shell's `spendBreakdown` rows), plus an optional
- * caption + a "value of max" label. Good for a savings-goal or budget-used read.
+ * `progress` — a goal bar. A CSS track with a mint fill and a glowing knob at
+ * the fill head (the pattern from the AI shell's `spendBreakdown` rows), plus an
+ * optional caption + a "value of max" label. The completion percent lives in the
+ * card's `introText`. Good for a savings-goal or budget-used read.
  */
-const schema = baseCardSchema.extend({
+const schema = z.object({
   /** Progress value. With `max` omitted it's read as a 0–100 percentage. */
   value: z.number(),
   /** The target the value is measured against; defaults to 100. */
@@ -54,8 +53,7 @@ function ProgressBar({ data }: { data: Data }) {
   )
 }
 
-export default definePreset({
+export default defineWidget({
   schema,
-  stat: (data) => `${Math.round(pct(data))}%`,
   Visual: ({ data }) => <ProgressBar data={data} />,
 })

@@ -1,13 +1,12 @@
 import { z } from 'zod'
-import { baseCardSchema } from '../schema'
-import { definePreset } from './types'
+import { defineWidget } from './types'
 
 /**
  * `countdown` — a calendar countdown. An SVG calendar glyph (month band + day)
  * sits beside a big `count` + optional unit and caption. No chart lib. Good for
  * "N days until your card payment" or "N subscriptions renew on 25 Jul".
  */
-const schema = baseCardSchema.extend({
+const schema = z.object({
   /** Short month shown in the calendar header, e.g. "JUL". */
   month: z.string(),
   /** Day of month shown on the calendar face, e.g. 25. */
@@ -75,9 +74,10 @@ function Countdown({ data, compact }: { data: Data; compact?: boolean }) {
   )
 }
 
-export default definePreset({
+export default defineWidget({
   schema,
+  // Rendered on hero/wide only; the tighter `wide` tile uses the compact layout.
   Visual: ({ data, variant }) => (
-    <Countdown data={data} compact={variant === 'compact' || variant === 'wide'} />
+    <Countdown data={data} compact={variant === 'wide'} />
   ),
 })

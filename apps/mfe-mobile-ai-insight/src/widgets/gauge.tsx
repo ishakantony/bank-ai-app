@@ -1,7 +1,6 @@
 import { z } from 'zod'
-import { baseCardSchema } from '../schema'
 import { MINT } from '../card-chrome'
-import { definePreset } from './types'
+import { defineWidget } from './types'
 
 /**
  * `gauge` — a strategy/score arc. A 270° SVG ring with a rounded mint fill from
@@ -9,7 +8,7 @@ import { definePreset } from './types'
  * optional label beneath. No chart lib — pure SVG so it stays crisp at any tile
  * size. Good for a risk score, savings-rate, or goal-completion strategy read.
  */
-const schema = baseCardSchema.extend({
+const schema = z.object({
   /** The gauged value, e.g. a score or a percentage. */
   value: z.number(),
   /** The scale maximum; defaults to 100. */
@@ -92,9 +91,10 @@ function Gauge({ data, compact }: { data: Data; compact?: boolean }) {
   )
 }
 
-export default definePreset({
+export default defineWidget({
   schema,
+  // Rendered on hero/wide only; the tighter `wide` tile uses the compact layout.
   Visual: ({ data, variant }) => (
-    <Gauge data={data} compact={variant === 'compact' || variant === 'wide'} />
+    <Gauge data={data} compact={variant === 'wide'} />
   ),
 })

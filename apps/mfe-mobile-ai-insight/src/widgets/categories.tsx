@@ -1,19 +1,14 @@
 import { Bar, BarChart, Cell, ResponsiveContainer, XAxis, YAxis } from 'recharts'
 import { z } from 'zod'
-import { baseCardSchema } from '../schema'
-import { PALETTE, money } from '../card-chrome'
-import { definePreset } from './types'
+import { PALETTE } from '../card-chrome'
+import { defineWidget } from './types'
 
 /**
- * `categories` — the default preset. A ranked horizontal bar chart of category
- * spend, with the period total as the prominent stat. This is the card's
- * original look, preserved so an unmigrated payload renders exactly as before.
+ * `categories` — the default widget. A ranked horizontal bar chart of category
+ * spend. The prose (total, delta) lives in the card's `introText`; this widget
+ * owns only the bars.
  */
-const schema = baseCardSchema.extend({
-  /** Hero stat: total spend for the period. */
-  amount: z.number().nonnegative(),
-  /** Currency prefix; defaults to "RM". */
-  currency: z.string().optional(),
+const schema = z.object({
   /** Category spend driving the bar chart (largest first reads best). */
   categories: z
     .array(z.object({ label: z.string(), amount: z.number().nonnegative() }))
@@ -66,12 +61,10 @@ function Bars({
   )
 }
 
-export default definePreset({
+export default defineWidget({
   schema,
-  stat: (data) => money(data.currency, data.amount),
-  Visual: ({ data, variant }) => {
-    // Hero labels the axis; the compact tile shows only the top three bars.
-    const rows = variant === 'compact' ? ranked(data).slice(0, 3) : ranked(data)
-    return <Bars data={rows} labels={variant === 'hero'} />
-  },
+  // Only hero/wide render a widget: hero labels the axis, wide is tight.
+  Visual: ({ data, variant }) => (
+    <Bars data={ranked(data)} labels={variant === 'hero'} />
+  ),
 })

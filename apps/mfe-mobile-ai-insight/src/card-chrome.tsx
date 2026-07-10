@@ -1,21 +1,20 @@
-import type { ReactNode } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import { Sparkles } from 'lucide-react'
-import type { BaseCardData, InsightCardData } from './schema'
+import type { InsightCardData } from './schema'
+import { Markdown } from './Markdown'
 
 // The Bank AI chat app the card deep-links into. Same default the shell's
 // "Your Banking Summary" row uses; overridable per remote deployment.
 const AI_SHELL_URL = import.meta.env.VITE_AI_SHELL_URL ?? 'http://localhost:9999'
 
 /**
- * Deep-link into the chat app and start a conversation. Mirrors the shell's
- * BankingSummaryCard: `?topic=` opens a specific thread (e.g. an insight),
- * `?message=` seeds the first message; with neither it's a plain regular chat.
- * The remote runs inside the shell page, so `window.open` opens the AI shell.
+ * Deep-link into the chat app and start a conversation. `prompt` seeds the first
+ * message (`?message=`); with none it opens a plain regular chat. The remote
+ * runs inside the shell page, so `window.open` opens the AI shell.
  */
-export function openChat(chrome: Pick<BaseCardData, 'topic' | 'prompt'>) {
+export function openChat(prompt?: string) {
   const url = new URL('/chat', AI_SHELL_URL)
-  if (chrome.topic) url.searchParams.set('topic', chrome.topic)
-  if (chrome.prompt) url.searchParams.set('message', chrome.prompt)
+  if (prompt) url.searchParams.set('message', prompt)
   window.open(url.toString(), '_blank', 'noopener,noreferrer')
 }
 
@@ -39,51 +38,6 @@ export function money(currency: string | undefined, n: number) {
   return `${currency ?? 'RM'}${MYR_WHOLE.format(n)}`
 }
 
-/** Badge tint per tone, drawn on the deep card. */
-const TONE: Record<NonNullable<BaseCardData['deltaTone']>, string> = {
-  positive: 'bg-tone-positive/25 text-tone-positive-fg',
-  negative: 'bg-tone-negative/25 text-tone-negative-fg',
-  warning: 'bg-tone-warning/25 text-tone-warning-fg',
-  info: 'bg-tone-info/25 text-tone-info-fg',
-}
-
-/** Eyebrow: sparkle + "AI · <period>", scaled for the card size. */
-function Eyebrow({ period, small }: { period: string; small?: boolean }) {
-  return (
-    <p
-      className={`flex items-center gap-1 font-semibold uppercase tracking-wide text-white/70 ${
-        small ? 'text-[9px]' : 'text-[11px]'
-      }`}
-    >
-      <Sparkles
-        className={`${small ? 'size-2.5' : 'size-3.5'} text-brand-3`}
-        strokeWidth={2.2}
-      />
-      AI · {period}
-    </p>
-  )
-}
-
-/** The delta pill, e.g. "+45% vs 6-mo avg". */
-function Delta({
-  chrome,
-  small,
-}: {
-  chrome: Pick<BaseCardData, 'delta' | 'deltaTone'>
-  small?: boolean
-}) {
-  if (!chrome.delta) return null
-  return (
-    <span
-      className={`shrink-0 rounded-full font-semibold ${TONE[chrome.deltaTone ?? 'warning']} ${
-        small ? 'px-2 py-0.5 text-[9px]' : 'px-2.5 py-1 text-[11px]'
-      }`}
-    >
-      {chrome.delta}
-    </span>
-  )
-}
-
 /** Shared gradient surface. `radius` differs between the full slide and tiles. */
 function Frame({
   radius,
@@ -105,23 +59,18 @@ function Frame({
 }
 
 /**
- * The only interactive element on the card — deep-links into Bank AI. `hero`
- * renders a labelled pill ("Full Insight" + AI icon); the compact tile variants
- * render an icon-only circular button (the AI icon alone). Both sit bottom-right.
+ * The only interactive element on the card — deep-links into Bank AI, seeded
+ * with `prompt`. Label is fixed to "Full Insight". The `icon` variant renders an
+ * icon-only circular button (compact tile); otherwise a labelled pill. The
+ * scaffold floats it absolute bottom-right.
  */
-function CtaButton({
-  chrome,
-  icon,
-}: {
-  chrome: Pick<BaseCardData, 'cta' | 'topic' | 'prompt'>
-  icon?: boolean
-}) {
+function CtaButton({ prompt, icon }: { prompt?: string; icon?: boolean }) {
   if (icon) {
     return (
       <button
         type="button"
-        aria-label={chrome.cta ?? 'Open in Bank AI'}
-        onClick={() => openChat(chrome)}
+        aria-label="Full Insight"
+        onClick={() => openChat(prompt)}
         className="grid size-8 shrink-0 place-items-center rounded-full bg-ink/85 text-white backdrop-blur-md transition hover:bg-ink active:scale-[0.95]"
       >
         <Sparkles className="size-4 text-brand-3" strokeWidth={2.2} />
@@ -131,12 +80,53 @@ function CtaButton({
   return (
     <button
       type="button"
-      onClick={() => openChat(chrome)}
+      onClick={() => openChat(prompt)}
       className="inline-flex items-center gap-1.5 rounded-full bg-ink/85 px-4 py-2 text-sm font-semibold text-white backdrop-blur-md transition hover:bg-ink active:scale-[0.98]"
     >
-      {chrome.cta ?? 'Full Insight'}
+      Full Insight
       <Sparkles className="size-4 text-brand-3" strokeWidth={2.2} />
     </button>
+  )
+}
+
+/**
+ * The card's real content: `introText` markdown (with inline highlights) inside
+ * an `overflow-hidden` region. When the prose overflows its region, a bottom
+ * fade mask (the `fade-bottom` utility in index.css) is applied so the last
+ * visible line dissolves rather than being hard-cut. Overflow is detected with a
+ * ref (`scrollHeight > clientHeight`) re-checked on mount + resize.
+ */
+function IntroText({ introText, className }: { introText: string; className?: string }) {
+  const ref = useRef<HTMLDivElement>(null)
+  const [overflow, setOverflow] = useState(false)
+
+  useLayoutEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const check = () => setOverflow(el.scrollHeight > el.clientHeight + 1)
+    check()
+    const ro = new ResizeObserver(check)
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [introText])
+
+  // Re-check after fonts settle so a late layout shift doesn't leave a stale mask.
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const id = requestAnimationFrame(() =>
+      setOverflow(el.scrollHeight > el.clientHeight + 1),
+    )
+    return () => cancelAnimationFrame(id)
+  }, [introText])
+
+  return (
+    <div
+      ref={ref}
+      className={`relative overflow-hidden ${overflow ? 'fade-bottom' : ''} ${className ?? ''}`}
+    >
+      <Markdown content={introText} />
+    </div>
   )
 }
 
@@ -145,64 +135,32 @@ export type Variant = NonNullable<InsightCardData['variant']>
 
 /**
  * The one place the four card layouts (hero / wide / tall / compact) are
- * arranged. Every preset supplies only its `stat` (optional prominent figure)
- * and its `visual` (the body slot) and gets the full deep-blue chrome — eyebrow,
- * delta badge, clamped headline (hidden on `compact`), and the deep-link CTA
- * (a pill on `hero`, an icon button on the smaller tiles) — for free. The visual
- * slot is always a flex-height region so a preset can render a chart at
- * `h-full` regardless of variant.
+ * arranged. Each layout is prose-first: an `introText` region (which fades when
+ * it overflows) plus a floating "Full Insight" CTA bottom-right. Only `hero` and
+ * `wide` also render a `widget` (the visual ReactNode; `null` when unresolved);
+ * `tall`/`compact` are introText-only. The intro region carries bottom padding
+ * so its last line clears the floating CTA.
  */
 export function CardScaffold({
   variant = 'hero',
-  chrome,
-  stat,
-  visual,
+  introText,
+  prompt,
+  widget,
 }: {
   variant?: Variant
-  chrome: BaseCardData
-  stat?: ReactNode
-  visual: ReactNode
+  introText: string
+  prompt?: string
+  widget: ReactNode
 }) {
   if (variant === 'wide') {
     return (
       <Frame radius="rounded-2xl" padding="p-3.5">
-        <div className="relative flex h-full items-stretch gap-3">
-          <div className="flex min-w-0 flex-1 flex-col">
-            <Eyebrow period={chrome.period} small />
-            {stat != null && (
-              <p className="num mt-0.5 text-xl font-semibold leading-tight">{stat}</p>
-            )}
-            <p className="mt-1 line-clamp-2 text-[11px] leading-snug text-white/80">
-              {chrome.headline}
-            </p>
-            <div className="mt-auto pt-1">
-              <Delta chrome={chrome} small />
-            </div>
-          </div>
-          <div className="flex w-[42%] shrink-0 flex-col">
-            <div className="min-h-0 flex-1">{visual}</div>
-            <div className="mt-1 flex justify-end">
-              <CtaButton chrome={chrome} icon />
-            </div>
-          </div>
+        <div className="flex h-full items-stretch gap-3">
+          <IntroText introText={introText} className="w-[75%] min-w-0 pb-8" />
+          <div className="min-h-0 flex-1">{widget}</div>
         </div>
-      </Frame>
-    )
-  }
-
-  if (variant === 'compact') {
-    return (
-      <Frame radius="rounded-2xl" padding="p-3.5">
-        <div className="relative flex items-start justify-between gap-2">
-          <Eyebrow period={chrome.period} small />
-          <Delta chrome={chrome} small />
-        </div>
-        {stat != null && (
-          <p className="num relative mt-1 text-xl font-semibold leading-tight">{stat}</p>
-        )}
-        <div className="relative mt-2 flex min-h-0 flex-1 items-end gap-2">
-          <div className="min-h-0 flex-1 self-stretch">{visual}</div>
-          <CtaButton chrome={chrome} icon />
+        <div className="absolute bottom-3 right-3">
+          <CtaButton prompt={prompt} />
         </div>
       </Frame>
     )
@@ -211,53 +169,47 @@ export function CardScaffold({
   if (variant === 'tall') {
     return (
       <Frame radius="rounded-2xl" padding="p-3.5">
-        <div className="relative flex items-start justify-between gap-2">
-          <Eyebrow period={chrome.period} small />
-          <Delta chrome={chrome} small />
-        </div>
-        {stat != null && (
-          <p className="num relative mt-1 text-xl font-semibold leading-tight">{stat}</p>
-        )}
-        <p className="relative mt-1 line-clamp-3 text-[11px] leading-snug text-white/80">
-          {chrome.headline}
-        </p>
-        <div className="relative mt-2 min-h-0 flex-1">{visual}</div>
-        <div className="relative mt-1 flex justify-end">
-          <CtaButton chrome={chrome} icon />
+        <IntroText introText={introText} className="h-full pb-10" />
+        <div className="absolute bottom-3 right-3">
+          <CtaButton prompt={prompt} />
         </div>
       </Frame>
     )
   }
 
-  // hero — the carousel's full-bleed slide.
+  if (variant === 'compact') {
+    return (
+      <Frame radius="rounded-2xl" padding="p-3.5">
+        <IntroText introText={introText} className="h-full pb-9" />
+        <div className="absolute bottom-3 right-3">
+          <CtaButton prompt={prompt} icon />
+        </div>
+      </Frame>
+    )
+  }
+
+  // hero — the carousel's full-bleed slide: introText on top, widget below with
+  // the floating CTA overlapping the widget's bottom-right corner (image #1). The
+  // intro sizes to its content but never past the top half (`max-h-[50%]`,
+  // fading if it does); a short intro lets the widget region grow to fill the
+  // rest, with the widget centered vertically within it.
   return (
     <Frame radius="rounded-3xl" padding="p-5">
-      <div className="relative flex items-start justify-between gap-3">
-        <div>
-          <Eyebrow period={chrome.period} />
-          {stat != null && (
-            <p className="num mt-1.5 text-2xl font-semibold">{stat}</p>
-          )}
-        </div>
-        <Delta chrome={chrome} />
-      </div>
-      <p className="relative mt-1.5 text-[12.5px] leading-snug text-white/85">
-        {chrome.headline}
-      </p>
-      <div className="relative mt-2 min-h-0 flex-1">{visual}</div>
-      <div className="relative mt-2 flex justify-end">
-        <CtaButton chrome={chrome} />
+      <IntroText introText={introText} className="max-h-[50%] pb-1" />
+      <div className="relative min-h-0 flex-1">{widget}</div>
+      <div className="absolute bottom-4 right-4">
+        <CtaButton prompt={prompt} />
       </div>
     </Frame>
   )
 }
 
 /**
- * The default fallback card, rendered when the `preset` can't be resolved or its
- * `data` fails validation. Best-effort chrome only — no visual, never throws:
- * it reads whatever headline/period/CTA fields it can find off the raw payload
- * and shows a plain deep-blue card so the slot degrades gracefully instead of
- * crashing or going blank.
+ * The fallback card, rendered when the payload is too malformed to resolve
+ * (Team A's boundary path). Best-effort introText only — no widget, never
+ * throws: it reads whatever `introText`/`prompt` it can find off the raw payload
+ * and renders the scaffold with `widget={null}` so the slot degrades gracefully
+ * instead of crashing or going blank.
  */
 export function FallbackCard({
   variant = 'hero',
@@ -268,24 +220,12 @@ export function FallbackCard({
 }) {
   const raw = (data ?? {}) as Record<string, unknown>
   const str = (v: unknown) => (typeof v === 'string' ? v : undefined)
-  const chrome: BaseCardData = {
-    headline: str(raw.headline) ?? 'Your latest AI insight is ready.',
-    period: str(raw.period) ?? 'Bank AI',
-    delta: str(raw.delta),
-    deltaTone: undefined,
-    cta: str(raw.cta),
-    topic: str(raw.topic),
-    prompt: str(raw.prompt),
-  }
   return (
     <CardScaffold
       variant={variant}
-      chrome={chrome}
-      visual={
-        <div className="grid h-full w-full place-items-center text-center text-[11px] text-white/45">
-          Open in Bank AI for the full breakdown.
-        </div>
-      }
+      introText={str(raw.introText) ?? 'Your latest AI insight is ready.'}
+      prompt={str(raw.prompt)}
+      widget={null}
     />
   )
 }

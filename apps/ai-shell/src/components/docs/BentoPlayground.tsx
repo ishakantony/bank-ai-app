@@ -21,17 +21,11 @@ const FRAMES: { variant: string; w: number; h: number }[] = [
 /** A bundled default card, used to seed the editor when the remote's docs don't load. */
 const DEFAULT_CARD = {
   variant: 'hero',
-  preset: 'categories',
-  data: {
-    period: 'June',
-    headline: 'Dining and Raya travel led your spend — up sharply on your 6-month rhythm.',
-    amount: 6800,
-    currency: 'RM',
-    delta: '+45% vs 6-mo avg',
-    deltaTone: 'warning',
-    cta: 'Full Insight',
-    topic: 'insights',
-    prompt: 'Break down my June spending and why it jumped 45%',
+  widget: 'categories',
+  introText:
+    'Your **June spending** hit :hl[RM6,800]{tone=warning} — :hl[+45% vs your 6-month average]{tone=negative}. Dining and Raya travel led the jump.',
+  prompt: 'Break down my June spending and why it jumped 45%',
+  widgetData: {
     categories: [
       { label: 'Dining', amount: 2450 },
       { label: 'Travel', amount: 1980 },

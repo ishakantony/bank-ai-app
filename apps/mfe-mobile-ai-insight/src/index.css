@@ -50,3 +50,10 @@
   font-variant-numeric: tabular-nums lining-nums;
   letter-spacing: -0.01em;
 }
+
+/* Fade the bottom of an overflowing introText region so the last visible line
+ * dissolves instead of being hard-cut. Applied only when the prose overflows. */
+@utility fade-bottom {
+  -webkit-mask-image: linear-gradient(to bottom, #000 62%, transparent);
+  mask-image: linear-gradient(to bottom, #000 62%, transparent);
+}

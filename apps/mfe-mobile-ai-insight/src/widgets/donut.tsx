@@ -1,20 +1,16 @@
 import { Cell, Pie, PieChart, ResponsiveContainer } from 'recharts'
 import { z } from 'zod'
-import { baseCardSchema } from '../schema'
-import { PALETTE, money } from '../card-chrome'
-import { definePreset } from './types'
+import { PALETTE } from '../card-chrome'
+import { defineWidget } from './types'
 
 /**
  * `donut` — a category ring. A recharts donut of the slices (colours cycle
- * `PALETTE`) beside a compact legend of percentages; the total is the stat.
- * Mirrors the AI shell's `allocationDonut` block. On the tighter tiles the
- * legend is dropped and the ring stands alone.
+ * `PALETTE`) beside a compact legend of percentages. Mirrors the AI shell's
+ * `allocationDonut` block. The prose (total, delta) lives in the card's
+ * `introText`; on the tighter `wide` tile the legend is dropped and the ring
+ * stands alone.
  */
-const schema = baseCardSchema.extend({
-  /** Optional total shown as the stat (defaults to the sum of the slices). */
-  amount: z.number().nonnegative().optional(),
-  /** Currency prefix; defaults to "RM". */
-  currency: z.string().optional(),
+const schema = z.object({
   /** Ring segments; each slice's `value` sets its proportion. */
   slices: z
     .array(z.object({ label: z.string(), value: z.number().nonnegative() }))
@@ -67,15 +63,10 @@ function Donut({ data, legend }: { data: Data; legend?: boolean }) {
   )
 }
 
-export default definePreset({
+export default defineWidget({
   schema,
-  stat: (data) =>
-    money(
-      data.currency,
-      data.amount ?? data.slices.reduce((sum, s) => sum + s.value, 0),
-    ),
-  // Only the wide hero has room for the ring + legend side by side; the narrow
-  // bento tiles (wide/tall/compact) show the ring alone.
+  // Only the hero has room for the ring + legend side by side; the narrow `wide`
+  // tile shows the ring alone.
   Visual: ({ data, variant }) => (
     <Donut data={data} legend={variant === 'hero'} />
   ),
