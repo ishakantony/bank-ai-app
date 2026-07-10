@@ -106,6 +106,19 @@
   animation: float-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@utility animate-shimmer {
+  animation: shimmer 1.75s ease-in-out infinite;
+}
+
 /* Block overlay (wizard drawer): backdrop fade + sheet slide-up from bottom. */
 @keyframes fade-in {
   from {
