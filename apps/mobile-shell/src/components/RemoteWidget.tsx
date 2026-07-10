@@ -50,7 +50,10 @@ export function RemoteWidget({
 
   return (
     <SilentBoundary fallback={fallback}>
-      <Suspense fallback={null}>
+      {/* Same `fallback` covers the loading case (not just errors), so the slot
+          shows the caller's placeholder while the remote's own JS loads —
+          before its self-skeleton can even mount. */}
+      <Suspense fallback={fallback}>
         <Widget load={entry.load} />
       </Suspense>
     </SilentBoundary>

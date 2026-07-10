@@ -132,7 +132,10 @@ export function RemoteAiCard({
 }) {
   return (
     <SilentBoundary fallback={fallback}>
-      <Suspense fallback={null}>
+      {/* Same `fallback` covers the (common) loading case, not just errors — so
+          the slot shows the caller's placeholder while the remote loads instead
+          of flashing blank and shifting layout when the card arrives. */}
+      <Suspense fallback={fallback}>
         <Card block={block} data={data} fallback={fallback} />
       </Suspense>
     </SilentBoundary>

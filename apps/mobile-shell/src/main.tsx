@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import './index.css'
 import App from './App.tsx'
 import { fetchBlockRemotes } from './api/blockRemotes'
-import { registerRemoteBlocks } from './blocks/registry'
+import { prefetchBlocks, registerRemoteBlocks } from './blocks/registry'
 
 const queryClient = new QueryClient()
 
@@ -25,6 +25,12 @@ async function enableMocking() {
 async function registerBlocks() {
   try {
     registerRemoteBlocks(await fetchBlockRemotes())
+    // Warm the above-the-fold carousel + insight card in parallel with
+    // /api/dashboard + /api/promos, so the (post-code-split, recharts-free) base
+    // chunks are cached by the time RemoteAiCard mounts — collapsing the serial
+    // boot → dashboard → carousel → promos → manifest → loadRemote waterfall.
+    // Not awaited: must never delay first paint.
+    prefetchBlocks(['promoCarousel', 'insightCard'])
   } catch (err) {
     if (import.meta.env.DEV) {
       console.warn('[blocks] failed to register remotes', err)

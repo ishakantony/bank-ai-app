@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import { Suspense, type ReactNode } from 'react'
 import type { InsightCardData } from './schema'
 import { CardScaffold } from './card-chrome'
 import { widgets, DEFAULT_WIDGET } from './widgets'
@@ -22,12 +22,27 @@ export default function InsightCard({ data: payload }: { data: InsightCardData }
   const { variant = 'hero', widget = DEFAULT_WIDGET, introText, ctaUrl, widgetData } = payload
 
   // tall/compact are introText-only; hero/wide resolve + validate the widget,
-  // degrading to no visual if it's unknown or its data doesn't fit.
+  // degrading to no visual if it's unknown or its data doesn't fit. The schema
+  // stays eager, so `safeParse` runs synchronously here — an unknown/invalid
+  // widget degrades to introText-only with no lazy chunk fetched. The resolved
+  // `Visual` may suspend (chart widgets lazy-load recharts), so it's wrapped in
+  // an inner `<Suspense>` with a chart-shaped placeholder: without this, a
+  // suspending Visual would bubble to `RemoteAiCard`'s outer boundary and blank
+  // the whole card (introText + CTA) while recharts loads.
   let visual: ReactNode = null
   if (variant === 'hero' || variant === 'wide') {
     const resolved = widgets[widget]
     const parsed = resolved?.schema.safeParse(widgetData)
-    if (parsed?.success) visual = <resolved.Visual data={parsed.data} variant={variant} />
+    if (parsed?.success) {
+      const Visual = resolved.Visual
+      visual = (
+        <Suspense
+          fallback={<div className="h-full w-full animate-pulse rounded-xl bg-white/10" />}
+        >
+          <Visual data={parsed.data} variant={variant} />
+        </Suspense>
+      )
+    }
   }
 
   return (

@@ -9,6 +9,28 @@ import { BankingSummaryCard } from '../components/dashboard/BankingSummaryCard'
 import { AccountAccordion } from '../components/dashboard/AccountAccordion'
 import { DashboardSkeleton } from '../components/dashboard/DashboardSkeleton'
 
+/**
+ * Carousel-shaped placeholder shown while the promo-carousel remote's own JS
+ * loads — before its internal `CarouselSkeleton` can mount. Mirrors that
+ * skeleton's shape (full-bleed track re-inset with `px-4`, an `h-60` glass slab
+ * + dot row) so mounting the real carousel doesn't shift layout.
+ */
+function CarouselSlotSkeleton() {
+  return (
+    <div className="px-4">
+      <div className="glass h-60 w-full animate-pulse rounded-3xl" />
+      <div className="mt-3 flex justify-center gap-1.5">
+        {[0, 1, 2].map((i) => (
+          <span
+            key={i}
+            className={`h-1.5 rounded-full bg-ink-soft/30 ${i === 0 ? 'w-5' : 'w-1.5'}`}
+          />
+        ))}
+      </div>
+    </div>
+  )
+}
+
 export function HomePage() {
   const user = useAuthStore((s) => s.user)
   const { data, isPending, isError, refetch } = useDashboard()
@@ -42,7 +64,7 @@ export function HomePage() {
           {/* -mx-4 cancels AppShell's px-4 so the carousel scroll track is full-bleed;
               the remote re-adds the inset inside its own scroller so cards stay aligned. */}
           <div className="animate-float-in -mx-4">
-            <RemoteWidget name="promoCarousel" />
+            <RemoteWidget name="promoCarousel" fallback={<CarouselSlotSkeleton />} />
           </div>
 
           <div className="animate-float-in [animation-delay:120ms]">

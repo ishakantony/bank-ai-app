@@ -104,7 +104,11 @@ export default function PromoCarousel() {
   // to nothing on failure; otherwise render the built-in text/SVG hero as today.
   const insightCard =
     'kind' in insight ? (
-      <RemoteAiCard block={insight.block} data={insight.data} />
+      <RemoteAiCard
+        block={insight.block}
+        data={insight.data}
+        fallback={<CardSkeleton radius="rounded-3xl" />}
+      />
     ) : (
       <InsightHeroCard insight={insight} />
     )
@@ -115,6 +119,20 @@ export default function PromoCarousel() {
   ]
 
   return <Carousel slides={slides} />
+}
+
+/**
+ * Card-shaped placeholder for an AI slot while its remote loads. Fills its
+ * container with a pulsing gradient matching the card frame, so the hero slot /
+ * bento cell never flashes blank and doesn't shift when the real card arrives.
+ * Team A owns this (no Team B dependency); `radius` matches the slot it fills.
+ */
+function CardSkeleton({ radius }: { radius: string }) {
+  return (
+    <div
+      className={`h-full w-full animate-pulse bg-gradient-to-bl from-brand-2 via-brand-1 to-brand-deep ${radius}`}
+    />
+  )
 }
 
 /** Loading placeholder that reserves the carousel's height (matches h-60). */
@@ -229,7 +247,13 @@ function BentoTile({
   if (tile.kind === 'ai') {
     return (
       <div className={`h-full w-full ${className}`}>
-        <RemoteAiCard block={tile.block} data={tile.data} />
+        {/* Bento AI cells use the tile radius; keyed off placement, not `data`
+            (the variant lives inside the opaque payload). */}
+        <RemoteAiCard
+          block={tile.block}
+          data={tile.data}
+          fallback={<CardSkeleton radius="rounded-2xl" />}
+        />
       </div>
     )
   }

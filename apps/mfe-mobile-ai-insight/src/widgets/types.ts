@@ -1,6 +1,12 @@
-import type { ReactNode } from 'react'
+import type { ComponentType } from 'react'
 import type { z } from 'zod'
 import type { Variant } from '../card-chrome'
+
+/** Props every widget `Visual` receives: its parsed data + the card variant. */
+export interface WidgetProps<Data> {
+  data: Data
+  variant: Variant
+}
 
 /**
  * A card body kind. Each widget owns its own standalone data schema (only its
@@ -15,7 +21,11 @@ import type { Variant } from '../card-chrome'
  */
 export interface Widget<Data = unknown> {
   schema: z.ZodType<Data>
-  Visual: (props: { data: Data; variant: Variant }) => ReactNode
+  // A `ComponentType` (not a bare function type) so both a plain function
+  // component and a `React.lazy(...)` (`LazyExoticComponent`) satisfy it — the
+  // recharts-heavy widgets lazy-load their `Visual` to keep recharts out of the
+  // base card chunk (see donut.tsx / categories.tsx).
+  Visual: ComponentType<WidgetProps<Data>>
 }
 
 /**

@@ -57,3 +57,19 @@ export function registerRemoteBlocks(manifest: BlockRemoteManifest): void {
     }
   }
 }
+
+/**
+ * Fire-and-forget: start loading the named blocks' remote chunks now, so they're
+ * warm (in the MF module cache + browser HTTP cache) by the time something
+ * renders them. Calls each block's already-memoized `load()` — so this shares
+ * the very same `@module-federation/runtime` `loadRemote` cache a later
+ * `RemoteAiCard`/`RemoteWidget` hits, warming across the module-federation seam
+ * with no second network fetch. Errors are swallowed: warming must never break
+ * boot, and the real render still fails gracefully on its own. Unknown block
+ * names are simply skipped.
+ */
+export function prefetchBlocks(names: string[]): void {
+  for (const name of names) {
+    blockRegistry[name]?.load().catch(() => {})
+  }
+}
