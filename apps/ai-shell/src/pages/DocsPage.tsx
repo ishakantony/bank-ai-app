@@ -4,10 +4,11 @@ import { useTranslation } from 'react-i18next'
 import { MarkdownBasics } from '../components/docs/MarkdownBasics'
 import { BlockGallery } from '../components/docs/BlockGallery'
 import { Playground } from '../components/docs/Playground'
+import { InsightGallery } from '../components/docs/InsightGallery'
 import { BentoPlayground } from '../components/docs/BentoPlayground'
 import { ChatThreadProvider } from '@bank-poc/blocks-runtime'
 
-type Tab = 'basics' | 'gallery' | 'playground' | 'bento'
+type Tab = 'basics' | 'gallery' | 'playground' | 'insightcards' | 'bento'
 
 /**
  * `/docs` — living documentation for the reply-authoring system. Three tabs
@@ -26,12 +27,18 @@ export function DocsPage() {
   const [params, setParams] = useSearchParams()
   const raw = params.get('tab')
   const tab: Tab =
-    raw === 'basics' || raw === 'playground' || raw === 'bento' ? raw : 'gallery'
+    raw === 'basics' ||
+    raw === 'playground' ||
+    raw === 'insightcards' ||
+    raw === 'bento'
+      ? raw
+      : 'gallery'
 
   const TABS: { id: Tab; label: string }[] = [
     { id: 'basics', label: t('docs.tabs.basics') },
     { id: 'gallery', label: t('docs.tabs.gallery') },
     { id: 'playground', label: t('docs.tabs.playground') },
+    { id: 'insightcards', label: t('docs.tabs.insightCards') },
     { id: 'bento', label: t('docs.tabs.bento') },
   ]
 
@@ -86,6 +93,8 @@ export function DocsPage() {
           <MarkdownBasics />
         ) : tab === 'playground' ? (
           <Playground />
+        ) : tab === 'insightcards' ? (
+          <InsightGallery />
         ) : tab === 'bento' ? (
           <BentoPlayground />
         ) : (

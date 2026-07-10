@@ -117,6 +117,7 @@
       "basics": "Markdown 基础",
       "gallery": "自定义区块",
       "playground": "演练场",
+      "insightCards": "Insight 卡片",
       "bento": "便当卡"
     },
     "gallery": {
@@ -144,6 +145,12 @@
       "preview": "预览",
       "comparing": "预览 · 正在对比 {{count}}",
       "selectDevices": "选择一个或多个设备进行对比。"
+    },
+    "insightCards": {
+      "heading": "Insight 卡片",
+      "blurb": "移动端 AI insight 卡片（`mobileAiInsight` 远程模块的 `insightCard` 区块），每个小部件一行。展开某行可预览卡片的全部四种布局变体——hero、wide、tall 和 compact。只有 hero 和 wide 会渲染小部件；tall 和 compact 仅显示 introText。",
+      "payload": "示例负载",
+      "empty": "远程模块未发布任何 insight 卡片示例。"
     },
     "bento": {
       "startFrom": "起始于",

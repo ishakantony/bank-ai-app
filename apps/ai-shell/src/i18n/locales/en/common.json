@@ -117,6 +117,7 @@
       "basics": "Markdown Basics",
       "gallery": "Custom Blocks",
       "playground": "Playground",
+      "insightCards": "Insight Cards",
       "bento": "Bento"
     },
     "gallery": {
@@ -144,6 +145,12 @@
       "preview": "Preview",
       "comparing": "Preview · comparing {{count}}",
       "selectDevices": "Select one or more devices to compare."
+    },
+    "insightCards": {
+      "heading": "Insight Cards",
+      "blurb": "The mobile AI insight card (the `mobileAiInsight` remote's `insightCard` block), one row per widget. Expand a row to preview the card in all four layout variants — hero, wide, tall and compact. Only hero and wide render the widget; tall and compact are introText-only.",
+      "payload": "Example payload",
+      "empty": "No insight-card examples were published by the remote."
     },
     "bento": {
       "startFrom": "Start from",

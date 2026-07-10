@@ -117,6 +117,7 @@
       "basics": "Asas Markdown",
       "gallery": "Blok Tersuai",
       "playground": "Taman Permainan",
+      "insightCards": "Kad Insight",
       "bento": "Bento"
     },
     "gallery": {
@@ -144,6 +145,12 @@
       "preview": "Pratonton",
       "comparing": "Pratonton · membandingkan {{count}}",
       "selectDevices": "Pilih satu atau lebih peranti untuk dibandingkan."
+    },
+    "insightCards": {
+      "heading": "Kad Insight",
+      "blurb": "Kad AI insight mudah alih (blok `insightCard` dari remote `mobileAiInsight`), satu baris bagi setiap widget. Kembangkan baris untuk pratonton kad dalam keempat-empat varian susun atur — hero, wide, tall dan compact. Hanya hero dan wide memaparkan widget; tall dan compact hanya introText.",
+      "payload": "Muatan contoh",
+      "empty": "Tiada contoh kad insight diterbitkan oleh remote."
     },
     "bento": {
       "startFrom": "Mula daripada",
