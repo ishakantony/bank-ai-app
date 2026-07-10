@@ -8,13 +8,11 @@ import { Markdown } from './Markdown'
 const AI_SHELL_URL = import.meta.env.VITE_AI_SHELL_URL ?? 'http://localhost:9999'
 
 /**
- * Deep-link into the chat app and start a conversation. `prompt` seeds the first
- * message (`?message=`); with none it opens a plain regular chat. The remote
- * runs inside the shell page, so `window.open` opens the AI shell.
+ * Open a CTA URL in a new tab. Relative URLs resolve against `AI_SHELL_URL` so
+ * callers can use plain paths like `/chat?topic=insights`.
  */
-export function openChat(prompt?: string) {
-  const url = new URL('/chat', AI_SHELL_URL)
-  if (prompt) url.searchParams.set('message', prompt)
+export function openCtaUrl(ctaUrl: string) {
+  const url = new URL(ctaUrl, AI_SHELL_URL)
   window.open(url.toString(), '_blank', 'noopener,noreferrer')
 }
 
@@ -60,17 +58,17 @@ function Frame({
 
 /**
  * The only interactive element on the card — deep-links into Bank AI, seeded
- * with `prompt`. Label is fixed to "Full Insight". The `icon` variant renders an
+ * with `ctaUrl`. Label is fixed to "Full Insight". The `icon` variant renders an
  * icon-only circular button (compact tile); otherwise a labelled pill. The
  * scaffold floats it absolute bottom-right.
  */
-function CtaButton({ prompt, icon }: { prompt?: string; icon?: boolean }) {
+function CtaButton({ ctaUrl, icon }: { ctaUrl?: string; icon?: boolean }) {
   if (icon) {
     return (
       <button
         type="button"
         aria-label="Full Insight"
-        onClick={() => openChat(prompt)}
+        onClick={() => ctaUrl && openCtaUrl(ctaUrl)}
         className="grid size-8 shrink-0 place-items-center rounded-full bg-ink/85 text-white backdrop-blur-md transition hover:bg-ink active:scale-[0.95]"
       >
         <Sparkles className="size-4 text-brand-3" strokeWidth={2.2} />
@@ -80,7 +78,7 @@ function CtaButton({ prompt, icon }: { prompt?: string; icon?: boolean }) {
   return (
     <button
       type="button"
-      onClick={() => openChat(prompt)}
+      onClick={() => ctaUrl && openCtaUrl(ctaUrl)}
       className="inline-flex items-center gap-1.5 rounded-full bg-ink/85 px-4 py-2 text-sm font-semibold text-white backdrop-blur-md transition hover:bg-ink active:scale-[0.98]"
     >
       Full Insight
@@ -144,12 +142,12 @@ export type Variant = NonNullable<InsightCardData['variant']>
 export function CardScaffold({
   variant = 'hero',
   introText,
-  prompt,
+  ctaUrl,
   widget,
 }: {
   variant?: Variant
   introText: string
-  prompt?: string
+  ctaUrl?: string
   widget: ReactNode
 }) {
   if (variant === 'wide') {
@@ -160,7 +158,7 @@ export function CardScaffold({
           <div className="min-h-0 flex-1">{widget}</div>
         </div>
         <div className="absolute bottom-3 right-3">
-          <CtaButton prompt={prompt} />
+          <CtaButton ctaUrl={ctaUrl} />
         </div>
       </Frame>
     )
@@ -171,7 +169,7 @@ export function CardScaffold({
       <Frame radius="rounded-2xl" padding="p-3.5">
         <IntroText introText={introText} className="h-full pb-10" />
         <div className="absolute bottom-3 right-3">
-          <CtaButton prompt={prompt} />
+          <CtaButton ctaUrl={ctaUrl} />
         </div>
       </Frame>
     )
@@ -182,7 +180,7 @@ export function CardScaffold({
       <Frame radius="rounded-2xl" padding="p-3.5">
         <IntroText introText={introText} className="h-full pb-9" />
         <div className="absolute bottom-3 right-3">
-          <CtaButton prompt={prompt} icon />
+          <CtaButton ctaUrl={ctaUrl} icon />
         </div>
       </Frame>
     )
@@ -198,7 +196,7 @@ export function CardScaffold({
       <IntroText introText={introText} className="max-h-[50%] pb-1" />
       <div className="relative min-h-0 flex-1">{widget}</div>
       <div className="absolute bottom-4 right-4">
-        <CtaButton prompt={prompt} />
+        <CtaButton ctaUrl={ctaUrl} />
       </div>
     </Frame>
   )
@@ -207,7 +205,7 @@ export function CardScaffold({
 /**
  * The fallback card, rendered when the payload is too malformed to resolve
  * (Team A's boundary path). Best-effort introText only — no widget, never
- * throws: it reads whatever `introText`/`prompt` it can find off the raw payload
+ * throws: it reads whatever `introText`/`ctaUrl` it can find off the raw payload
  * and renders the scaffold with `widget={null}` so the slot degrades gracefully
  * instead of crashing or going blank.
  */
@@ -224,7 +222,7 @@ export function FallbackCard({
     <CardScaffold
       variant={variant}
       introText={str(raw.introText) ?? 'Your latest AI insight is ready.'}
-      prompt={str(raw.prompt)}
+      ctaUrl={str(raw.ctaUrl)}
       widget={null}
     />
   )

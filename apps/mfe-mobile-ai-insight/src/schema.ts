@@ -11,7 +11,7 @@ import { z } from 'zod'
  * colored highlight, not a separate chrome "stat"). The visualization is a
  * secondary `widget` that only `hero`/`wide` render; `tall`/`compact` show
  * introText only. A fixed "Full Insight" CTA floats bottom-right and deep-links
- * into the Bank AI chat, seeded with `prompt`.
+ * into `ctaUrl` when tapped.
  *
  * `widgetData` is deliberately **lenient** (`unknown`) so an unknown/malformed
  * widget payload still passes the carousel's boundary `safeParse` and reaches
@@ -43,10 +43,11 @@ export const insightCardSchema = z.object({
    */
   introText: z.string(),
   /**
-   * Tapping the "Full Insight" CTA deep-links into the Bank AI chat, seeding the
-   * first message with this prompt. Omit to just open the chat with no message.
+   * The URL the "Full Insight" CTA opens (in a new tab). Typically a deeplink into
+   * the Bank AI chat — e.g. `/chat?topic=insights&message=…`. Omit to render the
+   * CTA as inert.
    */
-  prompt: z.string().optional(),
+  ctaUrl: z.string().optional(),
   /**
    * The per-widget payload. Opaque at the boundary (`unknown`); the card
    * validates it against the matched widget's schema and, if it doesn't fit (or

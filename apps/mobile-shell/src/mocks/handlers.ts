@@ -46,8 +46,8 @@ const promos = {
       widget: 'donut',
       introText:
         'Your **May spending** landed at :hl[RM6,800]{tone=info} — Raya travel and dining drove it. Here’s where it went, across :hl[4 categories]{tone=info}.',
-      // Tapping opens the Bank AI chat seeded with this prompt.
-      prompt: 'Break down my May spending and why it jumped 45%',
+      // Tapping opens the spending insights topic in the Bank AI chat.
+      ctaUrl: '/chat?topic=insights&message=Spending%20this%20month',
       widgetData: {
         slices: [
           { label: 'Dining', value: 2450 },
@@ -80,7 +80,7 @@ const promos = {
         widget: 'gauge',
         introText:
           'You’ve used :hl[82%]{tone=warning} of your **dining budget** this quarter — :hl[+18%]{tone=negative} on last quarter.',
-        prompt: 'Why is my dining spend growing this quarter?',
+        ctaUrl: '/chat?topic=insights&message=Why%20is%20my%20dining%20spend%20growing%20this%20quarter%3F',
         widgetData: { value: 82, max: 100, unit: '%', label: 'Dining budget' },
       },
     },
@@ -110,7 +110,7 @@ const promos = {
         widget: 'progress',
         introText:
           'You’re at :hl[RM620 of RM1,000]{tone=positive} this week — tracking :hl[12% below budget]{tone=positive}. Nice one.',
-        prompt: 'How am I tracking against my weekly budget?',
+        ctaUrl: '/chat?topic=insights&message=How%20am%20I%20tracking%20against%20my%20weekly%20budget%3F',
         widgetData: {
           value: 620,
           max: 1000,
@@ -138,7 +138,7 @@ const promos = {
         widget: 'countdown',
         introText:
           'You have :hl[3 subscriptions]{tone=info} renewing this month — :hl[RM189]{tone=info} total, next on 28 Jul.',
-        prompt: 'What subscriptions do I have renewing this month?',
+        ctaUrl: '/chat?topic=insights&message=What%20subscriptions%20do%20I%20have%20renewing%20this%20month%3F',
         widgetData: {
           month: 'Jul',
           day: 28,
